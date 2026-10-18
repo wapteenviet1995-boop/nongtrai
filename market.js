@@ -9,7 +9,7 @@ async function mBuy(id){const ref=fb.d.doc('market/'+id);let L=null;
   try{await fb.d.runTransaction(async tx=>{const sn=await tx.get(ref);if(!sn.exists)throw new Error('gone');L=sn.data();if(L.sid===usr.uid)throw new Error('own');
      const cost=L.qty*L.price,need=L.item==='gem'?0:L.qty;if(S.c<cost)throw new Error('coin');if(tot()+need>cap())throw new Error('full');
      tx.delete(ref);tx.set(fb.d.doc('users/'+L.sid+'/sales/'+id),{coins:cost,buyer:usr.uid,bn:S.nm,item:L.item,qty:L.qty,t:Date.now()})});
-   S.c-=L.qty*L.price;add(L.item,L.qty);hud();save();cloudSave(true);toast('Đã mua '+(IT[L.item]?IT[L.item][0]:'')+' ×'+L.qty+' 🛍️')}
+   S.c-=L.qty*L.price;add(L.item,L.qty);hud();save();cloudSave(true);if(typeof achInc==='function')achInc('mb',1);toast('Đã mua '+(IT[L.item]?IT[L.item][0]:'')+' ×'+L.qty+' 🛍️')}
   catch(e){const m={gone:'Hàng đã có người mua hoặc đã gỡ',own:'Đây là hàng của bạn',coin:'Bạn không đủ xu',full:'Kho đầy! Hãy bán bớt hoặc nâng cấp nhà kho'}[e.message];toast(m||(e.code==='permission-denied'?'Chưa cấp quyền Firestore cho chợ':'Mua thất bại, thử lại nhé'))}
   mkRender()}
 async function mCancel(id){const ref=fb.d.doc('market/'+id);let L=null;
@@ -29,6 +29,6 @@ async function mkRender(){const B=$('mkb');if(!B)return;const v=mkv;
    $('mkb').querySelectorAll('[data-mc]').forEach(b=>b.onclick=()=>mCancel(b.dataset.mc))}
   catch(e){if($('mkb'))$('mkb').innerHTML='<small>'+(e.code==='permission-denied'?'Chưa cấp quyền Firestore cho chợ (xem Rules).':'Không tải được chợ.')+'</small>'}}
 async function getSales(){if(!usr)return;try{const sn=await fb.d.collection('users/'+usr.uid+'/sales').get();let c=0,t=[];
-  for(const d of sn.docs){const g=d.data(),q=Math.min(10000000,Math.floor(g.coins)||0);if(q>0){c+=q;t.push(esc(g.bn||'?')+' mua '+(g.qty|0)+' '+(IT[g.item]?IT[g.item][0]:''))}await d.ref.delete()}
+  for(const d of sn.docs){const g=d.data(),q=Math.min(10000000,Math.floor(g.coins)||0);if(q>0){c+=q;if(typeof achInc==='function')achInc('ms',1);t.push(esc(g.bn||'?')+' mua '+(g.qty|0)+' '+(IT[g.item]?IT[g.item][0]:''))}await d.ref.delete()}
   if(c>0){S.c+=c;hud();save();cloudSave(true);toast('💰 +'+c+' xu: '+t.join(', '))}}catch(e){}}
 {const _gg=getGifts;getGifts=async()=>{await _gg();await getSales()}}
