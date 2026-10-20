@@ -33,12 +33,25 @@ function clickPlot(i,el){const p=S.p[i],now=Date.now();
 /* trang chủ: hotspot */
 const he={};
 function spot(id,x,y,w,h,fn){const d=document.createElement('div');d.className='hs';d.style.cssText='left:'+x+'%;top:'+y+'%;width:'+w+'%;height:'+h+'%';d.innerHTML='<div class="pill"></div>';d.onclick=()=>fn(d);$('s2').appendChild(d);he[id]=d.firstChild;return d}
+function openHouseMenu(){
+ dOpen=false;
+ $('md').className='md ui-house';
+ $('md').innerHTML='<h2>🏡 Ngôi nhà</h2><p style="text-align:center;margin:0 0 12px;color:var(--mu)">Bạn muốn làm gì trên đảo?</p><div class="house-actions"><button class="btn g" id="hmfarm">🌱 Làm nông</button><button class="btn g" id="hmranch">🐮 Chăn nuôi</button><button class="btn" id="hmstorage">📦 Nhà kho</button><button class="btn" id="hmshop">🏪 Cửa hàng</button><button class="btn" id="hmsocial">👥 Cộng đồng & bạn bè</button><button class="btn" id="hmdaily">🎁 Nhiệm vụ ngày</button><button class="btn" id="hmach">🏆 Thành tựu</button></div><div style="text-align:right;margin-top:12px"><button class="btn" id="hmclose">Đóng</button></div>';
+ $('ov').classList.add('on');
+ $('hmfarm').onclick=()=>{closeM();go(1)};
+ $('hmranch').onclick=()=>{closeM();go(3)};
+ $('hmstorage').onclick=()=>openKho();
+ $('hmshop').onclick=()=>openShop('buy');
+ $('hmsocial').onclick=()=>openSoc('chat');
+ $('hmdaily').onclick=()=>openSoc('daily');
+ $('hmach').onclick=()=>openSoc('ach');
+ $('hmclose').onclick=closeM;
+}
+spot('house',7,12,25,35,()=>openHouseMenu());
 spot('farm',68,57,22,16,()=>go(1));
 spot('wh',82,43,14,16,()=>openKho());
 AN.forEach(a=>spot(a.id,a.x,a.y,a.w,a.h,el=>clickAn(a,el)));
 spot('fish',46,65,13,18,el=>clickFish(el));
-spot('dra',45,40,12,14,()=>openDragon());
-spot('dra2',30.6,53,10,14,()=>openDragon());
 spot('box',4,64,8,11,el=>{const now=Date.now();if(S.box>now){toast('Rương đang nạp, chờ thêm chút');return}S.box=now+90000;const g=40+Math.floor(Math.random()*60);S.c+=g;hud();fl('+'+g+' 🪙',el)});
 function clickAn(a,el){const now=Date.now(),s=S.an[a.id]||(S.an[a.id]={st:0,e:0});
  if(s.st===0){if(inv(a.feed)<1){toast('Cần 1 '+IT[a.feed][0]+' '+IT[a.feed][1]+' - hãy trồng ở nông trại');return}add(a.feed,-1);s.st=1;s.e=now+a.t*1000;hud();fl('-1 '+IT[a.feed][0],el)}
@@ -134,15 +147,7 @@ function rtick(){const now=Date.now();pill('ranch','🐷 Chuồng'+(S.rn.some(a=
 const _t=tick;tick=()=>{_t();rtick()};const _h=hud;hud=()=>{_h();rbar()};const _g=go;go=n=>{_g(n);if(n===3)toast('Chạm thú: thu sản phẩm / cho ăn (chọn thức ăn bên dưới)')};
 spot('ranch',33,53,12,13,()=>go(3));$('bk3').onclick=()=>go(2);
 
-/* ===== RỒNG & CHÓ ĐI LẠI ===== */
-const SPD='img/rong.webp',SPG='img/cho.webp';
-function mover(pill,src,box,cls,face){const D=pill.parentNode,m=document.createElement('span'),im=document.createElement('img');D.style.height='auto';D.style.transition='left 3.6s ease-in-out,top 3.6s ease-in-out';
- m.className='mv '+cls;im.className='sp';im.alt='';im.src=src;m.appendChild(im);D.appendChild(m);let x=parseFloat(D.style.left);
- const mvp=()=>{const nx=box[0]+Math.random()*(box[2]-box[0]),ny=box[1]+Math.random()*(box[3]-box[1]);im.style.setProperty('--f',(nx>x)===(face==='L')?-1:1);x=nx;D.style.left=nx+'%';D.style.top=ny+'%';D.style.zIndex=Math.round(ny*10);m.classList.add('run');setTimeout(()=>m.classList.remove('run'),3600)};
- mvp();setInterval(mvp,4300+Math.random()*1500)}
-mover(he.dra,SPD,[24,30,74,52],'fly','L');
-spot('dog',42,60,7,9,el=>{toast(['🐶 Gâu gâu!','🐶 Chó vẫy đuôi mừng bạn!','🐶 Gâu! Đi câu cá thôi!'][Math.floor(Math.random()*3)]);fl('❤️',el)});he.dog.style.display='none';
-mover(he.dog,SPG,[36,57,52,62],'dg','R');
+/* Đã bỏ nhân vật chó và rồng khỏi màn hình đảo theo yêu cầu. */
 
 /* ===== CỬA HÀNG & HỒ SƠ ===== */
 const AVS=['img/avatar-1.webp','img/avatar-2.webp'];
