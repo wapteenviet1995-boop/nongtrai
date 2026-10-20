@@ -218,3 +218,31 @@ SOCX.daily = {
     if (S.c < before) dqInc('market');
   };
                    }
+(function () {
+  if (document.getElementById('promoQuickBtn')) return;
+
+  const btn = document.createElement('button');
+  btn.id = 'promoQuickBtn';
+  btn.type = 'button';
+  btn.textContent = '🎫 Mã khuyến mãi';
+  btn.style.position = 'fixed';
+  btn.style.right = '14px';
+  btn.style.bottom = '80px';
+  btn.style.zIndex = '999';
+  btn.style.padding = '10px 14px';
+  btn.style.borderRadius = '999px';
+  btn.style.border = '2px solid var(--bd, #e2d3b0)';
+  btn.style.background = '#2f8f4e';
+  btn.style.color = '#fff';
+  btn.style.fontWeight = '700';
+  btn.style.boxShadow = '0 6px 18px rgba(0,0,0,.2)';
+  btn.style.cursor = 'pointer';
+
+  btn.onclick = function () {
+    if (typeof openPromoCodeModal === 'function') {
+      openPromoCodeModal();
+    }
+  };
+
+  document.body.appendChild(btn);
+})();
