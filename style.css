@@ -110,3 +110,9 @@ body{
 
 /* Home screen: use the user's newly uploaded farm background image */
 #s2>img{object-fit:cover;object-position:center center}
+
+/* Menu thao tác khi chạm vào ngôi nhà */
+.house-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.house-actions .btn{min-height:48px;white-space:normal;line-height:1.25;padding:10px 8px}
+.ui-house{background-image:linear-gradient(rgba(255,248,220,.94),rgba(255,226,159,.97)),url("img/ui/profile.svg");background-size:cover;background-position:center}
+@media(max-width:380px){.house-actions{grid-template-columns:1fr}.house-actions .btn{min-height:42px}}
