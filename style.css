@@ -96,3 +96,14 @@ body{background:radial-gradient(ellipse at top,#fff8dc 0%,#f7d99a 62%,#eab56b 10
 .md.high-contrast .it,.md.high-contrast .dq-item{border-color:#642100}
 .md.high-contrast .btn{border-width:3px}
 .md.ui-settings{background-image:linear-gradient(#fff0bdcc,#fff0bdf0),url('img/ui/profile.svg')}
+
+/* Nền trang game dùng ảnh mới tải lên trong img/ */
+body{
+ background-color:#f5c56f;
+ background-image:linear-gradient(rgba(255,245,210,.10),rgba(126,65,16,.12)),url("img/file_00000000e74c8206a62f31514c769cca.png");
+ background-size:cover;
+ background-position:center center;
+ background-repeat:no-repeat;
+ background-attachment:fixed;
+}
+.ov{background:rgba(35,20,8,.52)}
