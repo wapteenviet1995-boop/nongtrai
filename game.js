@@ -176,7 +176,7 @@ function openShop(t){dOpen=false;stab=t||stab;const L=lvl();
   else if(a==='ur'){const c=150*(1+S.rx);if(S.c<c){toast('Cần 🪙'+c);return}S.c-=c;S.rx++;toast('Chuồng đã mở rộng!')}
   else if(a==='av')S.av=+n;else if(a==='hire'){if(!hire(k))return}else if(a==='hup'){if(!hupg(k))return}
   hud();openShop()})}
-spot('shop',48,39,13,14,()=>openShop('buy'));he.shop.textContent='🏪 Cửa hàng';
+spot('shop',48,39,13,14,()=>openSoc('mk'));he.shop.textContent='🛒 Chợ người chơi';
 $('sb').onclick=()=>openShop('buy');$('av').onclick=()=>openShop('me');
 
 /* ===== NHÂN VIÊN CHUỒNG TRẠI: Cậu bé xanh (chăm sóc) & Nhà thám hiểm (thu hoạch) ===== */
