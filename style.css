@@ -82,3 +82,17 @@ body{background:radial-gradient(ellipse at top,#fff8dc 0%,#f7d99a 62%,#eab56b 10
 .dq-count{font-size:11px;font-weight:800;color:#9b5b2c;white-space:nowrap}
 .dq-done{font-weight:900;color:#398b31;font-size:20px}
 @media(max-width:520px){.md{border-width:4px;border-radius:20px;padding:14px 10px 12px}.md h2{font-size:17px;padding:10px 6px}.tabs2 .btn{font-size:11px}.dq-item{padding:7px;gap:6px}}
+
+.profile-summary{display:flex;align-items:center;gap:12px;padding:12px;background:linear-gradient(100deg,#fff8d9,#ffdf8c);border:2px solid #d88932;border-radius:16px;margin:8px 0 12px}
+.profile-summary>div:last-child{display:flex;flex-direction:column;gap:3px;min-width:0}
+.profile-summary b{font-size:16px;color:#78300c}.profile-summary small{font-size:11px;overflow-wrap:anywhere;color:#985323}
+.profile-avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:34px;flex:none;background:linear-gradient(#ffe55a,#f58a0a);border:3px solid #b74b0b;box-shadow:inset 0 2px #fff}
+.profile-menu{display:grid;gap:6px;margin:8px 0 14px}
+.profile-menu .btn{display:flex;align-items:center;justify-content:space-between;text-align:left;padding:10px 13px;border-radius:13px}
+.profile-menu .btn span{font-size:22px;line-height:14px}
+.settings-card{padding:12px;background:#fff6d1;border:2px solid #d88932;border-radius:15px;color:#78300c}
+.settings-card p{font-size:12px;color:#985323;line-height:1.45}
+.md.high-contrast{background-image:none!important;background:#fff!important;color:#291000;border-color:#642100}
+.md.high-contrast .it,.md.high-contrast .dq-item{border-color:#642100}
+.md.high-contrast .btn{border-width:3px}
+.md.ui-settings{background-image:linear-gradient(#fff0bdcc,#fff0bdf0),url('img/ui/profile.svg')}
