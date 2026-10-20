@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 520" width="420" height="520">
+ <defs><linearGradient id="wood" x2="0" y2="1"><stop stop-color="#ffbf32"/><stop offset=".55" stop-color="#f47b0a"/><stop offset="1" stop-color="#b9430b"/></linearGradient><linearGradient id="cream" x2="0" y2="1"><stop stop-color="#fff9d8"/><stop offset="1" stop-color="#ffdf88"/></linearGradient><linearGradient id="grain" x2="1" y2="0"><stop stop-color="#b94b0b"/><stop offset=".5" stop-color="#ffb52e"/><stop offset="1" stop-color="#9f3509"/></linearGradient></defs>
+ <rect x="8" y="8" width="404" height="504" rx="31" fill="#78300b" opacity=".35"/>
+ <rect x="8" y="4" width="404" height="500" rx="31" fill="url(#grain)" stroke="#84300a" stroke-width="6"/>
+ <rect x="17" y="13" width="386" height="482" rx="25" fill="url(#wood)" stroke="#ffd25a" stroke-width="4"/>
+ <path d="M28 86 Q210 62 392 86 L392 468 Q392 484 374 484 H46 Q28 484 28 466Z" fill="url(#cream)" stroke="#9e3d0a" stroke-width="5"/>
+ <rect x="21" y="17" width="378" height="89" rx="24" fill="url(#wood)" stroke="#87300a" stroke-width="5"/>
+ <path d="M31 35 Q210 12 389 35 M31 81 Q210 100 389 81" fill="none" stroke="#ffd15a" stroke-width="3" opacity=".9"/>
+ <circle cx="34" cy="60" r="24" fill="#ffcf38" stroke="#7c2c08" stroke-width="4"/><g><circle cx="41" cy="31" r="13" fill="#20c8ed" stroke="#7d3009" stroke-width="4"/><path d="M18 61 Q20 42 41 43 Q62 42 64 61Z" fill="#20c8ed" stroke="#7d3009" stroke-width="4"/></g>
+ <text x="226" y="56" font-family="Arial,sans-serif" font-weight="900" font-size="24" text-anchor="middle" fill="#fff4bd" stroke="#8c3008" stroke-width="5" paint-order="stroke">TÀI KHOẢN</text>
+ <text x="226" y="56" font-family="Arial,sans-serif" font-weight="900" font-size="24" text-anchor="middle" fill="#fff4bd">TÀI KHOẢN</text>
+ <path d="M34 119 H386" stroke="#e7ae52" stroke-width="3"/><circle cx="29" cy="120" r="5" fill="#b65a13"/><circle cx="391" cy="120" r="5" fill="#b65a13"/>
+ </svg>
