@@ -107,3 +107,6 @@ body{
  background-attachment:fixed;
 }
 .ov{background:rgba(35,20,8,.52)}
+
+/* Home screen: use the user's newly uploaded farm background image */
+#s2>img{object-fit:cover;object-position:center center}
