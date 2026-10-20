@@ -36,11 +36,12 @@ function spot(id,x,y,w,h,fn){const d=document.createElement('div');d.className='
 function openHouseMenu(){
  dOpen=false;
  $('md').className='md ui-house';
- $('md').innerHTML='<h2>🏡 Ngôi nhà</h2><p style="text-align:center;margin:0 0 12px;color:var(--mu)">Bạn muốn làm gì trên đảo?</p><div class="house-actions"><button class="btn g" id="hmfarm">🌱 Làm nông</button><button class="btn g" id="hmranch">🐮 Chăn nuôi</button><button class="btn" id="hmstorage">📦 Nhà kho</button><button class="btn" id="hmshop">🏪 Cửa hàng</button><button class="btn" id="hmsocial">👥 Cộng đồng & bạn bè</button><button class="btn" id="hmdaily">🎁 Nhiệm vụ ngày</button><button class="btn" id="hmach">🏆 Thành tựu</button></div><div style="text-align:right;margin-top:12px"><button class="btn" id="hmclose">Đóng</button></div>';
+ $('md').innerHTML='<h2>🏡 Ngôi nhà</h2><p style="text-align:center;margin:0 0 12px;color:var(--mu)">Bạn muốn làm gì trên đảo?</p><div class="house-actions"><button class="btn g" id="hmfarm">🌳 Vườn cây · Trồng cây</button><button class="btn g" id="hmranch">🐄 Khu chăn nuôi</button><button class="btn g" id="hmmarket">🛒 Chợ người chơi</button><button class="btn" id="hmstorage">📦 Nhà kho</button><button class="btn" id="hmshop">🏪 Cửa hàng vật phẩm</button><button class="btn" id="hmsocial">👥 Cộng đồng & bạn bè</button><button class="btn" id="hmdaily">🎁 Nhiệm vụ ngày</button><button class="btn" id="hmach">🏆 Thành tựu</button></div><div style="text-align:right;margin-top:12px"><button class="btn" id="hmclose">Đóng</button></div>';
  $('ov').classList.add('on');
  $('hmfarm').onclick=()=>{closeM();go(1)};
  $('hmranch').onclick=()=>{closeM();go(3)};
  $('hmstorage').onclick=()=>openKho();
+ $('hmmarket').onclick=()=>openSoc('mk');
  $('hmshop').onclick=()=>openShop('buy');
  $('hmsocial').onclick=()=>openSoc('chat');
  $('hmdaily').onclick=()=>openSoc('daily');
@@ -70,8 +71,8 @@ function tick(){const now=Date.now();
   if(now>=p.e){el.classList.add('ready');b.innerHTML=c.e+'<small>Thu hoạch</small>';bar.children[0].style.width='100%'}
   else{const pr=(now-p.s)/(p.e-p.s);b.innerHTML=(pr<.5?'🌱':'🌿')+'<small>'+Math.ceil((p.e-now)/1000)+'s</small>';bar.children[0].style.width=pr*100+'%'}});
  const rd=S.p.filter(p=>p.c&&now>=p.e).length;
- pill('farm','🌱 Vườn'+(rd?' · '+rd+'!':''),0);
- pill('wh','🏚️ '+tot()+'/'+cap(),0);
+ pill('farm','🌳 Vườn cây'+(rd?' · Thu hoạch '+rd+'!':''),0);
+ pill('wh','📦 Nhà kho '+tot()+'/'+cap(),0);
  AN.forEach(a=>{const s=S.an[a.id]||{st:0,e:0};let t,cd=0;if(s.st===1&&now>=s.e)s.st=2;
   if(s.st===0)t=a.e+' '+IT[a.feed][0];else if(s.st===1){t=a.e+' '+Math.ceil((s.e-now)/1000)+'s';cd=1}else t=IT[a.out][0]+' Thu!';pill(a.id,t,cd)});
  const f=S.fi;if(f.st===1&&now>=f.e)f.st=2;
@@ -139,7 +140,7 @@ function rbar(){const B=$('rb');if(!B)return;B.innerHTML='';const mk=(h,on,fn,cl
  Object.keys(SP).forEach(k=>mk('<b>'+SP[k].e+'</b>Mua '+SP[k].n+'<br>🪙'+SP[k].cost,0,()=>rbuy(k)));
  mk('<b>💰</b>Bán thú<br>'+(sellM?'BẬT':'tắt'),sellM,()=>{sellM=!sellM;toast(sellM?'Chạm thú để bán':'Đã tắt chế độ bán');rbar()});
  Object.keys(FOOD).forEach(k=>mk('<b>'+IT[k][0]+'</b>'+IT[k][1]+'<br>Có: '+inv(k),S.rf===k,()=>{S.rf=k;rbar()}))}
-function rtick(){const now=Date.now();pill('ranch','🐷 Chuồng'+(S.rn.some(a=>a.rd>0)?' · Thu!':''),0);S.rn.forEach(a=>{if(!re[a.id])rmk(a);rupd(a,now);const el=re[a.id],sp=SP[a.sp],v=rvar(a),img=el.children[1],src=SPR[v?v.s:sp.baby];
+function rtick(){const now=Date.now();pill('ranch','🐄 Khu chăn nuôi'+(S.rn.some(a=>a.rd>0)?' · Thu sản phẩm!':''),0);S.rn.forEach(a=>{if(!re[a.id])rmk(a);rupd(a,now);const el=re[a.id],sp=SP[a.sp],v=rvar(a),img=el.children[1],src=SPR[v?v.s:sp.baby];
   if(img.getAttribute('src')!==src)img.src=src;el.style.width=(v?sp.aw:sp.bw)+'%';
   const hu=a.fed<=now;let t,cd=0;if(!v){t=hu?'😋 Đói':'🍼 '+Math.floor(a.g/sp.grow*100)+'%';cd=!hu}else if(a.rd>0)t=IT[v.p][0]+' Thu!'+(a.rd>1?' ×'+a.rd:'');else if(hu)t='😋 Đói';else{t=IT[v.p][0]+' '+Math.ceil(v.t-a.pr)+'s';cd=1}
   if(el.firstChild.textContent!==t)el.firstChild.textContent=t;el.firstChild.classList.toggle('cd',!!cd);if(Math.random()<.18)rwalk(a,el)});
