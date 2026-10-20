@@ -5,6 +5,89 @@ const DQ=[
  {id:'chat',icon:'💬',name:'Giao lưu cộng đồng',desc:'Gửi 1 tin nhắn cộng đồng',goal:1,reward:[40,0]},
  {id:'market',icon:'🛍️',name:'Ghé thăm khu chợ',desc:'Mua 1 món ở chợ người chơi',goal:1,reward:[50,0]}
 ];
+/* ===== MÃ KHUYẾN MÃI ===== */
+const PROMO_CODES = {
+  SAVE10: { type: "percent", value: 10 },
+  FARM100: { type: "cash", value: 100 },
+  GEM5: { type: "gem", value: 5 }
+};
+
+function applyPromoCode(code) {
+  const key = String(code || "").trim().toUpperCase();
+  if (!key) return { ok: false, msg: "Vui lòng nhập mã khuyến mãi." };
+
+  const item = PROMO_CODES[key];
+  if (!item) return { ok: false, msg: "Mã không hợp lệ." };
+
+  if (S.promo && S.promo[key]) {
+    return { ok: false, msg: "Mã này đã được dùng." };
+  }
+
+  S.promo = S.promo || {};
+  S.promo[key] = true;
+  save();
+
+  if (item.type === "percent") {
+    const bonus = Math.floor(S.c * (item.value / 100));
+    S.c += bonus;
+    hud();
+    return { ok: true, msg: `Áp dụng thành công: ${key} (+${bonus} 🪙)` };
+  }
+
+  if (item.type === "cash") {
+    S.c += item.value;
+    hud();
+    return { ok: true, msg: `Áp dụng thành công: +${item.value} 🪙` };
+  }
+
+  if (item.type === "gem") {
+    add("gem", item.value);
+    hud();
+    return { ok: true, msg: `Áp dụng thành công: +${item.value} 💎` };
+  }
+
+  return { ok: false, msg: "Loại mã không hỗ trợ." };
+}
+
+function openPromoCodeModal() {
+  dOpen = false;
+  let h = `
+    <h2>🎫 Mã khuyến mãi</h2>
+    <div class="row">
+      <input
+        id="promoInput"
+        type="text"
+        placeholder="Nhập mã"
+        value=""
+        style="flex:1;border:2px solid var(--bd);border-radius:10px;padding:10px 12px;font-size:14px;background:#fff;color:var(--tx)"
+      />
+      <button class="btn g" id="promoApplyBtn">Áp dụng</button>
+    </div>
+
+    <div style="margin-top:12px;font-size:13px;color:var(--mu)">
+      Mã có sẵn: <b>SAVE10</b>, <b>FARM100</b>, <b>GEM5</b>
+    </div>
+
+    <div id="promoResult" style="margin-top:12px;font-size:13px;color:var(--mu)"></div>
+
+    <div style="text-align:right;margin-top:14px">
+      <button class="btn" id="promoCloseBtn">Đóng</button>
+    </div>
+  `;
+
+  $('md').innerHTML = h;
+  $('ov').classList.add('on');
+
+  $('promoApplyBtn').onclick = () => {
+    const result = applyPromoCode($('promoInput').value);
+    const r = $('promoResult');
+    r.textContent = result.msg;
+    r.style.color = result.ok ? "var(--ac)" : "crimson";
+    toast(result.msg);
+  };
+
+  $('promoCloseBtn').onclick = closeM;
+}
 const dqDay=()=>new Date().toLocaleDateString('en-CA');
 function dqState(){
  const day=dqDay();
