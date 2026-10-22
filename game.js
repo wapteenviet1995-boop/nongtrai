@@ -31,9 +31,9 @@ function clickPlot(i,el){const p=S.p[i],now=Date.now();
  if(now-p.w<3000){toast('Vừa tưới xong, đợi chút nhé 💧');return}
  p.w=now;p.e-=(p.e-p.s)*.2;save();fl('💧 -20%',el)}
 /* trang chủ: dùng ảnh bản đồ mới làm lớp ảnh chính, không chồng nền cũ */
-const MAIN_MAP_IMAGE='file_00000000dadc8209ba7cfcf5e698fd7a.png';
+const MAIN_MAP_IMAGE='./file_00000000dadc8209ba7cfcf5e698fd7a.png?v=2';
 const homeMapImg=document.querySelector('#s2>img');
-if(homeMapImg){homeMapImg.src=MAIN_MAP_IMAGE;homeMapImg.removeAttribute('srcset');homeMapImg.style.objectFit='cover';homeMapImg.style.objectPosition='center center'}
+if(homeMapImg){homeMapImg.removeAttribute('srcset');homeMapImg.removeAttribute('sizes');homeMapImg.src=MAIN_MAP_IMAGE;homeMapImg.style.display='block';homeMapImg.style.width='100%';homeMapImg.style.height='100%';homeMapImg.style.objectFit='cover';homeMapImg.style.objectPosition='center center'}
 $('b2').style.backgroundImage='url("'+MAIN_MAP_IMAGE+'")';
 /* trang chủ: hotspot */
 const he={};
