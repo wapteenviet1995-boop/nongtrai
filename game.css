@@ -128,3 +128,9 @@ body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-
 /* Animal barn map: fill the game viewport and keep hotspots aligned */
 #s3{width:100%!important;height:100%!important;aspect-ratio:auto!important;overflow:hidden!important;display:block!important}
 #s3>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:fill!important;object-position:center center!important;display:block!important;margin:0!important;transform:none!important}
+
+
+/* Keep game actors inside their map; modal overlays must stay above them */
+.stage .an,.stage .hs,.stage .plot{z-index:2}
+.ov{z-index:1000!important}
+.md{position:relative!important;z-index:1001!important}
