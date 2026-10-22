@@ -97,15 +97,8 @@ body{background:radial-gradient(ellipse at top,#fff8dc 0%,#f7d99a 62%,#eab56b 10
 .md.high-contrast .btn{border-width:3px}
 .md.ui-settings{background-image:linear-gradient(#fff0bdcc,#fff0bdf0),url('img/ui/profile.svg')}
 
-/* Nền trang game dùng ảnh mới tải lên trong img/ */
-body{
- background-color:#f5c56f;
- background-image:linear-gradient(rgba(255,245,210,.10),rgba(126,65,16,.12)),url("file_00000000dadc8209ba7cfcf5e698fd7a.png");
- background-size:cover;
- background-position:center center;
- background-repeat:no-repeat;
- background-attachment:fixed;
-}
+
+/* Nền trang giữ màu giao diện; bản đồ chính nằm trong #s2 */
 .ov{background:rgba(35,20,8,.52)}
 
 /* Home screen: use the user's newly uploaded farm background image */
