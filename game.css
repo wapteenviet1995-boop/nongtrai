@@ -123,3 +123,8 @@ body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-
 /* Farm map: fill the game viewport so plots stay on the map */
 #s1{width:100%!important;height:100%!important;aspect-ratio:auto!important;overflow:hidden!important;display:block!important}
 #s1>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:fill!important;object-position:center center!important;display:block!important;margin:0!important;transform:none!important}
+
+
+/* Animal barn map: fill the game viewport and keep hotspots aligned */
+#s3{width:100%!important;height:100%!important;aspect-ratio:auto!important;overflow:hidden!important;display:block!important}
+#s3>img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:fill!important;object-position:center center!important;display:block!important;margin:0!important;transform:none!important}
