@@ -135,10 +135,10 @@ function openAch(t){dOpen=false;if(t!==undefined)aT=t;S.ac=S.ac||{};
 function closeM(){$('md').className='md';$('ov').classList.remove('on');dOpen=false}
 $('ov').onclick=e=>{if(e.target===$('ov'))closeM()};$('kb').onclick=openKho;
 function go(n){$('v1').style.display=n===1?'':'none';$('v2').style.display=n===2?'':'none';$('v3').style.display=n===3?'':'none';fit();center(n);if(n===1)toast('Chọn hạt giống bên dưới rồi chạm ô đất, vuốt để xem rộng hơn')}
-let Z=1;
+let Z=0.9;
 function fit(){const T=Math.ceil(document.querySelector('.top').getBoundingClientRect().bottom),H=innerHeight-T,nr=innerWidth<700,r=document.documentElement.style;r.setProperty('--T',T+'px');r.setProperty('--H',H+'px');r.setProperty('--W1',(nr?innerWidth:Math.min(innerWidth,H*1.5))*Z+'px');r.setProperty('--W2',(nr?innerWidth:Math.min(innerWidth,H*1.7778))*Z+'px');r.setProperty('--SH',nr?H*Z+'px':'auto')}
 function center(n){const p=$('p'+n);p.scrollLeft=(p.scrollWidth-p.clientWidth)/2;p.scrollTop=(p.scrollHeight-p.clientHeight)/2}
-$('zb').onclick=()=>{Z=Z===1?1.6:Z===1.6?2.3:1;$('zb').textContent='🔍 x'+Z;fit();center(1);center(2);center(3)};
+$('zb').onclick=()=>{Z=Z<=0.9?1.4:Z===1.4?2:0.9;$('zb').textContent='🔍 x'+Z;fit();center(1);center(2);center(3)};
 ['1','2','3'].forEach(n=>{$('b'+n).style.backgroundImage='url('+document.querySelector('#s'+n+' img').src+')'});
 document.documentElement.style.setProperty('--tile','url('+$('ti').src+')');
 addEventListener('resize',fit);
