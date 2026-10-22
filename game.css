@@ -111,5 +111,3 @@ body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-
 .ac .ar.go{background:linear-gradient(#ffd93f,#f5a300);color:#fff;text-shadow:0 .2cqw 0 #8a4b00}
 .ac .ar.cl{color:#3f9f3a}
 
-/* Mobile fix: slightly shrink the home/island background without stretching it */
-@media (max-width: 700px){.stage.home{zoom:.95}}
