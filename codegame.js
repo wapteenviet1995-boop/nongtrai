@@ -30,6 +30,11 @@ function clickPlot(i,el){const p=S.p[i],now=Date.now();
  if(now>=p.e){if(tot()>=cap()){full();return}const c=cr(p.c);add(c.id,1);S.xp+=c.xp;p.c=null;qc('h');hud();fl('+1 '+c.e,el);return}
  if(now-p.w<3000){toast('Vừa tưới xong, đợi chút nhé 💧');return}
  p.w=now;p.e-=(p.e-p.s)*.2;save();fl('💧 -20%',el)}
+/* trang chủ: thay ảnh JPEG nhúng cũ bằng bản đồ mới */
+const MAIN_MAP_IMAGE='./file_00000000dadc8209ba7cfcf5e698fd7a.png?v=3';
+const homeMapImg=document.querySelector('#s2>img');
+if(homeMapImg){homeMapImg.removeAttribute('srcset');homeMapImg.removeAttribute('sizes');homeMapImg.src=MAIN_MAP_IMAGE;homeMapImg.style.display='block';homeMapImg.style.width='100%';homeMapImg.style.height='100%';homeMapImg.style.objectFit='cover';homeMapImg.style.objectPosition='center center'}
+$('b2').style.backgroundImage='url("'+MAIN_MAP_IMAGE+'")';
 /* trang chủ: hotspot */
 const he={};
 function spot(id,x,y,w,h,fn){const d=document.createElement('div');d.className='hs';d.style.cssText='left:'+x+'%;top:'+y+'%;width:'+w+'%;height:'+h+'%';d.innerHTML='<div class="pill"></div>';d.onclick=()=>fn(d);$('s2').appendChild(d);he[id]=d.firstChild;return d}
