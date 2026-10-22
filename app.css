@@ -115,4 +115,4 @@ body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-
 
 /* Fix main island map: show the whole portrait map without cropping */
 #s2{height:auto!important;aspect-ratio:2/3!important;overflow:hidden!important;background:#dff0ff!important}
-#s2>img{position:relative!important;width:90%!important;height:90%!important;object-fit:contain!important;object-position:center center!important;display:block!important;margin:auto!important}
+#s2>img{position:relative!important;width:120%!important;height:120%!important;object-fit:contain!important;object-position:center center!important;display:block!important;margin:auto!important}
