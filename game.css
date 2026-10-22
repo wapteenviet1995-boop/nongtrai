@@ -114,6 +114,6 @@ body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-
 
 
 
-/* Auto-fit main island map to every screen */
-#s2{height:100%!important;aspect-ratio:2/3!important;overflow:hidden!important;background:#dff0ff!important;display:flex!important;align-items:center!important;justify-content:center!important}
-#s2>img{position:relative!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center center!important;display:block!important;margin:auto!important;transform:none!important}
+/* Full-screen main island map: fill all 4 corners */
+#s2{width:100%!important;height:100%!important;aspect-ratio:auto!important;overflow:hidden!important;background:#dff0ff!important;display:flex!important;align-items:center!important;justify-content:center!important}
+#s2>img{position:relative!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center center!important;display:block!important;margin:auto!important;transform:none!important}
