@@ -113,6 +113,3 @@ body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-
 
 
 
-/* Main game map background */
-body{background-image:linear-gradient(rgba(255,245,210,.10),rgba(126,65,16,.12)),url("file_00000000dadc8209ba7cfcf5e698fd7a.png")!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;background-attachment:fixed!important}
-#s2>img,.stage.home>img{object-fit:cover!important;object-position:center!important}
