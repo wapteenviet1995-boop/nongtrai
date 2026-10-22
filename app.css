@@ -112,3 +112,7 @@ body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-
 .ac .ar.cl{color:#3f9f3a}
 
 
+
+/* Fix main island map: show the whole portrait map without cropping */
+#s2{height:auto!important;aspect-ratio:2/3!important;overflow:hidden!important;background:#dff0ff!important}
+#s2>img{position:relative!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center top!important;display:block!important}
