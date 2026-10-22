@@ -33,7 +33,7 @@ function clickPlot(i,el){const p=S.p[i],now=Date.now();
 /* trang chủ: dùng ảnh bản đồ mới làm lớp ảnh chính, không chồng nền cũ */
 const MAIN_MAP_IMAGE='./file_00000000dadc8209ba7cfcf5e698fd7a.png?v=2';
 const homeMapImg=document.querySelector('#s2>img');
-if(homeMapImg){homeMapImg.removeAttribute('srcset');homeMapImg.removeAttribute('sizes');homeMapImg.style.display='block';homeMapImg.style.width='100%';homeMapImg.style.height='100%';homeMapImg.style.objectFit='cover';homeMapImg.style.objectPosition='center center';homeMapImg.style.visibility='hidden';homeMapImg.onload=()=>{homeMapImg.style.visibility='visible'};homeMapImg.src=MAIN_MAP_IMAGE;if(homeMapImg.complete&&homeMapImg.naturalWidth>0)homeMapImg.style.visibility='visible'}
+if(homeMapImg){homeMapImg.removeAttribute('srcset');homeMapImg.removeAttribute('sizes');homeMapImg.style.display='block';homeMapImg.style.width='100%';homeMapImg.style.height='100%';homeMapImg.style.objectFit='cover';homeMapImg.style.objectPosition='center center';homeMapImg.style.visibility='visible';homeMapImg.onload=null;homeMapImg.src=MAIN_MAP_IMAGE}
 $('b2').style.backgroundImage='url("'+MAIN_MAP_IMAGE+'")';
 /* trang chủ: hotspot */
 const he={};
