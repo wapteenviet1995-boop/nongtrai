@@ -54,6 +54,15 @@ spot('wh',82,43,14,16,()=>openKho());
 AN.forEach(a=>spot(a.id,a.x,a.y,a.w,a.h,el=>clickAn(a,el)));
 spot('fish',46,65,13,18,el=>clickFish(el));
 spot('box',4,64,8,11,el=>{const now=Date.now();if(S.box>now){toast('Rương đang nạp, chờ thêm chút');return}S.box=now+90000;const g=40+Math.floor(Math.random()*60);S.c+=g;hud();fl('+'+g+' 🪙',el)});
+/* Bảng nhiệm vụ ngày tại khu đài phun nước — giữ nguyên các hotspot khác. */
+const dailyBoard=document.createElement('button');
+dailyBoard.type='button';
+dailyBoard.id='dailyBoard';
+dailyBoard.className='daily-board';
+dailyBoard.innerHTML='<span class="daily-board-pin">✦</span><span class="daily-board-title">NHIỆM VỤ</span><span class="daily-board-sub">NGÀY</span><span class="daily-board-note">Chạm để xem</span>';
+dailyBoard.setAttribute('aria-label','Mở nhiệm vụ ngày');
+dailyBoard.onclick=()=>openSoc('daily');
+$('s2').appendChild(dailyBoard);
 function clickAn(a,el){const now=Date.now(),s=S.an[a.id]||(S.an[a.id]={st:0,e:0});
  if(s.st===0){if(inv(a.feed)<1){toast('Cần 1 '+IT[a.feed][0]+' '+IT[a.feed][1]+' - hãy trồng ở nông trại');return}add(a.feed,-1);s.st=1;s.e=now+a.t*1000;hud();fl('-1 '+IT[a.feed][0],el)}
  else if(s.st===1&&now>=s.e)s.st=2;
