@@ -116,3 +116,26 @@ body{
 .house-actions .btn{min-height:48px;white-space:normal;line-height:1.25;padding:10px 8px}
 .ui-house{background-image:linear-gradient(rgba(255,248,220,.94),rgba(255,226,159,.97)),url("img/ui/profile.svg");background-size:cover;background-position:center}
 @media(max-width:380px){.house-actions{grid-template-columns:1fr}.house-actions .btn{min-height:42px}}
+
+
+/* ===== Bản chỉnh giao diện đảo: ẩn nhãn trắng nhưng giữ nguyên vùng bấm ===== */
+.stage.home .pill{display:none!important}
+.daily-board{
+ position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);
+ z-index:4;width:15%;min-width:76px;max-width:180px;height:16%;min-height:64px;max-height:140px;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+ padding:5px 4px;cursor:pointer;line-height:1.05;text-align:center;
+ color:#fff0b7;font-weight:900;
+ background:linear-gradient(90deg,#7a2d0a 0%,#b95717 12%,#e39a3b 22%,#a84913 50%,#e39a3b 78%,#8b350d 100%);
+ border:3px solid #71300d;border-radius:7px;
+ box-shadow:0 4px 0 #5c2609,0 6px 8px #3c1b0a66,inset 0 0 0 2px #f7c35a,inset 0 0 0 5px #a34b14;
+ text-shadow:0 2px 2px #612306;
+}
+.daily-board::before,.daily-board::after{content:"";position:absolute;top:12%;bottom:12%;width:5px;border-radius:4px;background:linear-gradient(90deg,#f6d16d,#b66b20,#ffe18a);box-shadow:0 0 0 1px #71300d}
+.daily-board::before{left:5px}.daily-board::after{right:5px}
+.daily-board:active{transform:translate(-50%,-48%)}
+.daily-board-pin{font-size:clamp(10px,1.5cqw,19px);color:#ffe986}
+.daily-board-title{font-size:clamp(7px,1.25cqw,15px);letter-spacing:.03em}
+.daily-board-sub{font-size:clamp(8px,1.6cqw,18px);color:#fff5ce}
+.daily-board-note{font-size:clamp(5px,.72cqw,9px);font-weight:700;color:#ffe3a0;margin-top:2px}
+@media(max-width:520px){.daily-board{min-width:66px;min-height:58px;border-width:2px}.daily-board::before{left:3px}.daily-board::after{right:3px}}
