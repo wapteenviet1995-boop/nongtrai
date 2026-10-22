@@ -119,7 +119,7 @@ body{
 
 
 /* ===== Bản chỉnh giao diện đảo: ẩn nhãn trắng nhưng giữ nguyên vùng bấm ===== */
-.stage.home .pill{display:none!important}
+#s2 .hs .pill{display:none!important}
 .daily-board{
  position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);
  z-index:4;width:15%;min-width:76px;max-width:180px;height:16%;min-height:64px;max-height:140px;
