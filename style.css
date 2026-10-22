@@ -132,3 +132,7 @@ body{background:radial-gradient(ellipse at top,#fff8dc 0%,#f7d99a 62%,#eab56b 10
 .daily-board-sub{font-size:clamp(8px,1.6cqw,18px);color:#fff5ce}
 .daily-board-note{font-size:clamp(5px,.72cqw,9px);font-weight:700;color:#ffe3a0;margin-top:2px}
 @media(max-width:520px){.daily-board{min-width:66px;min-height:58px;border-width:2px}.daily-board::before{left:3px}.daily-board::after{right:3px}}
+
+/* Fix main island map: show the whole portrait map without cropping */
+#s2{height:auto!important;aspect-ratio:2/3!important;overflow:hidden!important;background:#dff0ff!important}
+#s2>img{position:relative!important;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center top!important;display:block!important}
