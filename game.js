@@ -53,9 +53,10 @@ function openHouseMenu(){
  $('hmach').onclick=()=>openSoc('ach');
  $('hmclose').onclick=closeM;
 }
-spot('house',7,12,25,35,()=>openHouseMenu());
-spot('farm',68,57,22,16,()=>go(1));
-spot('wh',82,43,14,16,()=>openKho());
+/* Hotspot bản đồ chính mới: canh theo tâm từng công trình */
+spot('house',20,31,28,28,()=>openHouseMenu());
+spot('farm',70,64,30,24,()=>go(1));
+spot('wh',82,42,20,20,()=>openKho());
 AN.forEach(a=>spot(a.id,a.x,a.y,a.w,a.h,el=>clickAn(a,el)));
 spot('fish',46,65,13,18,el=>clickFish(el));
 spot('box',4,64,8,11,el=>{const now=Date.now();if(S.box>now){toast('Rương đang nạp, chờ thêm chút');return}S.box=now+90000;const g=40+Math.floor(Math.random()*60);S.c+=g;hud();fl('+'+g+' 🪙',el)});
