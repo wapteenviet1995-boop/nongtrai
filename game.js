@@ -40,13 +40,22 @@ $('b2').style.backgroundImage='url("'+MAIN_MAP_IMAGE+'")';
 /* trang chủ: hotspot */
 const he={};
 function spot(id,x,y,w,h,fn){const d=document.createElement('div');d.className='hs';d.style.cssText='left:'+x+'%;top:'+y+'%;width:'+w+'%;height:'+h+'%';d.innerHTML='<div class="pill"></div>';d.onclick=()=>fn(d);$('s2').appendChild(d);he[id]=d.firstChild;return d}
+function openMineGame(){
+ dOpen=false;
+ $('md').className='md ui-mine';
+ $('md').style.cssText='width:min(94vw,850px);height:min(90vh,900px);max-width:none;padding:0;overflow:hidden;position:relative';
+ $('md').innerHTML='<button id="mineClose" class="btn" style="position:absolute;right:8px;top:8px;z-index:5;border-radius:50%;width:40px;height:40px;padding:0">✕</button><iframe src="./daomo/index.html" title="Đào Mỏ" style="width:100%;height:100%;border:0;display:block"></iframe>';
+ $('ov').classList.add('on');
+ $('mineClose').onclick=()=>{closeM();$('md').removeAttribute('style')};
+}
 function openHouseMenu(){
  dOpen=false;
  $('md').className='md ui-house';
- $('md').innerHTML='<h2>🏡 Ngôi nhà</h2><p style="text-align:center;margin:0 0 12px;color:var(--mu)">Bạn muốn làm gì trên đảo?</p><div class="house-actions"><button class="btn g" id="hmfarm">🌳 Vườn cây · Trồng cây</button><button class="btn g" id="hmranch">🐄 Khu chăn nuôi</button><button class="btn g" id="hmmarket">🛒 Chợ người chơi</button><button class="btn" id="hmstorage">📦 Nhà kho</button><button class="btn" id="hmshop">🏪 Cửa hàng vật phẩm</button><button class="btn" id="hmsocial">👥 Cộng đồng & bạn bè</button><button class="btn" id="hmdaily">🎁 Nhiệm vụ ngày</button><button class="btn" id="hmach">🏆 Thành tựu</button></div><div style="text-align:right;margin-top:12px"><button class="btn" id="hmclose">Đóng</button></div>';
+ $('md').innerHTML='<h2>🏡 Ngôi nhà</h2><p style="text-align:center;margin:0 0 12px;color:var(--mu)">Bạn muốn làm gì trên đảo?</p><div class="house-actions"><button class="btn g" id="hmfarm">🌳 Vườn cây · Trồng cây</button><button class="btn g" id="hmranch">🐄 Khu chăn nuôi</button><button class="btn g" id="hmmine">⛏️ Đào Mỏ</button><button class="btn g" id="hmmarket">🛒 Chợ người chơi</button><button class="btn" id="hmstorage">📦 Nhà kho</button><button class="btn" id="hmshop">🏪 Cửa hàng vật phẩm</button><button class="btn" id="hmsocial">👥 Cộng đồng & bạn bè</button><button class="btn" id="hmdaily">🎁 Nhiệm vụ ngày</button><button class="btn" id="hmach">🏆 Thành tựu</button></div><div style="text-align:right;margin-top:12px"><button class="btn" id="hmclose">Đóng</button></div>';
  $('ov').classList.add('on');
  $('hmfarm').onclick=()=>{closeM();go(1)};
  $('hmranch').onclick=()=>{closeM();go(3)};
+ $('hmmine').onclick=()=>openMineGame();
  $('hmstorage').onclick=()=>openKho();
  $('hmmarket').onclick=()=>openSoc('mk');
  $('hmshop').onclick=()=>openShop('buy');
