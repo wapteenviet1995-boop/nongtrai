@@ -1,5 +1,4 @@
-/* Bắt buộc đăng ký/đăng nhập trước khi vào game */
-if(!localStorage.getItem('nongtrai_session_v1')){location.replace('./auth.html');throw new Error('AUTH_REQUIRED')}
+/* Firebase Authentication kiểm tra phiên đăng nhập trong main.js/social.js; auth.html là cổng đăng nhập. */
 
 /* ===== LÕI GAME: nông trại, chuồng trại, shop, nhân viên ===== */
 const CROPS=[{id:'carrot',e:'🥕',n:'Cà rốt',cost:5,t:20,xp:3,lv:1},{id:'wheat',e:'🌾',n:'Lúa mì',cost:8,t:40,xp:5,lv:1},{id:'tomato',e:'🍅',n:'Cà chua',cost:12,t:70,xp:8,lv:2},{id:'sun',e:'🌻',n:'Hướng dương',cost:20,t:120,xp:12,lv:3},{id:'pump',e:'🎃',n:'Bí ngô',cost:35,t:200,xp:20,lv:5}];
