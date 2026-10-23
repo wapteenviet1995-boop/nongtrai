@@ -1,0 +1,1 @@
+(()=>{const SESSION='nongtrai_session_v1';if(!localStorage.getItem(SESSION)){location.replace('./auth.html')}})();
