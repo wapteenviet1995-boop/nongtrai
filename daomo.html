@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Đào Mỏ - Nông Trại</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#17120f;color:#fff}
+body{background:linear-gradient(#4a3828 0 14%,#251a14 14% 100%);overflow-x:hidden}
+.top{position:sticky;top:0;z-index:10;display:flex;gap:8px;align-items:center;padding:9px;background:#30231b;border-bottom:3px solid #8b643d;box-shadow:0 3px 10px #0008}
+.top button,.tool{border:0;border-radius:12px;padding:9px 12px;font-weight:800;background:#f2c45e;color:#3a2715;box-shadow:inset 0 -3px #b47b28;cursor:pointer}
+.stat{background:#18110dcc;border:1px solid #755437;border-radius:12px;padding:7px 10px;font-weight:700}.spacer{flex:1}
+.wrap{max-width:720px;margin:auto;padding:12px}.panel{background:#2c2019;border:2px solid #6f5035;border-radius:16px;padding:10px;margin-bottom:10px}
+.head{display:flex;align-items:center;gap:8px}.head h1{font-size:20px;margin:0}.depth{margin-left:auto;color:#ffd76a;font-weight:800}
+.bar{height:14px;background:#120d0a;border-radius:9px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#62d96b,#b8ef63)}
+.mine{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;user-select:none;touch-action:manipulation;background:#120d0a;padding:5px;border-radius:14px;border:2px solid #5b402b}
+.cell{aspect-ratio:1;border:0;border-radius:5px;font-size:clamp(17px,5vw,29px);display:grid;place-items:center;background:linear-gradient(145deg,#795236,#4d3223);box-shadow:inset 0 0 0 2px #906345,inset 0 -5px #352218;cursor:pointer;position:relative}
+.cell.rock{background:linear-gradient(145deg,#777,#454545);box-shadow:inset 0 0 0 2px #999,inset 0 -5px #303030}.cell.dug{background:#1c1511;box-shadow:inset 0 0 12px #000;cursor:default}.cell.hit:after{content:"💥";position:absolute;animation:pop .25s forwards}@keyframes pop{to{transform:scale(1.8);opacity:0}}
+.tools{display:flex;gap:7px;overflow:auto;padding:8px 0}.tool.active{outline:3px solid #fff3a3}.bag{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.item{background:#17110d;border-radius:10px;padding:7px;text-align:center;font-size:12px}.item b{display:block;font-size:20px}.msg{min-height:24px;text-align:center;color:#ffe18b;font-weight:700;padding:5px}
+.next{width:100%;margin-top:9px;padding:12px;border:0;border-radius:12px;background:#72c955;font-weight:900;font-size:16px;color:#17320f;display:none}
+.help{font-size:12px;color:#d7c3ad;line-height:1.5}
+</style>
+</head>
+<body>
+<header class="top"><button onclick="history.length>1?history.back():location.href='./game.html'">← Game</button><span class="stat">⚡ <b id="energy">100</b></span><span class="stat">🪙 <b id="coin">0</b></span><span class="spacer"></span><button id="reset">↻</button></header>
+<main class="wrap">
+<section class="panel"><div class="head"><h1>⛏️ Mỏ Kho Báu</h1><span class="depth">Tầng <b id="floor">1</b></span></div><div class="bar"><i id="energyBar"></i></div></section>
+<div class="tools"><button class="tool active" data-tool="pick">⛏️ Cuốc</button><button class="tool" data-tool="bomb">💣 Bom <b id="bombs">3</b></button></div>
+<section class="mine" id="mine"></section><div class="msg" id="msg">Chạm vào đất đá để đào!</div><button class="next" id="next">⬇️ Xuống tầng tiếp theo</button>
+<section class="panel"><b>🎒 Túi khoáng sản</b><div class="bag" id="bag"></div></section>
+<section class="panel help">Đào mỗi ô tốn 2 ⚡. Đá cứng tốn 4 ⚡. Bom phá vùng 3×3. Tìm đủ 3 mảnh chìa khóa 🔑 để mở đường xuống tầng sâu hơn. Càng xuống sâu, cơ hội tìm khoáng sản quý càng cao.</section>
+</main>
+<script>
+(()=>{const $=id=>document.getElementById(id),KEY='nongtrai_mine_v1';
+let S={floor:1,energy:100,coin:0,bombs:3,bag:{iron:0,silver:0,gold:0,gem:0},keys:0},tool='pick',cells=[];
+try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+const ores=[['iron','🔩','Sắt'],['silver','🥈','Bạc'],['gold','🥇','Vàng'],['gem','💎','Kim cương']];
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+function randOre(){let r=Math.random(),f=S.floor;if(r<.04+f*.002)return 3;if(r<.11+f*.003)return 2;if(r<.23)return 1;if(r<.43)return 0;return -1}
+function make(){cells=[];S.keys=0;for(let i=0;i<64;i++){let rock=Math.random()<.23,ore=randOre(),key=Math.random()<.055;cells.push({dug:false,rock,ore,key})}render()}
+function render(){ $('floor').textContent=S.floor;$('energy').textContent=S.energy;$('coin').textContent=S.coin;$('bombs').textContent=S.bombs;$('energyBar').style.width=Math.max(0,S.energy)+'%';
+ $('bag').innerHTML=ores.map(o=>'<div class="item"><b>'+o[1]+'</b>'+o[2]+'<br>x '+(S.bag[o[0]]||0)+'</div>').join('');
+ $('mine').innerHTML='';cells.forEach((c,i)=>{let b=document.createElement('button');b.className='cell'+(c.rock?' rock':'')+(c.dug?' dug':'');b.innerHTML=c.dug?(c.key?'🔑':c.ore>=0?ores[c.ore][1]:''):' ';b.onclick=()=>dig(i);$('mine').appendChild(b)});
+ $('next').style.display=S.keys>=3?'block':'none';save()}
+function one(i,free=false){let c=cells[i];if(!c||c.dug)return;let cost=c.rock?4:2;if(!free&&S.energy<cost){say('⚡ Không đủ năng lượng!');return false}if(!free)S.energy-=cost;c.dug=true;
+ if(c.key){S.keys++;say('🔑 Tìm thấy mảnh chìa khóa! '+S.keys+'/3')}else if(c.ore>=0){let o=ores[c.ore];S.bag[o[0]]=(S.bag[o[0]]||0)+1;S.coin+=c.ore+1;say('Tìm thấy '+o[1]+' '+o[2]+'!')}else say('Chỉ có đất đá...');return true}
+function dig(i){if(cells[i].dug)return;if(tool==='bomb'){if(S.bombs<=0)return say('Bạn đã hết bom!');S.bombs--;let r=Math.floor(i/8),c=i%8;for(let y=r-1;y<=r+1;y++)for(let x=c-1;x<=c+1;x++)if(x>=0&&x<8&&y>=0&&y<8)one(y*8+x,true);say('💣 BOOM!')}else one(i);render()}
+function say(t){$('msg').textContent=t}
+document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>{tool=b.dataset.tool;document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('active',x===b))});
+$('next').onclick=()=>{S.floor++;S.energy=Math.min(100,S.energy+25);make();say('Bạn đã xuống tầng '+S.floor+'!')};
+$('reset').onclick=()=>{if(confirm('Làm mới lượt đào mỏ?')){S.energy=100;S.bombs=3;make()}};
+make();
+})();
+</script>
+</body></html>
