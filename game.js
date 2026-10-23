@@ -1,3 +1,6 @@
+/* Bắt buộc đăng ký/đăng nhập trước khi vào game */
+if(!localStorage.getItem('nongtrai_session_v1')){location.replace('./auth.html');throw new Error('AUTH_REQUIRED')}
+
 /* ===== LÕI GAME: nông trại, chuồng trại, shop, nhân viên ===== */
 const CROPS=[{id:'carrot',e:'🥕',n:'Cà rốt',cost:5,t:20,xp:3,lv:1},{id:'wheat',e:'🌾',n:'Lúa mì',cost:8,t:40,xp:5,lv:1},{id:'tomato',e:'🍅',n:'Cà chua',cost:12,t:70,xp:8,lv:2},{id:'sun',e:'🌻',n:'Hướng dương',cost:20,t:120,xp:12,lv:3},{id:'pump',e:'🎃',n:'Bí ngô',cost:35,t:200,xp:20,lv:5}];
 const IT={carrot:['🥕','Cà rốt',12],wheat:['🌾','Lúa mì',22],tomato:['🍅','Cà chua',40],sun:['🌻','Hướng dương',75],pump:['🎃','Bí ngô',140],milk:['🥛','Sữa bò',25],egg:['🥚','Trứng gà',12],fur:['🧶','Lông thỏ',18],f1:['🐟','Cá nhỏ',12],f2:['🐠','Cá vàng',28],f3:['🐡','Cá nóc',60],f4:['🦈','Cá mập',150],gem:['💎','Ngọc rồng',40]};
