@@ -14,8 +14,8 @@ body{overflow:hidden}
 #game{position:relative;width:100%;height:100dvh;overflow:hidden;background:#65c9f4}
 .map-wrap{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden}
 .map{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;object-position:center;
+  position:absolute;left:50%;top:50%;width:92%;height:92%;
+  transform:translate(-50%,-50%);object-fit:contain;object-position:center;
   user-select:none;-webkit-user-drag:none;
 }
 .shade{position:absolute;inset:0;background:linear-gradient(180deg,#001d3a22 0%,transparent 35%,#001d3a10 100%);pointer-events:none}
