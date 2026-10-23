@@ -15,14 +15,18 @@
     <button id="registerTab" type="button">Đăng ký</button>
   </div>
   <form id="authForm">
-    <label>Tên tài khoản<input id="username" autocomplete="username" minlength="3" maxlength="24" required></label>
+    <label>Email<input id="username" type="email" autocomplete="email" maxlength="120" required></label>
     <label>Mật khẩu<input id="password" type="password" autocomplete="current-password" minlength="6" maxlength="64" required></label>
     <label id="confirmRow" hidden>Nhập lại mật khẩu<input id="confirm" type="password" autocomplete="new-password" minlength="6" maxlength="64"></label>
     <button class="submit" id="submitBtn" type="submit">Đăng nhập</button>
     <p id="msg" class="msg" aria-live="polite"></p>
   </form>
-  <p class="note">Phiên bản tài khoản cục bộ: tài khoản hiện được lưu trên thiết bị này.</p>
+  <p class="note">Tài khoản được bảo vệ bằng Firebase Authentication và đồng bộ dữ liệu game trên đám mây.</p>
 </main>
+<script src="./config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="./auth.js"></script>
 </body>
 </html>
