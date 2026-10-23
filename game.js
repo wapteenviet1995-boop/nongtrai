@@ -75,6 +75,26 @@ mineSpot.innerHTML='<span style="font-size:28px;line-height:1">⛏️</span><spa
 mineSpot.style.cssText='position:absolute;left:57%;top:72%;transform:translate(-50%,-50%);z-index:20;width:82px;height:68px;border:3px solid #6b4527;border-radius:18px;background:linear-gradient(#ffe49a,#e6a64f);color:#4a2b16;box-shadow:0 5px 0 #7b4a25,0 8px 16px rgba(0,0,0,.28);cursor:pointer;font-family:inherit;touch-action:manipulation;padding:5px 4px;';
 mineSpot.onclick=()=>openMineGame();
 $('s2').appendChild(mineSpot);
+
+/* ===== ĐẢO MỎ: nút launcher luôn hiện trên game.html ===== */
+(function(){
+  const old=$('mineLauncher');
+  if(old)old.remove();
+  const launch=document.createElement('button');
+  launch.type='button';
+  launch.id='mineLauncher';
+  launch.setAttribute('aria-label','Mở game Đào Mỏ');
+  launch.innerHTML='<span style="font-size:30px;line-height:1">⛏️</span><span style="display:block;font-size:13px;font-weight:1000;line-height:1.1">ĐÀO MỎ</span><small style="display:block;font-size:10px;font-weight:800;margin-top:2px">MINI GAME</small>';
+  launch.style.cssText='position:fixed;right:14px;bottom:88px;z-index:9999;width:96px;height:82px;border:3px solid #5b351b;border-radius:20px;background:linear-gradient(180deg,#ffeaa8 0%,#f0b04f 100%);color:#4a2a13;box-shadow:0 6px 0 #7a4825,0 10px 22px rgba(0,0,0,.32);font-family:inherit;cursor:pointer;touch-action:manipulation;padding:5px 4px;animation:minePulse 1.8s ease-in-out infinite;';
+  launch.onclick=()=>openMineGame();
+  document.body.appendChild(launch);
+  if(!document.getElementById('minePulseStyle')){
+    const st=document.createElement('style');
+    st.id='minePulseStyle';
+    st.textContent='@keyframes minePulse{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.04)}}@media(max-width:600px){#mineLauncher{right:10px;bottom:76px;width:84px;height:74px;border-radius:17px}#mineLauncher span{font-size:25px!important}}';
+    document.head.appendChild(st);
+  }
+})();
 AN.forEach(a=>spot(a.id,a.x,a.y,a.w,a.h,el=>clickAn(a,el)));
 spot('fish',46,65,13,18,el=>clickFish(el));
 spot('box',4,64,8,11,el=>{const now=Date.now();if(S.box>now){toast('Rương đang nạp, chờ thêm chút');return}S.box=now+90000;const g=40+Math.floor(Math.random()*60);S.c+=g;hud();fl('+'+g+' 🪙',el)});
