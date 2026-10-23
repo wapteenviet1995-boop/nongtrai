@@ -8,32 +8,156 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#3b2f1e;background:#bfe9ff}
-body{overflow:hidden}.top{height:64px;display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fffdf6;border-bottom:3px solid #d9c99f;position:relative;z-index:5}.logo{font-weight:1000;color:#2f8f4e;font-size:20px}.sp{flex:1}.coin{font-weight:900;background:#fff3b0;border:2px solid #dfbd50;border-radius:12px;padding:7px 10px}.btn{border:2px solid #bda981;background:#fff;border-radius:12px;padding:8px 12px;font-weight:900;cursor:pointer}.danger{background:#fff0ed;border-color:#e5aaa0;color:#a33}
-#game{height:calc(100dvh - 64px);display:grid;place-items:center;padding:14px}.farm{position:relative;width:min(100%,1000px);height:min(100%,680px);overflow:hidden;border:5px solid #76502d;border-radius:24px;background:linear-gradient(#8bd5ff 0 32%,#83c95a 32% 100%);box-shadow:0 14px 40px #0003}
-.cloud{position:absolute;font-size:55px;opacity:.8}.c1{left:8%;top:7%}.c2{right:10%;top:14%}.hill{position:absolute;left:-10%;right:-10%;bottom:18%;height:42%;border-radius:50% 50% 0 0;background:#6fbd55}
-.house{position:absolute;left:8%;bottom:27%;width:210px;height:150px;background:#d9a25e;border:5px solid #73471f;border-radius:12px}.roof{position:absolute;left:-20px;top:-78px;width:240px;height:100px;background:#b9503f;border:5px solid #73471f;clip-path:polygon(50% 0,100% 100%,0 100%)}.door{position:absolute;bottom:0;left:78px;width:55px;height:85px;background:#73471f;border:4px solid #4e321c;border-radius:10px 10px 0 0}
-.field{position:absolute;right:7%;bottom:15%;width:48%;height:42%;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.plot{background:#a96d3d;border:4px solid #704522;border-radius:12px;display:grid;place-items:center;font-size:30px;cursor:pointer;box-shadow:inset 0 8px 0 #bd824c}.plot.grow{background:#7baf43}.plot.ready{background:#e5b04c}.title{position:absolute;left:50%;top:8%;transform:translateX(-50%);background:#fffdf6eF;border:3px solid #8d6a39;border-radius:16px;padding:9px 18px;font-size:24px;font-weight:1000;white-space:nowrap}.hint{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);background:#fffdf6eF;border-radius:14px;padding:8px 14px;font-weight:800;white-space:nowrap}
-.modal-bg{position:fixed;inset:0;background:#0007;display:none;place-items:center;z-index:20}.modal-bg.on{display:grid}.modal{width:min(92vw,430px);background:#fffdf6;border:3px solid #d4c39c;border-radius:20px;padding:20px;box-shadow:0 20px 60px #0005}.modal h2{margin-top:0}.modal p{line-height:1.5}
-@media(max-width:650px){.top{height:58px}.logo{font-size:17px}.coin{font-size:13px;padding:6px}.farm{border-radius:16px}.house{transform:scale(.72);transform-origin:left bottom}.field{right:4%;width:58%;height:38%;gap:5px}.plot{font-size:24px}.title{font-size:18px;top:5%}.hint{font-size:11px;bottom:2%}}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#071b2d;color:#fff}
+body{overflow:hidden}
+#game{position:relative;width:100%;height:100dvh;overflow:hidden;background:#65c9f4}
+.map-wrap{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden}
+.map{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  user-select:none;-webkit-user-drag:none;
+}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,#001d3a22 0%,transparent 35%,#001d3a10 100%);pointer-events:none}
+.top{
+  position:absolute;left:12px;right:12px;top:10px;z-index:10;
+  display:flex;align-items:center;gap:8px;pointer-events:none;
+}
+.player{
+  display:flex;align-items:center;gap:9px;min-width:230px;
+  padding:7px 12px 7px 7px;border:3px solid #57371f;border-radius:18px;
+  background:linear-gradient(#fff7d8,#e8c879);color:#3b2514;
+  box-shadow:0 5px 16px #0005;pointer-events:auto;
+}
+.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#9bd8ff;border:3px solid #6b4826;font-size:29px}
+.player b{display:block;font-size:16px}.player small{display:block;font-weight:800}
+.xp{height:7px;margin-top:4px;background:#5b472d;border-radius:10px;overflow:hidden;width:120px}
+.xp i{display:block;width:38%;height:100%;background:#67c93f}
+.sp{flex:1}
+.currency{display:flex;gap:7px;align-items:center;pointer-events:auto}
+.pill{min-width:94px;text-align:center;padding:9px 12px;border:3px solid #57371f;border-radius:16px;background:#fff4bb;color:#352311;font-weight:1000;box-shadow:0 5px 14px #0004}
+.pill.gem{background:#d8f5ff}
+.icon-btn{width:45px;height:45px;border:3px solid #57371f;border-radius:14px;background:#fff4bb;font-size:22px;cursor:pointer;box-shadow:0 4px 12px #0004}
+.hotspot{
+  position:absolute;z-index:5;transform:translate(-50%,-50%);
+  border:3px solid #5a3517;border-radius:16px;padding:8px 13px;
+  background:linear-gradient(#fff3a4,#d99b35);color:#3a220e;
+  font-weight:1000;font-size:15px;white-space:nowrap;
+  box-shadow:0 5px 13px #0006;cursor:pointer;
+  transition:transform .15s,filter .15s;
+}
+.hotspot:hover{transform:translate(-50%,-50%) scale(1.07);filter:brightness(1.08)}
+.hotspot:active{transform:translate(-50%,-50%) scale(.96)}
+.hs-dragon{left:50%;top:21%}.hs-ach{left:78%;top:27%}.hs-house{left:58%;top:45%}
+.hs-production{left:78%;top:51%}.hs-barn{left:25%;top:57%}.hs-field{left:49%;top:69%}
+.hs-mine{left:19%;top:81%}.hs-warehouse{left:79%;top:70%}
+.notice{
+  position:absolute;z-index:7;left:12px;top:92px;width:230px;
+  padding:12px;border:3px solid #59371f;border-radius:17px;
+  background:#2e2118e8;box-shadow:0 7px 20px #0005
+}
+.notice h3{margin:0 0 7px;color:#ffe083}.notice div{font-size:13px;font-weight:750;line-height:1.55}
+.bottom{
+  position:absolute;z-index:10;left:50%;bottom:10px;transform:translateX(-50%);
+  display:flex;gap:8px;align-items:center;padding:8px;
+  border:3px solid #5b3a1e;border-radius:23px;background:#2b211be8;
+  box-shadow:0 7px 22px #0006;max-width:96vw;overflow:auto
+}
+.nav{
+  min-width:76px;border:2px solid #694724;border-radius:14px;padding:7px 9px;
+  background:#fff0bd;color:#3a2412;font-weight:1000;cursor:pointer
+}
+.nav.main{min-width:190px;background:linear-gradient(#6ee05e,#2d9d45);color:#fff;border-color:#285f2d;font-size:16px}
+.modal-bg{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:50}
+.modal-bg.on{display:grid}.modal{width:min(92vw,430px);background:#fff9df;color:#3b2919;border:4px solid #8c6330;border-radius:22px;padding:20px;box-shadow:0 20px 70px #0007}.modal h2{margin:0 0 10px}.modal p{line-height:1.5}.close{border:0;border-radius:12px;padding:9px 16px;background:#4ca54b;color:#fff;font-weight:900;cursor:pointer}
+.logout{background:#ffe1d9;color:#8f2d20}
+@media(max-width:700px){
+  .player{min-width:170px;padding:5px 8px}.avatar{width:40px;height:40px;font-size:24px}
+  .player b{font-size:13px}.player small{font-size:10px}.xp{width:90px}
+  .pill{min-width:72px;padding:7px 8px;font-size:12px}.icon-btn{width:39px;height:39px;font-size:18px}
+  .notice{display:none}.hotspot{font-size:11px;padding:6px 8px;border-width:2px}
+  .bottom{bottom:6px;padding:5px}.nav{min-width:64px;font-size:10px;padding:6px}.nav.main{min-width:120px;font-size:12px}
+}
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="logo">🌾 NÔNG TRẠI</div><div class="sp"></div>
-  <div class="coin">🪙 <span id="coins">100</span></div>
-  <button class="btn danger" id="logout">Đăng xuất</button>
-</header>
 <main id="game">
-  <section class="farm">
-    <div class="cloud c1">☁️</div><div class="cloud c2">☁️</div><div class="hill"></div>
-    <div class="title">🏡 Nông Trại Của Bạn</div>
-    <div class="house"><div class="roof"></div><div class="door"></div></div>
-    <div class="field" id="field"></div>
-    <div class="hint">🌱 Chạm vào ô đất để trồng và thu hoạch</div>
-  </section>
+  <div class="map-wrap">
+    <img class="map" src="./file_00000000dadc8209ba7cfcf5e698fd7a.png" alt="Bản đồ Nông Trại">
+    <div class="shade"></div>
+  </div>
+
+  <header class="top">
+    <div class="player">
+      <div class="avatar">👨‍🌾</div>
+      <div><b>Nông Dân Anh</b><small>⭐ Lv.12 · 450/1200 XP</small><div class="xp"><i></i></div></div>
+    </div>
+    <div class="sp"></div>
+    <div class="currency">
+      <div class="pill">🪙 <span id="coins">100</span></div>
+      <div class="pill gem">💎 <span id="gems">0</span></div>
+      <button class="icon-btn" id="logout" title="Đăng xuất">🚪</button>
+    </div>
+  </header>
+
+  <aside class="notice">
+    <h3>🔔 THÔNG BÁO</h3>
+    <div>🎉 Sự kiện mới đã bắt đầu!<br>🐉 Rồng mới đã xuất hiện!<br>🏆 BXH tuần đã cập nhật!<br>🎁 Đăng nhập hôm nay nhận quà!</div>
+  </aside>
+
+  <button class="hotspot hs-dragon" data-feature="dragon">🐉 Đảo Rồng</button>
+  <button class="hotspot hs-ach" data-feature="achieve">🏆 Thành tựu & BXH</button>
+  <button class="hotspot hs-house" data-feature="house">🏡 Nhà</button>
+  <button class="hotspot hs-production" data-feature="production">⚙️ Sản xuất</button>
+  <button class="hotspot hs-barn" data-feature="barn">🐄 Chuồng</button>
+  <button class="hotspot hs-field" data-feature="field">🌾 Ruộng</button>
+  <button class="hotspot hs-mine" data-feature="mine">⛏️ Đào Mỏ</button>
+  <button class="hotspot hs-warehouse" data-feature="warehouse">📦 Kho</button>
+
+  <nav class="bottom">
+    <button class="nav" data-feature="map">🗺️<br>Bản đồ</button>
+    <button class="nav" data-feature="seeds">🌱<br>Hạt giống</button>
+    <button class="nav" data-feature="warehouse">📦<br>Kho</button>
+    <button class="nav main" data-feature="field">🌾 Vào Nông Trại<br><small>Trồng trọt · Thu hoạch</small></button>
+    <button class="nav" data-feature="dragon">🐉<br>Đảo Rồng</button>
+    <button class="nav" data-feature="achieve">🏆<br>Thành tựu</button>
+    <button class="nav" data-feature="mine">⛏️<br>Đào Mỏ</button>
+  </nav>
 </main>
-<div class="modal-bg" id="modal"><div class="modal"><h2 id="mt"></h2><p id="mb"></p><button class="btn" id="mc">Đóng</button></div></div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h2 id="mt"></h2>
+    <p id="mb"></p>
+    <button class="close" id="mc">Đóng</button>
+  </div>
+</div>
+
 <script src="./game.js"></script>
+<script>
+(function(){
+  const data={
+    dragon:['🐉 Đảo Rồng','Khu vực nuôi rồng, nâng cấp rồng và nhận phần thưởng.'],
+    achieve:['🏆 Thành tựu & BXH','Theo dõi thành tựu, thứ hạng và bảng xếp hạng người chơi.'],
+    house:['🏡 Nhà','Khu nhà chính của nông dân và các nâng cấp trang trại.'],
+    production:['⚙️ Sản xuất','Chế biến nông sản thành các sản phẩm có giá trị cao hơn.'],
+    barn:['🐄 Chuồng','Nuôi vật nuôi và thu hoạch sản phẩm từ chuồng.'],
+    field:['🌾 Ruộng','Trồng cây, chờ cây lớn rồi thu hoạch để kiếm xu.'],
+    mine:['⛏️ Đào Mỏ','Mini game đào mỏ với quặng, năng lượng và nhiều tầng.'],
+    warehouse:['📦 Kho','Quản lý nông sản, vật phẩm và sức chứa kho.'],
+    map:['🗺️ Bản đồ','Đây là bản đồ chính của Nông Trại.'],
+    seeds:['🌱 Hạt giống','Chọn giống cây để bắt đầu trồng trọt.']
+  };
+  function openFeature(key){
+    const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
+    document.getElementById('mt').textContent=d[0];
+    document.getElementById('mb').innerHTML=d[1]+'<br><br><b>🚧 Phần chức năng sẽ được nối vào game ở bước tiếp theo.</b>';
+    document.getElementById('modal').classList.add('on');
+  }
+  document.querySelectorAll('[data-feature]').forEach(b=>b.addEventListener('click',()=>openFeature(b.dataset.feature)));
+  document.getElementById('mc').onclick=()=>document.getElementById('modal').classList.remove('on');
+  document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('on')};
+})();
+</script>
 </body>
 </html>
