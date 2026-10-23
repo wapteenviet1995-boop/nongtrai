@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Đăng nhập - Nông Trại</title>
+<link rel="stylesheet" href="./auth.css">
+</head>
+<body>
+<main class="auth-card">
+  <h1>🌾 Nông Trại</h1>
+  <p class="sub">Đăng nhập hoặc tạo tài khoản để vào game</p>
+  <div class="tabs">
+    <button id="loginTab" class="on" type="button">Đăng nhập</button>
+    <button id="registerTab" type="button">Đăng ký</button>
+  </div>
+  <form id="authForm">
+    <label>Tên tài khoản<input id="username" autocomplete="username" minlength="3" maxlength="24" required></label>
+    <label>Mật khẩu<input id="password" type="password" autocomplete="current-password" minlength="6" maxlength="64" required></label>
+    <label id="confirmRow" hidden>Nhập lại mật khẩu<input id="confirm" type="password" autocomplete="new-password" minlength="6" maxlength="64"></label>
+    <button class="submit" id="submitBtn" type="submit">Đăng nhập</button>
+    <p id="msg" class="msg" aria-live="polite"></p>
+  </form>
+  <p class="note">Phiên bản tài khoản cục bộ: tài khoản hiện được lưu trên thiết bị này.</p>
+</main>
+<script src="./auth.js"></script>
+</body>
+</html>
