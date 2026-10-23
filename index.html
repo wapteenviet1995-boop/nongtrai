@@ -1,29 +1,9 @@
 <!doctype html>
-<html lang="vi">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Nông Trại</title>
-<style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#bde9ff}
-body{overflow:hidden}.gate{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(#8ed9ff,#dff5d0);z-index:100;color:#285735}.home{height:100%;overflow:auto;padding:24px 14px;background:linear-gradient(#83d7ff 0 45%,#83c85a 45% 100%)}
-.title{text-align:center;color:#fff;text-shadow:0 3px 4px #285b31;margin:4px 0 20px}.world{max-width:760px;margin:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.place{min-height:210px;border:3px solid #fff9;border-radius:24px;padding:18px;text-align:center;box-shadow:0 10px 25px #285b3166,inset 0 -8px #0002;cursor:pointer;font-weight:800;color:#fff;text-shadow:0 2px 3px #0006}
-.farm{background:linear-gradient(#6bc7ff,#4aa63f)}.mine{background:linear-gradient(#826044,#302117)}.ico{font-size:72px;display:block;margin:8px}.place b{font-size:22px}.place small{display:block;margin-top:8px;font-weight:600}.ov{display:none;position:fixed;inset:0;background:#000b;z-index:50;padding:2vh 2vw}.ov.on{display:block}.pop{height:96vh;max-width:1000px;margin:auto;background:#17120f;border:3px solid #fff8;border-radius:20px;overflow:hidden;position:relative}.close{position:absolute;right:8px;top:8px;z-index:3;width:42px;height:42px;border:0;border-radius:50%;background:#ffd365;font-size:21px;font-weight:900;cursor:pointer}.pop iframe{width:100%;height:100%;border:0;background:#fff}@media(max-width:600px){.world{grid-template-columns:1fr}.place{min-height:170px}.ico{font-size:58px}}
-</style>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Nông Trại</title>
+<style>html,body{margin:0;width:100%;height:100%;background:#dff0ff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}#checking{position:fixed;inset:0;display:grid;place-items:center;text-align:center;color:#2f6f3e;background:linear-gradient(#bfe9ff,#eaf8d8)}</style>
 <script src="./config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-</head>
-<body>
-<div class="gate" id="gate"><div><b>🌾 Nông Trại</b><br><small>Đang kiểm tra đăng nhập...</small></div></div>
-<main class="home" id="home" hidden><h1 class="title">🌴 Thế Giới Nông Trại</h1><section class="world">
-<button class="place farm" onclick="openApp('./game.html')"><span class="ico">🏡🌾</span><b>Nông Trại</b><small>Vào đảo, trồng cây và chăn nuôi</small></button>
-<button class="place mine" onclick="openApp('./daomo/index.html')"><span class="ico">⛏️💎</span><b>Mỏ Kho Báu</b><small>Đào khoáng sản và khám phá các tầng mỏ</small></button>
-</section></main>
-<div class="ov" id="popup"><div class="pop"><button class="close" onclick="closeApp()">✕</button><iframe id="appFrame" title="Mini game"></iframe></div></div>
-<script>
-function openApp(src){document.getElementById('appFrame').src=src;document.getElementById('popup').classList.add('on')}
-function closeApp(){document.getElementById('popup').classList.remove('on');document.getElementById('appFrame').src=''}
-document.getElementById('popup').addEventListener('click',e=>{if(e.target.id==='popup')closeApp()});
-(function(){if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined'||!FB_CONFIG){location.replace('./auth.html');return}try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(u=>{if(!u){location.replace('./auth.html');return}document.getElementById('gate').remove();document.getElementById('home').hidden=false},()=>location.replace('./auth.html'))}catch(e){location.replace('./auth.html')}})();
-</script></body></html>
+</head><body><div id="checking"><div><b>🌾 Nông Trại</b><br><small>Đang kiểm tra đăng nhập...</small></div></div>
+<script>(function(){if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined'||!FB_CONFIG){location.replace('./auth.html');return}try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(function(u){if(!u){location.replace('./auth.html');return}location.replace('./game.html')},function(){location.replace('./auth.html')})}catch(e){location.replace('./auth.html')}})();</script>
+</body></html>
