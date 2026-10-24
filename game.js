@@ -243,6 +243,9 @@
     currentUser=user;
     await loadCloud(user);
     updateHUD();
+    const profileLevel=document.getElementById('profileLevel');
+    if(profileLevel)profileLevel.textContent='⭐ Lv.'+S.level+' · '+S.xp+'/'+xpNeed(S.level)+' XP';
+    document.body.classList.add('auth-ready');
   });
 
   async function openPets(){
