@@ -210,7 +210,7 @@ body{overflow:hidden}
     if(key==='barn' && window.nongPet){ window.nongPet.open(); return; }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
     document.getElementById('mt').textContent=d[0];
-    document.getElementById('mb').innerHTML=d[1]+'<br><br><b>🚧 Phần chức năng sẽ được nối vào game ở bước tiếp theo.</b>';
+    document.getElementById('mb').innerHTML=d[1];
     document.getElementById('modal').classList.add('on');
   }
   document.querySelectorAll('[data-feature]').forEach(b=>b.addEventListener('click',()=>openFeature(b.dataset.feature)));
