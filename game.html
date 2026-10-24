@@ -54,6 +54,10 @@ body{overflow:hidden}
   transition:transform .15s,filter .15s;
 }
 .hotspot:hover{transform:translate(-50%,-50%) scale(1.07);filter:brightness(1.08)}
+.hotspot::after{content:"";position:absolute;inset:12%;border-radius:50%;background:rgba(255,235,120,.22);opacity:0;transform:scale(.7);pointer-events:none}
+.hotspot:focus-visible::after,.hotspot:active::after{opacity:1;transform:scale(1.25);animation:hotspotPulse .45s ease-out}
+.hotspot:active{filter:brightness(1.2);}
+@keyframes hotspotPulse{0%{opacity:.8;transform:scale(.65)}100%{opacity:0;transform:scale(1.5)}}
 .hotspot:active{transform:translate(-50%,-50%) scale(.96)}
 .map-wrap .hotspot{z-index:6}
 .hs-dragon{left:51%;top:19%}.hs-ach{left:79%;top:22.5%}.hs-house{left:58%;top:43%}
@@ -72,7 +76,7 @@ body{overflow:hidden}
   text-shadow:none;
 }
 /* Điểm vào Chuồng luôn nhìn thấy trên bản đồ */
-.hs-barn{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;font-size:0!important;text-shadow:none!important;display:block;z-index:8;padding:0;min-width:0;min-height:0}
+.hs-barn{background:transparent!important;border:0!important;box-shadow:none!important;color:transparent!important;font-size:0!important;text-shadow:none!important;display:block;z-index:8;padding:0;min-width:0;min-height:0}.hs-barn::after{background:rgba(255,255,255,.18)}
 .notice{
   position:absolute;z-index:7;left:12px;top:92px;width:230px;
   padding:12px;border:3px solid #59371f;border-radius:17px;
@@ -93,6 +97,7 @@ body{overflow:hidden}
 .modal-bg{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:50}
 .modal-bg.on{display:grid}.modal{width:min(94vw,460px);max-height:90dvh;overflow:auto;background:#fff9df;color:#3b2919;border:4px solid #8c6330;border-radius:22px;padding:14px;box-shadow:0 20px 70px #0007}.modal h2{margin:0 0 10px}.modal p{line-height:1.5}.close{border:0;border-radius:12px;padding:9px 16px;background:#4ca54b;color:#fff;font-weight:900;cursor:pointer}
 .logout{background:#ffe1d9;color:#8f2d20}
+.profile-dock{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);z-index:11}.profile-dock button{border:3px solid #57371f;border-radius:16px;padding:9px 20px;background:#fff4bb;color:#352311;font-weight:1000;box-shadow:0 5px 14px #0005;cursor:pointer}.profile-panel{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:80}.profile-panel.on{display:grid}.profile-card{width:min(92vw,390px);background:#fff9df;color:#3b2919;border:4px solid #8c6330;border-radius:22px;padding:16px;box-shadow:0 20px 70px #0007}.profile-card h2{margin:0 0 12px}.profile-info{background:#fff0bd;border-radius:14px;padding:12px;margin-bottom:12px}.profile-card button{width:100%;border:0;border-radius:12px;padding:11px;margin-top:7px;font-weight:1000;cursor:pointer}.profile-close{background:#e6c77c}.profile-logout{background:#ffe1d9;color:#8f2d20}
 @media(max-width:700px){
   .player{min-width:170px;padding:5px 8px}.avatar{width:40px;height:40px;font-size:24px}
   .player b{font-size:13px}.player small{font-size:10px}.xp{width:90px}
@@ -172,7 +177,7 @@ body{overflow:hidden}
     <div class="currency">
       <div class="pill">🪙 <span id="coins">100</span></div>
       <div class="pill gem">💎 <span id="gems">0</span></div>
-      <button class="icon-btn" id="logout" title="Đăng xuất">🚪</button>
+      <button class="icon-btn" id="profileBtn" title="Hồ sơ">👤</button>
     </div>
   </header>
 
@@ -191,7 +196,11 @@ body{overflow:hidden}
     <button class="nav" data-feature="achieve">🏆<br>Thành tựu</button>
     <button class="nav" data-feature="mine">⛏️<br>Đào Mỏ</button>
   </nav>
+
+  <div class="profile-dock"><button id="profileDockBtn">👤 Hồ sơ</button></div>
 </main>
+
+<div class="profile-panel" id="profilePanel"><div class="profile-card"><h2>👤 Hồ sơ</h2><div class="profile-info"><b>Nông Dân Anh</b><br><small>⭐ Lv.12 · 450/1200 XP</small></div><button class="profile-logout" id="profileLogout">🚪 Đăng xuất</button><button class="profile-close" id="profileClose">Đóng</button></div></div>
 
 <div class="modal-bg" id="modal">
   <div class="modal">
@@ -227,6 +236,13 @@ body{overflow:hidden}
     document.getElementById('modal').classList.add('on');
   }
   document.querySelectorAll('[data-feature]').forEach(b=>b.addEventListener('click',()=>openFeature(b.dataset.feature)));
+  const profilePanel=document.getElementById('profilePanel');
+  const openProfile=()=>profilePanel.classList.add('on');
+  document.getElementById('profileBtn').onclick=openProfile;
+  document.getElementById('profileDockBtn').onclick=openProfile;
+  document.getElementById('profileClose').onclick=()=>profilePanel.classList.remove('on');
+  profilePanel.onclick=e=>{if(e.target===profilePanel)profilePanel.classList.remove('on')};
+  document.getElementById('profileLogout').onclick=()=>{try{localStorage.clear()}catch(e){};location.href='./index.html'};
   document.getElementById('mc').onclick=()=>document.getElementById('modal').classList.remove('on');
   document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('on')};
 })();
