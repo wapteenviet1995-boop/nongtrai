@@ -25,10 +25,10 @@ body{min-height:100dvh;overflow-x:hidden}
 .new-ranch-top span:first-of-type{margin-left:auto}
 .new-ranch-top i{font-style:normal}
 .new-pet-scene{position:fixed;inset:0;width:100%;height:100dvh;min-height:0;border-radius:0;overflow:auto;background:transparent!important;border:0!important;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:110px 18px 24px;align-content:end;z-index:3}
-.new-pet{width:92px;min-height:0;padding:3px;text-align:center;border-radius:12px;background:rgba(255,249,220,.30);border:0;box-shadow:none;color:#3b2919;will-change:left,top}
-.new-pet img{width:72px;height:72px;transition:transform .15s;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0003)}
+.new-pet{width:82px;min-height:0;padding:0;text-align:center;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;color:#3b2919;will-change:left,top;pointer-events:auto}
+.new-pet img{width:76px;height:76px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0004);transform-origin:50% 90%}
 .new-pet b,.new-pet small{display:none}.new-pet small{font-weight:800;font-size:12px;margin-top:2px}
-.new-pet-actions{display:flex;justify-content:center;gap:5px;margin-top:6px}.new-pet-actions button{border:1px solid #80603a;border-radius:8px;background:#fff4bb;padding:6px 9px;cursor:pointer;font-weight:900}
+.new-pet-actions{display:flex;justify-content:center;gap:3px;margin-top:-5px;opacity:.72}.new-pet-actions button{border:0;border-radius:50%;background:#fff9;padding:3px 5px;cursor:pointer;font-weight:900;font-size:10px}
 .new-ranch-actions{display:none!important}
 .barn-bottom{position:fixed;z-index:30;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:8px;padding:8px;border:3px solid #5b3a1e;border-radius:22px;background:#2b211be8;box-shadow:0 7px 22px #0006}
 .barn-nav{min-width:92px;border:2px solid #694724;border-radius:14px;padding:9px 13px;background:#fff0bd;color:#3a2412;font-weight:1000;cursor:pointer}
@@ -47,6 +47,11 @@ body{min-height:100dvh;overflow-x:hidden}
  .barn-card{padding:0;border:0;border-radius:0}.new-ranch{padding:70px 6px 6px}.new-pet-scene{height:calc(100dvh - 150px);min-height:0;max-height:none;padding:8px;gap:6px}
  .new-pet{min-height:95px;padding:5px}.new-pet img{width:52px;height:52px}.new-pet small{font-size:9px}.new-pet-actions{margin-top:3px}.new-pet-actions button{padding:3px 6px;font-size:10px}
  .new-ranch-top{font-size:11px;padding:8px}.new-ranch-actions button{padding:9px 5px;font-size:12px}.new-ranch-help{font-size:9px}
+}
+@keyframes petWalk{
+  0%{transform:scaleX(var(--pet-dir,1)) translateY(0) rotate(-2deg)}
+  50%{transform:scaleX(var(--pet-dir,1)) translateY(-4px) rotate(2deg)}
+  100%{transform:scaleX(var(--pet-dir,1)) translateY(0) rotate(-2deg)}
 }
 </style>
 </head>
@@ -73,7 +78,24 @@ body{min-height:100dvh;overflow-x:hidden}
   let S=clone();
   try{const raw=localStorage.getItem(SAVE_KEY);if(raw)S=merge(clone(),JSON.parse(raw))}catch(e){}
   const saveLocal=()=>{try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}};
-  const update=()=>{saveLocal();document.getElementById('pageCoins').textContent=Math.floor(S.coins||0)};
+  let cloudSaveTimer=0;
+  const saveCloudNow=async()=>{
+    try{
+      if(typeof firebase==='undefined'||!firebase.auth)return;
+      const u=firebase.auth().currentUser;if(!u)return;
+      await firebase.firestore().collection('users').doc(u.uid).set(
+        {game:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},
+        {merge:true}
+      );
+    }catch(e){console.error('Lưu Firebase:',e)}
+  };
+  const update=()=>{
+    saveLocal();
+    const coinEl=document.getElementById('pageCoins');
+    if(coinEl)coinEl.textContent=Math.floor(Number(S.coins)||0);
+    clearTimeout(cloudSaveTimer);
+    cloudSaveTimer=setTimeout(saveCloudNow,0);
+  };
   const toast=(m)=>{let x=document.getElementById('toast');if(!x){x=document.createElement('div');x.id='toast';x.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:99999;background:#fffdf6;color:#3b2f1e;border:2px solid #9b8154;border-radius:14px;padding:10px 16px;font-weight:900;box-shadow:0 8px 30px #0003';document.body.appendChild(x)}x.textContent=m;clearTimeout(x.t);x.style.opacity=1;x.t=setTimeout(()=>x.style.opacity=0,1800)};
   window.nongTrai={state:()=>S,save:update,refresh:update,toast};
   document.getElementById('backIsland').onclick=()=>location.href='./game.html';
@@ -82,12 +104,12 @@ body{min-height:100dvh;overflow-x:hidden}
   update();
   const mount=document.getElementById('ranchMount');
   const wrap=document.createElement('div');wrap.id='mb';mount.appendChild(wrap);
-  const script=document.createElement('script');script.src='./nuoipet/pets.js?v=20261024-walk2';script.onload=()=>window.nongPet?.open();script.onerror=()=>toast('❌ Không tải được hệ thống chuồng nuôi');document.body.appendChild(script);
+  const script=document.createElement('script');script.src='./nuoipet/pets.js?v=20261024-walk3';script.onload=()=>window.nongPet?.open();script.onerror=()=>toast('❌ Không tải được hệ thống chuồng nuôi');document.body.appendChild(script);
   
   if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){
     try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);const auth=firebase.auth();auth.onAuthStateChanged(async user=>{if(!user){location.replace('./auth.html');return}try{const snap=await firebase.firestore().collection('users').doc(user.uid).get();if(snap.exists&&snap.data().game){S=merge(clone(),snap.data().game);update();window.nongPet?.open()}}catch(e){}})}catch(e){}
   }
-  setInterval(async()=>{saveLocal();try{const u=firebase.auth().currentUser;if(u)await firebase.firestore().collection('users').doc(u.uid).set({game:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){}},5000);
+  setInterval(()=>{saveLocal();saveCloudNow()},30000);
 })();
 </script>
 </body>
