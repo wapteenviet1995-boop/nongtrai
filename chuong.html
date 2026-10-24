@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chuồng Nuôi Thú · Nông Trại</title>
+<script src="./config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#172b20;color:#3b2919}
+body{min-height:100dvh;overflow-x:hidden}
+#barn-page{min-height:100dvh;position:relative;padding:12px}
+.barn-bg{position:fixed;inset:0;background:url('./img/chuong-trai.webp') center/cover no-repeat;z-index:-2}
+.barn-shade{position:fixed;inset:0;background:linear-gradient(180deg,#18351b66,#172b2055 55%,#0b1710aa);z-index:-1}
+.topbar{max-width:900px;margin:0 auto 10px;display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.topbar button{border:3px solid #57371f;border-radius:14px;background:#fff0bd;color:#3b2919;padding:9px 13px;font-weight:1000;cursor:pointer;box-shadow:0 5px 14px #0005}
+.title{flex:1;min-width:190px;text-align:center;color:#fff8d5;text-shadow:0 3px 5px #000;font-weight:1000;font-size:clamp(20px,5vw,34px)}
+.money{background:#fff9df;border:3px solid #57371f;border-radius:14px;padding:9px 13px;font-weight:1000;box-shadow:0 5px 14px #0005}
+.barn-card{width:min(96vw,900px);margin:0 auto;background:rgba(255,249,223,.94);border:4px solid #8c6330;border-radius:24px;padding:12px;box-shadow:0 18px 55px #0008}
+.new-ranch{display:flex;flex-direction:column;gap:8px;width:100%}
+.new-ranch-top{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#fff0bd;border:2px solid #9b8154}
+.new-ranch-top span:first-of-type{margin-left:auto}
+.new-ranch-top i{font-style:normal}
+.new-pet-scene{position:relative;width:100%;min-height:420px;border-radius:18px;overflow:auto;background:url('./img/chuong-trai.webp') center/cover no-repeat;border:3px solid #8b6336;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:18px;align-content:end}
+.new-pet{min-height:120px;padding:9px;text-align:center;border-radius:15px;background:rgba(255,249,220,.9);border:2px solid #a97b45;box-shadow:0 4px 12px #0003;color:#3b2919}
+.new-pet img{width:72px;height:72px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0003)}
+.new-pet b,.new-pet small{display:block}.new-pet small{font-weight:800;font-size:12px;margin-top:2px}
+.new-pet-actions{display:flex;justify-content:center;gap:5px;margin-top:6px}.new-pet-actions button{border:1px solid #80603a;border-radius:8px;background:#fff4bb;padding:6px 9px;cursor:pointer;font-weight:900}
+.new-ranch-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.new-ranch-actions button{border:2px solid #79552d;border-radius:12px;padding:12px;background:linear-gradient(#fff4bd,#e5b74e);color:#3b2919;font-weight:1000;cursor:pointer}
+.new-ranch-help{padding:8px 10px;border-radius:10px;background:#fff7dc;color:#66553f;font-size:12px;text-align:center;font-weight:700}
+.pet-shop-popup{position:fixed;inset:0;z-index:1000;background:#0009;display:grid;place-items:center;padding:16px}
+.pet-shop-card{width:min(94vw,430px);max-height:88vh;overflow:auto;background:#fff9df;color:#3b2919;border:4px solid #8c6330;border-radius:20px;padding:14px;box-shadow:0 20px 70px #0008}
+.pet-shop-head{display:flex;align-items:center;justify-content:space-between;font-size:18px;margin-bottom:8px}.pet-shop-head button{border:0;border-radius:9px;background:#e6c77c;padding:7px 10px;font-weight:900;cursor:pointer}
+.pet-shop-money{padding:8px;border-radius:10px;background:#fff0bd;text-align:center;font-weight:1000;margin-bottom:9px}
+.pet-shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.pet-shop-item{border:2px solid #b4935c;border-radius:14px;background:#fffdf2;color:#3b2919;padding:10px;cursor:pointer;display:grid;gap:3px;text-align:center}
+.pet-shop-item img{width:82px;height:82px;object-fit:contain;margin:auto}.pet-shop-item b{font-size:15px}.pet-shop-item span{font-weight:1000}.pet-shop-item small{font-size:11px;color:#66553f}
+@media(max-width:700px){
+ #barn-page{padding:7px}.topbar{margin-bottom:7px}.topbar button{padding:7px 9px;font-size:12px}.title{font-size:20px}.money{padding:7px 9px;font-size:12px}
+ .barn-card{padding:7px;border-width:3px;border-radius:17px}
+ .new-pet-scene{min-height:48vh;max-height:58vh;padding:8px;gap:6px}
+ .new-pet{min-height:95px;padding:5px}.new-pet img{width:52px;height:52px}.new-pet small{font-size:9px}.new-pet-actions{margin-top:3px}.new-pet-actions button{padding:3px 6px;font-size:10px}
+ .new-ranch-top{font-size:11px;padding:8px}.new-ranch-actions button{padding:9px 5px;font-size:12px}.new-ranch-help{font-size:9px}
+}
+</style>
+</head>
+<body>
+<div class="barn-bg"></div><div class="barn-shade"></div>
+<main id="barn-page">
+  <div class="topbar">
+    <button id="backIsland">🏝️ QUAY VỀ ĐẢO</button>
+    <div class="title">🐄 CHUỒNG NUÔI THÚ</div>
+    <div class="money">🪙 <span id="pageCoins">0</span></div>
+  </div>
+  <section class="barn-card">
+    <div id="ranchMount"></div>
+  </section>
+</main>
+<script>
+(()=> {
+  'use strict';
+  const SAVE_KEY='nongtrai_new_v1';
+  const DEFAULT={version:1,coins:100,gems:0,xp:0,level:1,inventory:{carrot:0,corn:0,tomato:0,wheat:0},plots:Array.from({length:8},()=>({state:'empty',crop:null,plantedAt:0,readyAt:0})),stats:{planted:0,harvested:0,earned:0},pets:{animals:[],capacity:4,feed:0}};
+  const clone=()=>JSON.parse(JSON.stringify(DEFAULT));
+  const merge=(a,b)=>{if(!b||typeof b!=='object')return a;Object.keys(a).forEach(k=>{if(b[k]!==undefined){if(a[k]&&typeof a[k]==='object'&&!Array.isArray(a[k])&&b[k]&&typeof b[k]==='object')a[k]=merge(a[k],b[k]);else a[k]=b[k]}});return a};
+  let S=clone();
+  try{const raw=localStorage.getItem(SAVE_KEY);if(raw)S=merge(clone(),JSON.parse(raw))}catch(e){}
+  const saveLocal=()=>{try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}};
+  const update=()=>{saveLocal();document.getElementById('pageCoins').textContent=Math.floor(S.coins||0)};
+  const toast=(m)=>{let x=document.getElementById('toast');if(!x){x=document.createElement('div');x.id='toast';x.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:99999;background:#fffdf6;color:#3b2f1e;border:2px solid #9b8154;border-radius:14px;padding:10px 16px;font-weight:900;box-shadow:0 8px 30px #0003';document.body.appendChild(x)}x.textContent=m;clearTimeout(x.t);x.style.opacity=1;x.t=setTimeout(()=>x.style.opacity=0,1800)};
+  window.nongTrai={state:()=>S,save:update,refresh:update,toast};
+  document.getElementById('backIsland').onclick=()=>location.href='./game.html';
+  update();
+  const mount=document.getElementById('ranchMount');
+  const wrap=document.createElement('div');wrap.id='mb';mount.appendChild(wrap);
+  const script=document.createElement('script');script.src='./nuoipet/pets.js?v=20261024-newpet';document.body.appendChild(script);
+  setTimeout(()=>window.nongPet?.open(),0);
+  if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){
+    try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);const auth=firebase.auth();auth.onAuthStateChanged(async user=>{if(!user){location.replace('./auth.html');return}try{const snap=await firebase.firestore().collection('users').doc(user.uid).get();if(snap.exists&&snap.data().game){S=merge(clone(),snap.data().game);update();window.nongPet?.open()}}catch(e){}})}catch(e){}
+  }
+  setInterval(async()=>{saveLocal();try{const u=firebase.auth().currentUser;if(u)await firebase.firestore().collection('users').doc(u.uid).set({game:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){}},5000);
+})();
+</script>
+</body>
+</html>
