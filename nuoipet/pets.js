@@ -2,10 +2,15 @@
 if(window.nongPet)return;
 
 const TYPES={
- pig:{name:'Heo',img:'./img/spr-2.webp',baby:'./img/spr-1.webp',price:60,product:'🥓 Thịt heo',value:35,grow:45},
- sheep:{name:'Cừu',img:'./img/spr-5.webp',baby:'./img/spr-9.webp',price:90,product:'🧶 Len',value:45,grow:60},
- cow:{name:'Bò',img:'./img/spr-8.webp',baby:'./img/spr-8.webp',price:150,product:'🥛 Sữa',value:60,grow:75},
- dog:{name:'Chó',img:'./img/cho.webp',baby:'./img/cho.webp',price:120,product:'❤️ Niềm vui',value:20,grow:55}
+ pet1:{name:'Vật nuôi 1',img:'./img/spr-1.webp',baby:'./img/spr-1.webp',price:50,product:'🎁 Sản phẩm',value:25,grow:40},
+ pet2:{name:'Vật nuôi 2',img:'./img/spr-2.webp',baby:'./img/spr-2.webp',price:60,product:'🎁 Sản phẩm',value:30,grow:45},
+ pet3:{name:'Vật nuôi 3',img:'./img/spr-3.webp',baby:'./img/spr-3.webp',price:70,product:'🎁 Sản phẩm',value:35,grow:50},
+ pet4:{name:'Vật nuôi 4',img:'./img/spr-4.webp',baby:'./img/spr-4.webp',price:80,product:'🎁 Sản phẩm',value:40,grow:55},
+ pet5:{name:'Vật nuôi 5',img:'./img/spr-5.webp',baby:'./img/spr-5.webp',price:90,product:'🎁 Sản phẩm',value:45,grow:60},
+ pet6:{name:'Vật nuôi 6',img:'./img/spr-6.webp',baby:'./img/spr-6.webp',price:100,product:'🎁 Sản phẩm',value:50,grow:65},
+ pet7:{name:'Vật nuôi 7',img:'./img/spr-7.webp',baby:'./img/spr-7.webp',price:110,product:'🎁 Sản phẩm',value:55,grow:70},
+ pet8:{name:'Vật nuôi 8',img:'./img/spr-8.webp',baby:'./img/spr-8.webp',price:120,product:'🎁 Sản phẩm',value:60,grow:75},
+ pet9:{name:'Vật nuôi 9',img:'./img/spr-9.webp',baby:'./img/spr-9.webp',price:130,product:'🎁 Sản phẩm',value:65,grow:80}
 };
 
 const S=window.nongTrai.state();
@@ -21,7 +26,7 @@ const setCoins=v=>S.coins=Math.max(0,Number(v)||0);
 const feedCount=()=>Number(S.pets.feed||0);
 
 function addCoins(n){setCoins(coins()+n);hud();save()}
-function petIcon(p){return TYPES[p.type]?.img||TYPES.pig.img}
+function petIcon(p){return TYPES[p.type]?.img||TYPES.pet1.img}
 
 function ensureIds(){
   S.pets.animals.forEach((p,i)=>{if(!p.id)p.id='pet_'+Date.now()+'_'+i})
@@ -117,7 +122,24 @@ function feedAll(){
   save();render();toast(n?'❤️ Đã cho '+n+' con ăn':'😊 Tất cả đều đã no');
 }
 
-function shop(){ return; }
+function shop(){
+  document.getElementById('pet-shop-popup')?.remove();
+  const pop=document.createElement('div');
+  pop.id='pet-shop-popup';
+  pop.style.cssText='position:fixed;inset:0;z-index:1000;background:#0009;display:grid;place-items:center;padding:16px';
+  pop.innerHTML='<div style="width:min(94vw,520px);max-height:82dvh;overflow:auto;background:#fff9df;border:4px solid #8c6330;border-radius:20px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">🛒 SHOP VẬT NUÔI</h2><button id="petShopClose">✕</button></div><div id="petShopGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px"></div></div>';
+  document.body.appendChild(pop);
+  const grid=pop.querySelector('#petShopGrid');
+  Object.entries(TYPES).forEach(([key,t])=>{
+    const b=document.createElement('button');
+    b.style.cssText='border:2px solid #b4935c;border-radius:14px;background:#fffdf2;padding:8px;font-weight:900;cursor:pointer;color:#3b2919';
+    b.innerHTML='<img src="'+t.img+'" style="width:72px;height:72px;object-fit:contain;display:block;margin:auto"><span>'+t.name+'</span><br><small>🪙 '+t.price+'</small>';
+    b.onclick=()=>createPet(key);
+    grid.appendChild(b);
+  });
+  pop.querySelector('#petShopClose').onclick=()=>pop.remove();
+  pop.onclick=e=>{if(e.target===pop)pop.remove()};
+}
 
 function render(){
   const scene=document.getElementById('new-pet-scene');
