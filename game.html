@@ -119,6 +119,19 @@ body{overflow:hidden}
 .old-food-grid small,.old-buy-grid small{display:block;font-size:10px;opacity:.7;margin-top:2px}
 .old-section-title{font-weight:900;font-size:13px;margin:4px 0}
 .old-upgrade{width:100%;margin-top:4px;background:#78b94e;color:#fff}
+
+/* Giao diện thú dùng đúng cơ chế cũ */
+.pet-old-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px;max-height:145px;overflow:auto}
+.pet-old-bar .seed{min-height:58px;padding:6px 4px;border-radius:10px;border:1px solid var(--bd,#ddd);background:var(--pn,#fff);color:var(--tx,#222);font-size:11px;font-weight:800;text-align:center;cursor:pointer}
+.pet-old-bar .seed.on{outline:3px solid #75bd55;background:rgba(117,189,85,.16)}
+.pet-old-bar .seed b{display:block;font-size:23px;line-height:25px}
+.pet-old-bar .seed img{width:32px;height:32px;object-fit:contain;vertical-align:middle}
+.pet-old-bar .seed small{font-size:10px}
+#pet-scene .an{position:absolute;display:flex;align-items:flex-end;justify-content:center;min-width:56px;cursor:pointer;transition:left 3.6s ease-in-out,top 3.6s ease-in-out;z-index:5}
+#pet-scene .an .pill{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;padding:3px 6px;border-radius:8px;background:rgba(0,0,0,.62);color:#fff;font-size:10px;font-weight:900;pointer-events:none}
+#pet-scene .an img{display:block;width:100%;height:auto;max-height:82px;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(0,0,0,.22))}
+#pet-scene .an .pill.cd{background:rgba(30,100,30,.78)}
+#pet-scene .an .pill:not(:empty){min-width:42px;text-align:center}
 </style>
 </head>
 <body>
