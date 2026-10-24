@@ -246,10 +246,9 @@
   });
 
   async function openPets(){
-    if(window.nongPet&&typeof window.nongPet.open==='function'){
-      window.nongPet.open();
-      return true;
-    }
+    location.href='./chuong.html';
+    return true;
+    /*
     if(!window.__nongPetLoading){
       window.__nongPetLoading=new Promise((resolve,reject)=>{
         const old=document.querySelector('script[data-nong-pet]');
@@ -267,6 +266,7 @@
     if(!window.nongPet||typeof window.nongPet.open!=='function') throw new Error('Nuôi Thú chưa khởi tạo');
     window.nongPet.open();
     return true;
+    */
   }
 
   window.nongTrai={
