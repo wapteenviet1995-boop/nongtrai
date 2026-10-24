@@ -16,12 +16,13 @@ body{overflow:hidden}
   position:absolute;inset:0;overflow:hidden;touch-action:none;
 }
 .map-wrap{
-  position:absolute;inset:0;width:100%;height:100%;
+  position:absolute;left:0;top:50%;width:100vw;
+  aspect-ratio:1536/1024;height:auto;
   transform-origin:0 0;will-change:transform;
 }
 .map{
   position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;object-position:center;
+  object-fit:fill;
   user-select:none;-webkit-user-drag:none;pointer-events:none;
 }
 .shade{position:absolute;inset:0;background:linear-gradient(180deg,#001d3a22 0%,transparent 35%,#001d3a10 100%);pointer-events:none}
@@ -148,11 +149,11 @@ body{overflow:hidden}
   const viewport=document.getElementById('mapViewport');
   const world=document.getElementById('mapWorld');
   let scale=1,x=0,y=0;
-  const MIN=.75,MAX=2.5;
+  const MIN=.8,MAX=2.5;
   const pointers=new Map();
   let startDist=0,startScale=1,startMid=null,startX=0,startY=0,last=null;
 
-  function apply(){world.style.transform=`translate(${x}px,${y}px) scale(${scale})`;}
+  function apply(){world.style.transform=`translate(${x}px,calc(-50% + ${y}px)) scale(${scale})`;}
   function clampScale(v){return Math.max(MIN,Math.min(MAX,v));}
   function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
   function mid(a,b){return{x:(a.x+b.x)/2,y:(a.y+b.y)/2};}
