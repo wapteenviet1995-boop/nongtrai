@@ -1,37 +1,53 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Kho · Nông Trại</title>
 <script src="./config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#d9b36c;color:#3b2919}
-body{min-height:100dvh;background:#6f9f50 url('./img/ui/1792422533083.png') center center/cover no-repeat fixed}
-.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px;background:#3d2a1de8;border-bottom:3px solid #6b4525;color:#fff}
-.top button{border:2px solid #694724;border-radius:12px;background:#fff0bd;padding:9px 12px;font-weight:900;color:#3b2919}.top h1{margin:0;flex:1;text-align:center;font-size:22px}.coins{background:#fff0bd;color:#3b2919;border:2px solid #694724;border-radius:12px;padding:8px 12px;font-weight:1000}
-.wrap{width:min(94vw,760px);margin:18px auto 90px;background:transparent;border:0;border-radius:22px;padding:14px;box-shadow:none}
-.head{display:flex;justify-content:space-between;align-items:center;gap:10px}.capacity{font-weight:1000;background:#e8c77c;padding:7px 10px;border-radius:10px}
-.tabs{display:flex;gap:7px;margin:12px 0}.tabs button{flex:1;border:2px solid #8c6330;border-radius:11px;padding:9px;background:#fffdf2;font-weight:900}.tabs button.on{background:#ffd45f}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.item{border:2px solid #b4935c;border-radius:14px;background:#fffdf2;padding:12px;text-align:center;min-height:110px}.item .ico{font-size:40px}.item b,.item small{display:block}.item small{margin-top:5px;font-weight:800}.empty{text-align:center;padding:35px 10px;font-weight:900;color:#7b684e;grid-column:1/-1}
-@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}.top h1{font-size:18px}.wrap{margin-top:10px}}
-</style></head><body>
-<header class="top"><button id="back">🏝️ Đảo</button><h1>📦 KHO</h1><div class="coins">🪙 <span id="coins">0</span></div></header>
-<main class="wrap"><div class="head"><b>Vật phẩm đang có</b><span class="capacity" id="capacity">0 / 100</span></div>
-<div class="tabs"><button class="on" data-tab="crop">Nông sản</button><button data-tab="pet">Vật nuôi</button></div><div class="grid" id="grid"></div></main>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#49301b}
+body{min-height:100dvh;background:linear-gradient(180deg,#8ed9ef 0 17%,#82c85d 17% 100%);overflow-x:hidden}
+body:before{content:"";position:fixed;left:-10%;right:-10%;bottom:-70px;height:55%;background:radial-gradient(ellipse at center,#6aae45 0 45%,#57963b 72%);z-index:-1}
+.top{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;padding:10px 12px;background:linear-gradient(#684424,#432b19);border-bottom:3px solid #2d1b0e;box-shadow:0 4px 14px #0004;color:#fff}
+.back{border:2px solid #4e3219;border-radius:13px;background:linear-gradient(#fff2b4,#e6b958);padding:9px 12px;font-weight:1000;color:#49301b;box-shadow:inset 0 1px #fff8,0 2px 5px #0004;cursor:pointer}
+.title{flex:1;text-align:center;font-size:22px;font-weight:1000;text-shadow:0 2px #0005}.money{background:#fff1b4;color:#4a301a;border:2px solid #4e3219;border-radius:14px;padding:8px 12px;font-weight:1000;white-space:nowrap}
+.shell{width:min(94vw,780px);margin:22px auto 90px}
+.sign{width:max-content;max-width:90%;margin:0 auto -10px;position:relative;z-index:2;padding:8px 28px;border:3px solid #5d3a1d;border-radius:10px;background:linear-gradient(#d99b4a,#a9652f);color:#fff6cf;font-size:20px;font-weight:1000;text-shadow:0 2px #6a3519;box-shadow:0 4px 8px #0004}
+.panel{background:linear-gradient(#f7e1a8,#e4bd73);border:5px solid #6a4525;border-radius:22px;padding:20px 14px 16px;box-shadow:inset 0 0 0 3px #fff2bd,0 12px 30px #0004}
+.info{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.info b{font-size:16px}.capacity{padding:6px 11px;border-radius:12px;background:#5d3c23;color:#fff4cf;font-weight:1000}
+.meter{height:11px;background:#765438;border:2px solid #52351f;border-radius:10px;overflow:hidden;margin:-4px 0 13px}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,#75cf45,#e4d947);transition:width .25s}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.tab{border:3px solid #76502a;border-radius:13px;padding:10px;background:#f8e8b8;color:#55371f;font-weight:1000;cursor:pointer}.tab.on{background:linear-gradient(#ffd968,#e9a735);transform:translateY(-1px);box-shadow:0 3px 0 #8c5726}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;min-height:280px}
+.slot{position:relative;min-height:122px;border:3px solid #8a6137;border-radius:15px;background:linear-gradient(#fff9dd,#edd6a1);box-shadow:inset 0 0 0 2px #fff8,0 3px 7px #0002;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;text-align:center}
+.slot .ico{font-size:48px;line-height:1}.slot img{width:66px;height:66px;object-fit:contain;filter:drop-shadow(0 3px 2px #0003)}.slot b{font-size:13px;margin-top:5px}.qty{position:absolute;right:5px;bottom:5px;min-width:28px;padding:3px 7px;border-radius:12px;background:#583b24;color:#fff;font-size:12px;font-weight:1000}
+.empty{grid-column:1/-1;align-self:center;text-align:center;color:#806848;font-weight:900;font-size:16px}.empty span{display:block;font-size:52px;margin-bottom:6px;opacity:.7}
+.foot{text-align:center;margin-top:12px;font-size:12px;font-weight:800;color:#765a38}
+@media(max-width:600px){.title{font-size:18px}.money{font-size:12px;padding:7px}.back{font-size:12px;padding:8px}.shell{margin-top:15px}.panel{padding:18px 10px 12px}.grid{grid-template-columns:repeat(3,1fr);gap:7px}.slot{min-height:105px;padding:5px}.slot .ico{font-size:40px}.slot img{width:56px;height:56px}.slot b{font-size:11px}}
+</style>
+</head>
+<body>
+<header class="top"><button class="back" id="back">🏝️ Đảo</button><div class="title">KHO NÔNG TRẠI</div><div class="money">🪙 <span id="coins">0</span></div></header>
+<main class="shell"><div class="sign">📦 KHO</div><section class="panel">
+<div class="info"><b>Vật phẩm của bạn</b><span class="capacity" id="capacity">0 / 100</span></div><div class="meter"><i id="meter"></i></div>
+<div class="tabs"><button class="tab on" data-tab="crop">🌾 Nông sản</button><button class="tab" data-tab="pet">🐾 Vật nuôi</button></div>
+<div class="grid" id="grid"></div><div class="foot">Vật phẩm thu hoạch sẽ tự động được đưa vào Kho.</div>
+</section></main>
 <script>
 (()=>{'use strict';const KEY='nongtrai_new_v1';
 const DEF={coins:100,inventory:{carrot:0,corn:0,tomato:0,wheat:0},pets:{animals:[],capacity:4,feed:0},warehouse:{capacity:100}};
 const merge=(a,b)=>{if(!b||typeof b!=='object')return a;Object.keys(b).forEach(k=>{if(a[k]&&typeof a[k]==='object'&&!Array.isArray(a[k])&&b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k]))merge(a[k],b[k]);else a[k]=b[k]});return a};
 let S=JSON.parse(JSON.stringify(DEF));try{const x=localStorage.getItem(KEY);if(x)merge(S,JSON.parse(x))}catch(e){}
-const items={carrot:['🥕','Cà rốt'],corn:['🌽','Ngô'],tomato:['🍅','Cà chua'],wheat:['🌾','Lúa mì']};
-let tab='crop';
-function render(){document.getElementById('coins').textContent=Math.floor(Number(S.coins)||0);const g=document.getElementById('grid');g.innerHTML='';let total=0;
- if(tab==='crop'){Object.entries(items).forEach(([k,v])=>{const n=Number(S.inventory?.[k]||0);total+=n;if(!n)return;g.innerHTML+='<div class="item"><div class="ico">'+v[0]+'</div><b>'+v[1]+'</b><small>Số lượng: '+n+'</small></div>'})}
- else{const pets=S.pets?.animals||[];total=pets.length;pets.forEach(p=>{const n=(p.type||'pet').replace('pet','');g.innerHTML+='<div class="item"><img src="./img/spr-'+n+'.webp" style="width:64px;height:64px;object-fit:contain"><b>Vật nuôi '+n+'</b><small>'+(Number(p.growth)||0)+'%</small></div>'})}
- if(!g.children.length)g.innerHTML='<div class="empty">Kho đang trống</div>';document.getElementById('capacity').textContent=total+' / '+(S.warehouse?.capacity||100)}
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x===b));render()});
-document.getElementById('back').onclick=()=>location.href='./game.html';
-if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(async u=>{if(!u){location.replace('./login.html');return}try{const d=await firebase.firestore().collection('users').doc(u.uid).get();if(d.exists&&d.data().game){S=merge(JSON.parse(JSON.stringify(DEF)),d.data().game);localStorage.setItem(KEY,JSON.stringify(S))}render()}catch(e){render()}})}catch(e){render()}}else render();
+const items={carrot:['🥕','Cà rốt'],corn:['🌽','Ngô'],tomato:['🍅','Cà chua'],wheat:['🌾','Lúa mì']};let tab='crop';
+function allCount(){return Object.values(S.inventory||{}).reduce((a,n)=>a+(Number(n)||0),0)}
+function render(){document.getElementById('coins').textContent=Math.floor(Number(S.coins)||0);const cap=Number(S.warehouse?.capacity)||100,total=allCount();document.getElementById('capacity').textContent=total+' / '+cap;document.getElementById('meter').style.width=Math.min(100,total/cap*100)+'%';const g=document.getElementById('grid');g.innerHTML='';
+if(tab==='crop'){Object.entries(items).forEach(([k,v])=>{const n=Number(S.inventory?.[k]||0);if(!n)return;g.innerHTML+='<div class="slot"><div class="ico">'+v[0]+'</div><b>'+v[1]+'</b><span class="qty">x'+n+'</span></div>'})}
+else{(S.pets?.animals||[]).forEach(p=>{const n=(p.type||'pet').replace('pet','');g.innerHTML+='<div class="slot"><img src="./img/spr-'+n+'.webp"><b>Vật nuôi '+n+'</b><span class="qty">'+(Number(p.growth)||0)+'%</span></div>'})}
+if(!g.children.length)g.innerHTML='<div class="empty"><span>📦</span>Chưa có vật phẩm</div>'}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on',x===b));render()});document.getElementById('back').onclick=()=>location.href='./game.html';
+if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(async u=>{if(!u){location.replace('./login.html');return}try{const d=await firebase.firestore().collection('users').doc(u.uid).get();if(d.exists&&d.data().game){S=merge(JSON.parse(JSON.stringify(DEF)),d.data().game);localStorage.setItem(KEY,JSON.stringify(S))}}catch(e){}render()})}catch(e){render()}}else render();
 })();
 </script></body></html>
