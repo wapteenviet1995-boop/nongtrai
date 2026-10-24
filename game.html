@@ -219,13 +219,7 @@ body{overflow:hidden}
   };
   async function openFeature(key){
     if(key==='barn'){
-      document.getElementById('mt').textContent='🐄 Chuồng · Nuôi Thú';
-      if(window.nongPet&&typeof window.nongPet.open==='function'){
-        window.nongPet.open();
-        return;
-      }
-      document.getElementById('mb').innerHTML='<div style="padding:18px;text-align:center"><b>🐄 Đang tải game Nuôi Thú...</b></div>';
-      document.getElementById('modal').classList.add('on');
+      location.href='./chuong.html';
       return;
     }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
