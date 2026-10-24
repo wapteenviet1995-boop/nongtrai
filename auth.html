@@ -10,7 +10,7 @@
 <main class="auth-card">
   <h1>🌾 Nông Trại</h1>
   <p class="sub">Đăng nhập hoặc tạo tài khoản để vào game</p>
-  <div class="tabs">
+  <div class="auth-actions"><button type="button" id="quickLogin">🔐 ĐĂNG NHẬP</button><button type="button" id="quickRegister">📝 ĐĂNG KÝ</button></div><div class="tabs">
     <button id="loginTab" class="on" type="button">Đăng nhập</button>
     <button id="registerTab" type="button">Đăng ký</button>
   </div>
@@ -27,6 +27,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="./auth.js"></script>
+<script src="./auth.js"></script><script>(function(){const l=document.getElementById("quickLogin"),r=document.getElementById("quickRegister"),lt=document.getElementById("loginTab"),rt=document.getElementById("registerTab");if(l)l.onclick=()=>lt.click();if(r)r.onclick=()=>rt.click()})();</script>
 </body>
 </html>
