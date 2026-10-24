@@ -5,5 +5,5 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head><body><div id="checking"><div><b>🌾 Nông Trại</b><br><small>Đang kiểm tra đăng nhập...</small></div></div>
-<script>(function(){if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined'||!FB_CONFIG){location.replace('./auth.html');return}try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(function(u){if(!u){location.replace('./auth.html');return}location.replace('./game.html')},function(){location.replace('./auth.html')})}catch(e){location.replace('./auth.html')}})();</script>
+<script>(function(){if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined'||!FB_CONFIG){location.replace('./login.html');return}try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(function(u){if(!u){location.replace('./login.html');return}location.replace('./game.html')},function(){location.replace('./login.html')})}catch(e){location.replace('./login.html')}})();</script>
 </body></html>
