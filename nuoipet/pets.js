@@ -165,7 +165,7 @@ function render(){
     if(p.walkY==null)p.walkY=25+Math.random()*55;
     el.style.left=p.walkX+'%';el.style.top=p.walkY+'%';el.style.transform='translate(-50%,-50%)';
     const growth=Math.max(0,Math.min(100,Number(p.growth)||0));
-    const status=growth>=100?'✅ 100% · Bán 🪙'+Math.floor(t.price*2.25):(p.hunger<=0?'🍽️ Đói':'🌱 Lớn '+growth+'%');
+    const status=p.hunger<=0?'🍚':growth+'%';
     el.innerHTML='<img src="'+petIcon(p)+'"><div class="pet-status">'+status+'</div>';
     el.onclick=()=>{if(growth>=100)sellPet(p.id);else feedPet(p.id)};
     scene.appendChild(el);
