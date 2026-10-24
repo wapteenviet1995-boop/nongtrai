@@ -30,6 +30,9 @@ body{min-height:100dvh;overflow-x:hidden}
 .new-pet b,.new-pet small{display:block}.new-pet small{font-weight:800;font-size:12px;margin-top:2px}
 .new-pet-actions{display:flex;justify-content:center;gap:5px;margin-top:6px}.new-pet-actions button{border:1px solid #80603a;border-radius:8px;background:#fff4bb;padding:6px 9px;cursor:pointer;font-weight:900}
 .new-ranch-actions{display:none!important}
+.barn-bottom{position:fixed;z-index:30;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:8px;padding:8px;border:3px solid #5b3a1e;border-radius:22px;background:#2b211be8;box-shadow:0 7px 22px #0006}
+.barn-nav{min-width:92px;border:2px solid #694724;border-radius:14px;padding:9px 13px;background:#fff0bd;color:#3a2412;font-weight:1000;cursor:pointer}
+.barn-nav.shop{background:linear-gradient(#ffd85c,#e99b28);font-size:15px}
 .new-ranch-actions button{border:2px solid #79552d;border-radius:12px;padding:12px;background:linear-gradient(#fff4bd,#e5b74e);color:#3b2919;font-weight:1000;cursor:pointer}
 .new-ranch-help{display:none!important}
 .pet-shop-popup{display:none!important}
@@ -58,6 +61,7 @@ body{min-height:100dvh;overflow-x:hidden}
   <section class="barn-card">
     <div id="ranchMount"></div>
   </section>
+  <nav class="barn-bottom"><button class="barn-nav" id="barnHome">🏝️<br>Bản đồ</button><button class="barn-nav shop" id="barnShop">🛒<br>SHOP</button></nav>
 </main>
 <script>
 (()=> {
@@ -73,6 +77,8 @@ body{min-height:100dvh;overflow-x:hidden}
   const toast=(m)=>{let x=document.getElementById('toast');if(!x){x=document.createElement('div');x.id='toast';x.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:99999;background:#fffdf6;color:#3b2f1e;border:2px solid #9b8154;border-radius:14px;padding:10px 16px;font-weight:900;box-shadow:0 8px 30px #0003';document.body.appendChild(x)}x.textContent=m;clearTimeout(x.t);x.style.opacity=1;x.t=setTimeout(()=>x.style.opacity=0,1800)};
   window.nongTrai={state:()=>S,save:update,refresh:update,toast};
   document.getElementById('backIsland').onclick=()=>location.href='./game.html';
+  document.getElementById('barnHome').onclick=()=>location.href='./game.html';
+  document.getElementById('barnShop').onclick=()=>window.nongPet?.shop();
   update();
   const mount=document.getElementById('ranchMount');
   const wrap=document.createElement('div');wrap.id='mb';mount.appendChild(wrap);
