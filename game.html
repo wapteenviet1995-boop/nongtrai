@@ -189,10 +189,7 @@ body{overflow:hidden}
   </div>
 </div>
 
-<script src="./game.js"></script>\n<script src="./nuoipet/pets.js"></script>
-
-
-<script>
+<script src="./game.js"></script>\n<script>
 (function(){
   const data={
     dragon:['🐉 Đảo Rồng','Khu vực nuôi rồng, nâng cấp rồng và nhận phần thưởng.'],
@@ -208,23 +205,16 @@ body{overflow:hidden}
   };
   async function openFeature(key){
     if(key==='barn'){
-      if(window.nongPet){
+      document.getElementById('mt').textContent='🐄 Chuồng · Nuôi Thú';
+      try{
+        if(window.nongTrai?.openPets){ await window.nongTrai.openPets(); return; }
+      }catch(e){
+        console.error('Nuôi Thú:',e);
         document.getElementById('mt').textContent='🐄 Chuồng · Nuôi Thú';
-        window.nongPet.open();
+        document.getElementById('mb').innerHTML='<div style="padding:14px;text-align:center"><b>Không mở được Nuôi Thú.</b><br><small>Đang tải lại mô-đun, hãy chạm Chuồng lần nữa.</small></div>';
+        document.getElementById('modal').classList.add('on');
         return;
       }
-      try{
-        await new Promise((resolve,reject)=>{
-          const s=document.createElement('script');
-          s.src='./nuoipet/pets.js?v='+Date.now();
-          s.onload=resolve; s.onerror=reject; document.body.appendChild(s);
-        });
-        if(window.nongPet){
-          document.getElementById('mt').textContent='🐄 Chuồng · Nuôi Thú';
-          window.nongPet.open();
-          return;
-        }
-      }catch(e){ console.error('Nuôi Thú:',e); }
     }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
     document.getElementById('mt').textContent=d[0];
