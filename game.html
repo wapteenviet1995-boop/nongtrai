@@ -243,7 +243,7 @@ body{overflow:hidden}
   document.getElementById('profileDockBtn').onclick=openProfile;
   document.getElementById('profileClose').onclick=()=>profilePanel.classList.remove('on');
   profilePanel.onclick=e=>{if(e.target===profilePanel)profilePanel.classList.remove('on')};
-  document.getElementById('profileLogout').onclick=async()=>{\n    try{\n      if(typeof firebase!=='undefined'&&firebase.auth){await firebase.auth().signOut();}\n    }catch(e){console.error('Đăng xuất:',e);}\n    finally{\n      try{localStorage.removeItem('nongtrai_new_v1')}catch(e){}\n      location.replace('./login.html');\n    }\n  };
+  document.getElementById('profileLogout').onclick=async()=>{\n    try{\n      if(typeof firebase!=='undefined'&&firebase.auth){await firebase.auth().signOut();}\n    }catch(e){console.error('Đăng xuất:',e);}\n    finally{\n      try{localStorage.removeItem('nongtrai_new_v1')}catch(e){}\n      location.replace('./login.html?logout=1');\n    }\n  };
   document.getElementById('mc').onclick=()=>document.getElementById('modal').classList.remove('on');
   document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('on')};
 })();
