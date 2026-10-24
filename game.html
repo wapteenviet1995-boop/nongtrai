@@ -162,7 +162,7 @@ body{overflow:hidden}
     if(e.target.closest('button')) return;
     viewport.setPointerCapture(e.pointerId);
     pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    if(pointers.size===1) last={x:e.clientX,y:e.clientY};
+    if(pointers.size===1) last=null;
     if(pointers.size===2){
       const [a,b]=[...pointers.values()];
       startDist=dist(a,b);startScale=scale;startMid=mid(a,b);startX=x;startY=y;
@@ -171,9 +171,7 @@ body{overflow:hidden}
   viewport.addEventListener('pointermove',e=>{
     if(!pointers.has(e.pointerId)) return;
     pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    if(pointers.size===1 && last){
-      x+=e.clientX-last.x;y+=e.clientY-last.y;last={x:e.clientX,y:e.clientY};apply();
-    } else if(pointers.size===2){
+    if(pointers.size===2){
       const [a,b]=[...pointers.values()],m=mid(a,b);
       const ns=clampScale(startScale*dist(a,b)/startDist);
       const ratio=ns/startScale;
@@ -184,8 +182,7 @@ body{overflow:hidden}
   });
   function up(e){
     pointers.delete(e.pointerId);
-    if(pointers.size===1){const p=[...pointers.values()][0];last={x:p.x,y:p.y};}
-    else last=null;
+    last=null;
   }
   viewport.addEventListener('pointerup',up);
   viewport.addEventListener('pointercancel',up);
