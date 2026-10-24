@@ -61,17 +61,15 @@ body{overflow:hidden}
 .hs-mine{left:19%;top:88%}.hs-warehouse{left:82%;top:75%}
 /* Chuồng/Kho/Đào Mỏ đã có chữ sẵn trong ảnh nền: chỉ giữ vùng bấm trong suốt */
 .hs-barn,.hs-mine,.hs-warehouse{
-  background:transparent;border:0;box-shadow:none;color:transparent;
-  font-size:0;padding:18px 28px;min-width:72px;min-height:48px;
-}
-.hs-barn::after,.hs-warehouse::after{
-  content:"";position:absolute;inset:5px;border-radius:14px;
-  box-shadow:0 0 0 0 rgba(255,238,91,.65);
-  animation:hotspotPulse 1.8s ease-out infinite;pointer-events:none;
-}
-@keyframes hotspotPulse{
-  0%{box-shadow:0 0 0 0 rgba(255,238,91,.65)}
-  70%,100%{box-shadow:0 0 0 14px rgba(255,238,91,0)}
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  color:transparent!important;
+  font-size:0!important;
+  padding:18px 28px;
+  min-width:72px;
+  min-height:48px;
+  text-shadow:none;
 }
 .notice{
   position:absolute;z-index:7;left:12px;top:92px;width:230px;
