@@ -76,7 +76,7 @@ body{min-height:100dvh;overflow-x:hidden}
   update();
   const mount=document.getElementById('ranchMount');
   const wrap=document.createElement('div');wrap.id='mb';mount.appendChild(wrap);
-  const script=document.createElement('script');script.src='./nuoipet/pets.js?v=20261024-newpet';document.body.appendChild(script);
+  const script=document.createElement('script');script.src='./nuoipet/pets.js?v=20261024-newpet';script.onload=()=>window.nongPet?.open();script.onerror=()=>toast('❌ Không tải được hệ thống chuồng nuôi');document.body.appendChild(script);
   setTimeout(()=>window.nongPet?.open(),0);
   if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){
     try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);const auth=firebase.auth();auth.onAuthStateChanged(async user=>{if(!user){location.replace('./auth.html');return}try{const snap=await firebase.firestore().collection('users').doc(user.uid).get();if(snap.exists&&snap.data().game){S=merge(clone(),snap.data().game);update();window.nongPet?.open()}}catch(e){}})}catch(e){}
