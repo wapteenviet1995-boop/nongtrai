@@ -1,4 +1,5 @@
 (()=>{'use strict';
+const IT={carrot:['🥕','Cà rốt',12],wheat:['🌾','Lúa mì',22],tomato:['🍅','Cà chua',40],sun:['🌻','Hướng dương',75],pump:['🎃','Bí ngô',140],truf:['🍄','Nấm cục',35],wool:['☁️','Len cừu',30],ice:['❄️','Tinh thể băng',90],gold:['🏅','Vàng thỏi',220],milk:['🥛','Sữa bò',25]};
 const SP={pig:{n:'Heo',e:'🐷',cost:60,baby:0,bw:6.5,aw:9,grow:60,vars:[{s:1,n:'Heo hồng',p:'truf',t:45,w:70},{s:6,n:'Heo hoa',p:'truf',t:30,w:20},{s:3,n:'Heo băng',p:'ice',t:70,w:7},{s:2,n:'Heo vàng bay',p:'gold',t:100,w:3}]},
  sheep:{n:'Cừu',e:'🐑',cost:90,baby:8,bw:6.5,aw:9,grow:80,vars:[{s:4,n:'Cừu sừng',p:'wool',t:60,w:50},{s:5,n:'Cừu hoa',p:'wool',t:40,w:50}]},
  cow:{n:'Bò',e:'🐄',cost:150,baby:7,bw:7.5,aw:11.5,grow:100,vars:[{s:7,n:'Bò sữa',p:'milk',t:50,w:100}]}};
@@ -36,7 +37,7 @@ function rbar(){const B=$('rb');if(!B)return;B.innerHTML='';const mk=(h,on,fn,cl
 function rtick(){const now=Date.now();S.rn.forEach(a=>{if(!re[a.id])rmk(a);rupd(a,now);const el=re[a.id],sp=SP[a.sp],v=rvar(a),img=el.children[1],src=SPR[v?v.s:sp.baby];if(img.getAttribute('src')!==src)img.src=src;el.style.width=(v?sp.aw:sp.bw)+'%';const hu=a.fed<=now;let t,cd=0;if(!v){t=hu?'😋 Đói':'🍼 '+Math.floor(a.g/sp.grow*100)+'%';cd=!hu}else if(a.rd>0)t=IT[v.p][0]+' Thu!'+(a.rd>1?' ×'+a.rd:'');else if(hu)t='😋 Đói';else{t=IT[v.p][0]+' '+Math.ceil(v.t-a.pr)+'s';cd=1}if(el.firstChild.textContent!==t)el.firstChild.textContent=t;el.firstChild.classList.toggle('cd',!!cd);if(Math.random()<.18)rwalk(a,el)}Object.keys(re).forEach(id=>{if(!S.rn.some(a=>a.id===id)){re[id].remove();delete re[id]}});if(!(rc++%10))window.nongTrai.save?.()}
 
 function renderOldBar(){const bar=document.getElementById('pet-old-bar');if(!bar)return;rbar();}
-function open(){const s=document.getElementById('pet-scene');if(!s)return;document.getElementById('modal')?.classList.add('on');rtick();rbar();}
+function open(){const body=document.getElementById('mb'),s=document.getElementById('pet-scene');if(!body||!s)return;if(!document.getElementById('rb')){const bar=document.createElement('div');bar.id='rb';bar.className='pet-old-bar';s.parentNode.insertBefore(bar,s)}document.getElementById('modal')?.classList.add('on');rtick();rbar();}
 window.nongPet={open,buy:rbuy,state:()=>S,feed:(i)=>{const a=S.rn[i];if(a)rclick(a,re[a.id])}};
 setInterval(rtick,1000);
 })();
