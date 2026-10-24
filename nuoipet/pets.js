@@ -34,10 +34,10 @@ function ensureIds(){
 }
 
 function age(p){
-  if(p.stage==='baby'&&Date.now()>=p.readyAt){
-    p.stage='adult';
-    p.readyAt=0;
-    toast('🎉 '+TYPES[p.type].name+' đã lớn!');
+  p.growth=Math.max(0,Math.min(100,Number(p.growth)||0));
+  if(p.growth>=100&&p.stage!=='adult'){
+    p.stage='adult';p.growth=100;p.readyAt=0;
+    toast('🎉 '+TYPES[p.type].name+' đã trưởng thành!');
     save();
   }
 }
@@ -50,8 +50,8 @@ function createPet(type){
   if(!spendCoins(t.price)){toast('🪙 Không đủ xu!');return}
   S.pets.animals.push({
     id:'pet_'+Date.now()+'_'+Math.floor(Math.random()*9999),
-    type,stage:'baby',readyAt:Date.now()+t.grow*1000,
-    hunger:100,lastFed:Date.now(),products:0
+    type,stage:'baby',readyAt:0,growth:0,
+    hunger:0,lastFed:Date.now(),products:0
   });
   save();hud();render();setTimeout(startWalking,50);
   toast('🐾 Đã mua '+t.name+' · -🪙'+t.price);
@@ -61,13 +61,15 @@ function feedPet(id){
   const p=S.pets.animals.find(x=>x.id===id);
   if(!p)return;
   age(p);
+  if(p.stage==='adult'){toast('✅ Vật nuôi đã trưởng thành 100%');return}
   if(feedCount()<=0){toast('🌾 Hết thức ăn!');return}
-  if(p.hunger>=100){toast('😊 Vật nuôi đang no!');return}
   S.pets.feed--;
-  p.hunger=Math.min(100,p.hunger+35);
+  p.hunger=100;
+  p.growth=Math.min(100,(Number(p.growth)||0)+25);
   p.lastFed=Date.now();
+  age(p);
   save();render();
-  toast('❤️ Đã cho '+TYPES[p.type].name+' ăn');
+  toast('🍚 Đã cho ăn · Lớn '+p.growth+'%');
 }
 
 function collectPet(id){
@@ -87,7 +89,9 @@ function sellPet(id){
   const i=S.pets.animals.findIndex(x=>x.id===id);
   if(i<0)return;
   const p=S.pets.animals[i],t=TYPES[p.type];
-  const price=Math.floor(t.price*.7);
+  age(p);
+  if((Number(p.growth)||0)<100){toast('🐾 Vật nuôi chưa lớn 100%, chưa thể bán!');return}
+  const price=Math.floor(t.price*2.25);
   if(!confirm('Bán '+t.name+' lấy 🪙'+price+'?'))return;
   S.pets.animals.splice(i,1);
   addCoins(price);
@@ -97,6 +101,9 @@ function sellPet(id){
 
 function produce(){
   const now=Date.now();
+  S.pets.animals.forEach(p=>{
+    if(p.stage!=='adult'&&p.hunger>0&&now-(p.lastFed||0)>=12000)p.hunger=0;
+  });
   S.pets.animals.forEach(p=>{
     age(p);
     if(p.stage!=='adult')return;
@@ -157,10 +164,10 @@ function render(){
     if(p.walkX==null)p.walkX=10+Math.random()*75;
     if(p.walkY==null)p.walkY=25+Math.random()*55;
     el.style.left=p.walkX+'%';el.style.top=p.walkY+'%';el.style.transform='translate(-50%,-50%)';
-    el.innerHTML='<img src="'+petIcon(p)+'"><b>'+t.name+'</b><small>'+ (p.stage==='baby'?'🍼 Đang lớn':p.hunger+'% no')+'</small><div class="new-pet-actions"><button data-feed>🍚</button><button data-get>🎁</button><button data-sell>💰</button></div>';
-    el.querySelector('[data-feed]').onclick=()=>feedPet(p.id);
-    el.querySelector('[data-get]').onclick=()=>collectPet(p.id);
-    el.querySelector('[data-sell]').onclick=()=>sellPet(p.id);
+    const growth=Math.max(0,Math.min(100,Number(p.growth)||0));
+    const status=growth>=100?'✅ 100% · Bán 🪙'+Math.floor(t.price*2.25):(p.hunger<=0?'🍽️ Đói':'🌱 Lớn '+growth+'%');
+    el.innerHTML='<img src="'+petIcon(p)+'"><div class="pet-status">'+status+'</div>';
+    el.onclick=()=>{if(growth>=100)sellPet(p.id);else feedPet(p.id)};
     scene.appendChild(el);
   });
   const count=document.getElementById('pet-count');
