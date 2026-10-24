@@ -12,14 +12,17 @@
 html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#071b2d;color:#fff}
 body{overflow:hidden}
 #game{position:relative;width:100%;height:100dvh;overflow:hidden;background:#65c9f4}
+.map-viewport{
+  position:absolute;inset:0;overflow:hidden;touch-action:none;
+}
 .map-wrap{
   position:absolute;inset:0;width:100%;height:100%;
-  transform:none;overflow:hidden;
+  transform-origin:0 0;will-change:transform;
 }
 .map{
   position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;object-position:center;transform:scale(.94);
-  user-select:none;-webkit-user-drag:none;
+  object-fit:cover;object-position:center;
+  user-select:none;-webkit-user-drag:none;pointer-events:none;
 }
 .shade{position:absolute;inset:0;background:linear-gradient(180deg,#001d3a22 0%,transparent 35%,#001d3a10 100%);pointer-events:none}
 .top{
@@ -86,7 +89,8 @@ body{overflow:hidden}
 </head>
 <body>
 <main id="game">
-  <div class="map-wrap">
+  <div class="map-viewport" id="mapViewport">
+  <div class="map-wrap" id="mapWorld">
     <img class="map" src="./img/file_000000007b508209afe9fddd71d47262.png" alt="Bản đồ Nông Trại">
     <div class="shade"></div>
   <button class="hotspot hs-dragon" data-feature="dragon">🐉 Đảo Rồng</button>
@@ -98,6 +102,7 @@ body{overflow:hidden}
   <button class="hotspot hs-mine" data-feature="mine">⛏️ Đào Mỏ</button>
   <button class="hotspot hs-warehouse" data-feature="warehouse">📦 Kho</button>
   </div>
+</div>
 
   <header class="top">
     <div class="player">
@@ -138,6 +143,61 @@ body{overflow:hidden}
 </div>
 
 <script src="./game.js"></script>
+<script>
+(function(){
+  const viewport=document.getElementById('mapViewport');
+  const world=document.getElementById('mapWorld');
+  let scale=1,x=0,y=0;
+  const MIN=.75,MAX=2.5;
+  const pointers=new Map();
+  let startDist=0,startScale=1,startMid=null,startX=0,startY=0,last=null;
+
+  function apply(){world.style.transform=`translate(${x}px,${y}px) scale(${scale})`;}
+  function clampScale(v){return Math.max(MIN,Math.min(MAX,v));}
+  function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+  function mid(a,b){return{x:(a.x+b.x)/2,y:(a.y+b.y)/2};}
+
+  viewport.addEventListener('pointerdown',e=>{
+    if(e.target.closest('button')) return;
+    viewport.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pointers.size===1) last={x:e.clientX,y:e.clientY};
+    if(pointers.size===2){
+      const [a,b]=[...pointers.values()];
+      startDist=dist(a,b);startScale=scale;startMid=mid(a,b);startX=x;startY=y;
+    }
+  });
+  viewport.addEventListener('pointermove',e=>{
+    if(!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pointers.size===1 && last){
+      x+=e.clientX-last.x;y+=e.clientY-last.y;last={x:e.clientX,y:e.clientY};apply();
+    } else if(pointers.size===2){
+      const [a,b]=[...pointers.values()],m=mid(a,b);
+      const ns=clampScale(startScale*dist(a,b)/startDist);
+      const ratio=ns/startScale;
+      x=m.x-(startMid.x-startX)*ratio;
+      y=m.y-(startMid.y-startY)*ratio;
+      scale=ns;apply();
+    }
+  });
+  function up(e){
+    pointers.delete(e.pointerId);
+    if(pointers.size===1){const p=[...pointers.values()][0];last={x:p.x,y:p.y};}
+    else last=null;
+  }
+  viewport.addEventListener('pointerup',up);
+  viewport.addEventListener('pointercancel',up);
+  viewport.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const rect=viewport.getBoundingClientRect(),px=e.clientX-rect.left,py=e.clientY-rect.top;
+    const old=scale,ns=clampScale(scale*(e.deltaY<0?1.1:.9)),r=ns/old;
+    x=px-(px-x)*r;y=py-(py-y)*r;scale=ns;apply();
+  },{passive:false});
+  apply();
+})();
+</script>
+
 <script>
 (function(){
   const data={
