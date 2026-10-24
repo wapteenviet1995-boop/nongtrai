@@ -5,7 +5,7 @@
   const SAVE_KEY = 'nongtrai_new_v1';
 
   if (typeof firebase === 'undefined' || typeof FB_CONFIG === 'undefined') {
-    location.replace('./auth.html');
+    location.replace('./login.html');
     return;
   }
 
@@ -13,7 +13,7 @@
     if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
   } catch (e) {
     console.error(e);
-    location.replace('./auth.html');
+    location.replace('./login.html');
     return;
   }
 
@@ -234,12 +234,12 @@
     logout.onclick=async()=>{
       try{await saveCloud();await auth.signOut();}
       catch(e){console.error(e);}
-      finally{location.replace('./auth.html');}
+      finally{location.replace('./login.html');}
     };
   }
 
   auth.onAuthStateChanged(async user=>{
-    if(!user){location.replace('./auth.html');return;}
+    if(!user){location.replace('./login.html');return;}
     currentUser=user;
     await loadCloud(user);
     updateHUD();
