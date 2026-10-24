@@ -98,6 +98,8 @@ body{overflow:hidden}
   .notice{display:none}.hotspot{font-size:11px;padding:6px 8px;border-width:2px}
   .bottom{bottom:6px;padding:5px}.nav{min-width:64px;font-size:10px;padding:6px}.nav.main{min-width:120px;font-size:12px}
 }
+
+.pet-shop{font-size:14px}.pet-summary{padding:9px 11px;margin-bottom:8px;border-radius:12px;background:#fff0bd;border:2px solid #9b8154}.pet-list{display:grid;gap:8px;max-height:42vh;overflow:auto}.pet-card{display:grid;grid-template-columns:45px 1fr;gap:8px;padding:9px;border:2px solid #b4935c;border-radius:14px;background:#fffdf2}.pet-icon{font-size:34px;display:grid;place-items:center}.pet-info small,.pet-info strong{display:block;margin-top:3px}.pet-info strong{font-size:12px;color:#39713c}.pet-actions{grid-column:1/-1;display:flex;gap:6px}.pet-btn,.pet-buy-btn{border:2px solid #79552d;border-radius:10px;padding:7px 9px;background:#fff0bd;color:#3b2919;font-weight:900;cursor:pointer}.pet-btn:disabled{opacity:.45;cursor:not-allowed}.pet-heading{margin:12px 0 7px}.pet-buy{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.pet-buy-btn{display:grid;gap:2px;text-align:center}.pet-buy-btn small{font-weight:900}.pet-note,.pet-empty{font-size:12px;color:#66553f;margin:9px 0 0}
 </style>
 </head>
 <body>
@@ -155,7 +157,7 @@ body{overflow:hidden}
   </div>
 </div>
 
-<script src="./game.js"></script>
+<script src="./game.js"></script>\n<script src="./nuoipet/pets.js"></script>
 
 
 <script>
@@ -173,6 +175,7 @@ body{overflow:hidden}
     seeds:['🌱 Hạt giống','Chọn giống cây để bắt đầu trồng trọt.']
   };
   function openFeature(key){
+    if(key==='barn' && window.nongPet){ window.nongPet.open(); return; }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
     document.getElementById('mt').textContent=d[0];
     document.getElementById('mb').innerHTML=d[1]+'<br><br><b>🚧 Phần chức năng sẽ được nối vào game ở bước tiếp theo.</b>';
