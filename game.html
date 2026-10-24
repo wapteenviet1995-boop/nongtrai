@@ -91,13 +91,13 @@ body{overflow:hidden}
 }
 .nav.main{min-width:190px;background:linear-gradient(#6ee05e,#2d9d45);color:#fff;border-color:#285f2d;font-size:16px}
 .modal-bg{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:50}
-.modal-bg.on{display:grid}.modal{width:min(92vw,430px);background:#fff9df;color:#3b2919;border:4px solid #8c6330;border-radius:22px;padding:20px;box-shadow:0 20px 70px #0007}.modal h2{margin:0 0 10px}.modal p{line-height:1.5}.close{border:0;border-radius:12px;padding:9px 16px;background:#4ca54b;color:#fff;font-weight:900;cursor:pointer}
+.modal-bg.on{display:grid}.modal{width:min(94vw,460px);max-height:90dvh;overflow:auto;background:#fff9df;color:#3b2919;border:4px solid #8c6330;border-radius:22px;padding:14px;box-shadow:0 20px 70px #0007}.modal h2{margin:0 0 10px}.modal p{line-height:1.5}.close{border:0;border-radius:12px;padding:9px 16px;background:#4ca54b;color:#fff;font-weight:900;cursor:pointer}
 .logout{background:#ffe1d9;color:#8f2d20}
 @media(max-width:700px){
   .player{min-width:170px;padding:5px 8px}.avatar{width:40px;height:40px;font-size:24px}
   .player b{font-size:13px}.player small{font-size:10px}.xp{width:90px}
   .pill{min-width:72px;padding:7px 8px;font-size:12px}.icon-btn{width:39px;height:39px;font-size:18px}
-  .notice{display:none}.hotspot{font-size:11px;padding:6px 8px;border-width:2px}
+  .notice{display:none}.modal{width:96vw;max-height:88dvh;padding:10px}.new-pet-scene{min-height:220px;padding:10px}.new-pet{min-height:96px}.new-pet img{width:56px;height:56px}.hotspot{font-size:11px;padding:6px 8px;border-width:2px}
   .bottom{bottom:6px;padding:5px}.nav{min-width:64px;font-size:10px;padding:6px}.nav.main{min-width:120px;font-size:12px}
 }
 
@@ -106,9 +106,9 @@ body{overflow:hidden}
 .new-ranch-top{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#fff0bd;border:2px solid #9b8154;color:#3b2919}
 .new-ranch-top span:first-of-type{margin-left:auto}
 .new-ranch-top i{font-style:normal}
-.new-pet-scene{position:relative;width:100%;min-height:320px;aspect-ratio:16/9;border-radius:18px;overflow:auto;background:url('./img/chuong-trai.webp') center/100% 100% no-repeat;border:3px solid #8b6336;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:18px;align-content:end}
-.new-pet{position:relative;min-height:135px;padding:8px;text-align:center;border-radius:15px;background:rgba(255,249,220,.88);border:2px solid #a97b45;box-shadow:0 4px 12px #0003;color:#3b2919}
-.new-pet img{width:78px;height:78px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0003)}
+.new-pet-scene{position:relative;width:100%;min-height:245px;aspect-ratio:16/9;border-radius:18px;overflow:auto;background:url('./img/chuong-trai.webp') center/100% 100% no-repeat;border:3px solid #8b6336;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:18px;align-content:end}
+.new-pet{position:relative;min-height:105px;padding:8px;text-align:center;border-radius:15px;background:rgba(255,249,220,.88);border:2px solid #a97b45;box-shadow:0 4px 12px #0003;color:#3b2919}
+.new-pet img{width:62px;height:62px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0003)}
 .new-pet b,.new-pet small{display:block}.new-pet small{font-weight:800;font-size:11px;margin-top:2px}
 .new-pet-actions{display:flex;justify-content:center;gap:5px;margin-top:5px}.new-pet-actions button{border:1px solid #80603a;border-radius:8px;background:#fff4bb;padding:5px 8px;cursor:pointer;font-weight:900}
 .new-ranch-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
