@@ -244,9 +244,34 @@
     updateHUD();
   });
 
+  async function openPets(){
+    if(window.nongPet&&typeof window.nongPet.open==='function'){
+      window.nongPet.open();
+      return true;
+    }
+    if(!window.__nongPetLoading){
+      window.__nongPetLoading=new Promise((resolve,reject)=>{
+        const old=document.querySelector('script[data-nong-pet]');
+        if(old){ old.addEventListener('load',resolve,{once:true}); old.addEventListener('error',reject,{once:true}); return; }
+        const s=document.createElement('script');
+        s.src='./nuoipet/pets.js?v=1';
+        s.async=false;
+        s.dataset.nongPet='1';
+        s.onload=()=>resolve();
+        s.onerror=()=>reject(new Error('Không tải được Nuôi Thú'));
+        document.body.appendChild(s);
+      });
+    }
+    await window.__nongPetLoading;
+    if(!window.nongPet||typeof window.nongPet.open!=='function') throw new Error('Nuôi Thú chưa khởi tạo');
+    window.nongPet.open();
+    return true;
+  }
+
   window.nongTrai={
     openSeeds:openSeedShop,
     openInfo:openFarmInfo,
+    openPets,
     state:()=>S,
     save:scheduleSave,
     refresh:updateHUD,
