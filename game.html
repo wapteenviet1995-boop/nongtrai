@@ -12,11 +12,13 @@
 html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#071b2d;color:#fff}
 body{overflow:hidden}
 #game{position:relative;width:100%;height:100dvh;overflow:hidden;background:#65c9f4}
-.map-wrap{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden}
+.map-wrap{
+  position:absolute;left:50%;top:50%;width:min(97vw,900px);
+  aspect-ratio:1536/1024;transform:translate(-50%,-50%);
+}
 .map{
-  position:absolute;left:50%;top:50%;width:97%;height:97%;
-  transform:translate(-50%,-50%);object-fit:contain;object-position:center;
-  user-select:none;-webkit-user-drag:none;
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:fill;user-select:none;-webkit-user-drag:none;
 }
 .shade{position:absolute;inset:0;background:linear-gradient(180deg,#001d3a22 0%,transparent 35%,#001d3a10 100%);pointer-events:none}
 .top{
@@ -48,9 +50,10 @@ body{overflow:hidden}
 }
 .hotspot:hover{transform:translate(-50%,-50%) scale(1.07);filter:brightness(1.08)}
 .hotspot:active{transform:translate(-50%,-50%) scale(.96)}
-.hs-dragon{left:50%;top:21%}.hs-ach{left:78%;top:27%}.hs-house{left:58%;top:45%}
-.hs-production{left:78%;top:51%}.hs-barn{left:25%;top:57%}.hs-field{left:49%;top:69%}
-.hs-mine{left:19%;top:81%}.hs-warehouse{left:79%;top:70%}
+.map-wrap .hotspot{z-index:6}
+.hs-dragon{left:51%;top:18%}.hs-ach{left:79%;top:23%}.hs-house{left:58%;top:43%}
+.hs-production{left:78%;top:54%}.hs-barn{left:25%;top:57%}.hs-field{left:49%;top:72%}
+.hs-mine{left:19%;top:83%}.hs-warehouse{left:79%;top:73%}
 .notice{
   position:absolute;z-index:7;left:12px;top:92px;width:230px;
   padding:12px;border:3px solid #59371f;border-radius:17px;
@@ -85,6 +88,14 @@ body{overflow:hidden}
   <div class="map-wrap">
     <img class="map" src="./img/file_000000007b508209afe9fddd71d47262.png" alt="Bản đồ Nông Trại">
     <div class="shade"></div>
+  <button class="hotspot hs-dragon" data-feature="dragon">🐉 Đảo Rồng</button>
+  <button class="hotspot hs-ach" data-feature="achieve">🏆 Thành tựu & BXH</button>
+  <button class="hotspot hs-house" data-feature="house">🏡 Nhà</button>
+  <button class="hotspot hs-production" data-feature="production">⚙️ Sản xuất</button>
+  <button class="hotspot hs-barn" data-feature="barn">🐄 Chuồng</button>
+  <button class="hotspot hs-field" data-feature="field">🌾 Ruộng</button>
+  <button class="hotspot hs-mine" data-feature="mine">⛏️ Đào Mỏ</button>
+  <button class="hotspot hs-warehouse" data-feature="warehouse">📦 Kho</button>
   </div>
 
   <header class="top">
@@ -105,14 +116,6 @@ body{overflow:hidden}
     <div>🎉 Sự kiện mới đã bắt đầu!<br>🐉 Rồng mới đã xuất hiện!<br>🏆 BXH tuần đã cập nhật!<br>🎁 Đăng nhập hôm nay nhận quà!</div>
   </aside>
 
-  <button class="hotspot hs-dragon" data-feature="dragon">🐉 Đảo Rồng</button>
-  <button class="hotspot hs-ach" data-feature="achieve">🏆 Thành tựu & BXH</button>
-  <button class="hotspot hs-house" data-feature="house">🏡 Nhà</button>
-  <button class="hotspot hs-production" data-feature="production">⚙️ Sản xuất</button>
-  <button class="hotspot hs-barn" data-feature="barn">🐄 Chuồng</button>
-  <button class="hotspot hs-field" data-feature="field">🌾 Ruộng</button>
-  <button class="hotspot hs-mine" data-feature="mine">⛏️ Đào Mỏ</button>
-  <button class="hotspot hs-warehouse" data-feature="warehouse">📦 Kho</button>
 
   <nav class="bottom">
     <button class="nav" data-feature="map">🗺️<br>Bản đồ</button>
