@@ -12,7 +12,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#071b2d;color:#fff}
 body{overflow:hidden}
-#game{position:relative;width:100%;height:100dvh;overflow:hidden;background:#65c9f4}
+#game{position:relative;width:100%;height:100dvh;overflow:hidden;background:#65c9f4;visibility:hidden}body.auth-ready #game{visibility:visible}
 .map-viewport{
   position:absolute;inset:0;overflow:hidden;touch-action:auto;
 }
@@ -172,7 +172,7 @@ body{overflow:hidden}
   <header class="top">
     <div class="player">
       <div class="avatar">👨‍🌾</div>
-      <div><b>Nông Dân Anh</b><small>⭐ Lv.12 · 450/1200 XP</small><div class="xp"><i></i></div></div>
+      <div><b>Nông Dân Anh</b><small>⏳ Đang tải dữ liệu...</small><div class="xp"><i></i></div></div>
     </div>
     <div class="sp"></div>
     <div class="currency">
@@ -201,7 +201,7 @@ body{overflow:hidden}
   <div class="profile-dock"><button id="profileDockBtn">👤 Hồ sơ</button></div>
 </main>
 
-<div class="profile-panel" id="profilePanel"><div class="profile-card"><h2>👤 Hồ sơ</h2><div class="profile-info"><b>Nông Dân Anh</b><br><small>⭐ Lv.12 · 450/1200 XP</small></div><button class="profile-logout" id="profileLogout">🚪 Đăng xuất</button><button class="profile-close" id="profileClose">Đóng</button></div></div>
+<div class="profile-panel" id="profilePanel"><div class="profile-card"><h2>👤 Hồ sơ</h2><div class="profile-info"><b>Nông Dân Anh</b><br><small>⏳ Đang tải dữ liệu...</small></div><button class="profile-logout" id="profileLogout">🚪 Đăng xuất</button><button class="profile-close" id="profileClose">Đóng</button></div></div>
 
 <div class="modal-bg" id="modal">
   <div class="modal">
