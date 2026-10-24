@@ -247,6 +247,9 @@
   window.nongTrai={
     openSeeds:openSeedShop,
     openInfo:openFarmInfo,
-    state:()=>S
+    state:()=>S,
+    save:scheduleSave,
+    refresh:updateHUD,
+    toast
   };
 })();
