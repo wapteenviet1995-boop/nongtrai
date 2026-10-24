@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Đăng ký - Nông Trại</title>
+<link rel="stylesheet" href="./auth.css">
+</head>
+<body>
+<main class="auth-card">
+  <h1>🌾 Nông Trại</h1>
+  <p class="sub">Tạo tài khoản mới để bắt đầu</p>
+  <form id="authForm">
+    <label>Email<input id="username" type="email" autocomplete="email" required></label>
+    <label>Mật khẩu<input id="password" type="password" autocomplete="new-password" minlength="6" required></label>
+    <label>Nhập lại mật khẩu<input id="confirm" type="password" autocomplete="new-password" minlength="6" required></label>
+    <button class="submit" id="submitBtn" type="submit">📝 Tạo tài khoản</button>
+    <p id="msg" class="msg" aria-live="polite"></p>
+  </form>
+  <button class="auth-link" id="loginBtn" type="button">🔐 Đã có tài khoản? Đăng nhập</button>
+</main>
+<script src="./config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="./register.js"></script>
+</body>
+</html>
