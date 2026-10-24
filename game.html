@@ -59,6 +59,11 @@ body{overflow:hidden}
 .hs-dragon{left:51%;top:18%}.hs-ach{left:79%;top:23%}.hs-house{left:58%;top:43%}
 .hs-production{left:78%;top:54%}.hs-barn{left:25%;top:57%}.hs-field{left:49%;top:72%}
 .hs-mine{left:19%;top:83%}.hs-warehouse{left:79%;top:73%}
+/* Giữ vùng bấm Kho/Đào Mỏ nhưng ẩn khung và chữ bên ngoài bản đồ */
+.hs-mine,.hs-warehouse{
+  background:transparent;border:0;box-shadow:none;color:transparent;
+  font-size:0;padding:18px 28px;min-width:72px;min-height:48px;
+}
 .notice{
   position:absolute;z-index:7;left:12px;top:92px;width:230px;
   padding:12px;border:3px solid #59371f;border-radius:17px;
