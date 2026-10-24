@@ -13,8 +13,9 @@ html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,"S
 body{overflow:hidden}
 #game{position:relative;width:100%;height:100dvh;overflow:hidden;background:#65c9f4}
 .map-wrap{
-  position:absolute;left:50%;top:50%;width:min(97vw,900px);
-  aspect-ratio:1536/1024;transform:translate(-50%,-50%);
+  position:absolute;left:0;right:0;top:50%;
+  width:100vw;aspect-ratio:1536/1024;
+  transform:translateY(-50%);
 }
 .map{
   position:absolute;inset:0;width:100%;height:100%;
