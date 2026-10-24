@@ -151,6 +151,10 @@ function render(){
     const t=TYPES[p.type];
     const el=document.createElement('div');
     el.className='new-pet';
+    el.style.position='absolute';
+    if(p.walkX==null)p.walkX=10+Math.random()*70;
+    if(p.walkY==null)p.walkY=28+Math.random()*55;
+    el.style.left=p.walkX+'%';el.style.top=p.walkY+'%';el.style.transform='translate(-50%,-50%)';el.style.transition='left 2.8s ease-in-out, top 2.8s ease-in-out';
     el.innerHTML='<img src="'+petIcon(p)+'"><b>'+t.name+'</b><small>'+ (p.stage==='baby'?'🍼 Đang lớn':p.hunger+'% no')+'</small><div class="new-pet-actions"><button data-feed>🍚</button><button data-get>🎁</button><button data-sell>💰</button></div>';
     el.querySelector('[data-feed]').onclick=()=>feedPet(p.id);
     el.querySelector('[data-get]').onclick=()=>collectPet(p.id);
@@ -177,5 +181,13 @@ function open(){
 
 ensureIds();
 setInterval(()=>{produce();render()},10000);
+setInterval(()=>{
+  const scene=document.getElementById('new-pet-scene');if(!scene)return;
+  S.pets.animals.forEach(p=>{
+    p.walkX=8+Math.random()*84;
+    p.walkY=25+Math.random()*65;
+  });
+  render();
+},3000);
 window.nongPet={open,shop,feed:feedPet,collect:collectPet,buy:createPet,state:()=>S.pets};
 })();
