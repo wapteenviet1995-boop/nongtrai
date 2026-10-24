@@ -99,39 +99,26 @@ body{overflow:hidden}
   .bottom{bottom:6px;padding:5px}.nav{min-width:64px;font-size:10px;padding:6px}.nav.main{min-width:120px;font-size:12px}
 }
 
-.pet-shop{font-size:14px}.pet-summary{padding:9px 11px;margin-bottom:8px;border-radius:12px;background:#fff0bd;border:2px solid #9b8154}.pet-list{display:grid;gap:8px;max-height:42vh;overflow:auto}.pet-card{display:grid;grid-template-columns:45px 1fr;gap:8px;padding:9px;border:2px solid #b4935c;border-radius:14px;background:#fffdf2}.pet-icon{font-size:34px;display:grid;place-items:center}.pet-info small,.pet-info strong{display:block;margin-top:3px}.pet-info strong{font-size:12px;color:#39713c}.pet-actions{grid-column:1/-1;display:flex;gap:6px}.pet-btn,.pet-buy-btn{border:2px solid #79552d;border-radius:10px;padding:7px 9px;background:#fff0bd;color:#3b2919;font-weight:900;cursor:pointer}.pet-btn:disabled{opacity:.45;cursor:not-allowed}.pet-heading{margin:12px 0 7px}.pet-buy{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.pet-buy-btn{display:grid;gap:2px;text-align:center}.pet-buy-btn small{font-weight:900}.pet-note,.pet-empty{font-size:12px;color:#66553f;margin:9px 0 0}
 
-/* Nuôi Thú cũ - chuồng động */
-.old-ranch{display:flex;flex-direction:column;gap:8px;height:100%;min-height:520px}
-.old-ranch-top{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.08);border-radius:12px}
-.old-ranch-top span{margin-left:auto}
-.old-ranch-top button{border:0;border-radius:9px;padding:7px 9px;background:#8b5e3c;color:#fff;font-weight:800}
-.old-ranch-top button.on{background:#c0392b}
-.pet-scene{position:relative;width:100%;aspect-ratio:16/9;min-height:220px;max-height:360px;overflow:hidden;border-radius:16px;background:url('./img/chuong-trai.webp') center center/100% 100% no-repeat;border:2px solid rgba(0,0,0,.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
-.pet-scene:before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.04),rgba(255,205,90,.03));pointer-events:none}
-.old-pet{position:absolute;min-width:58px;text-align:center;cursor:pointer;transition:left .9s ease,top .9s ease,transform .35s ease;user-select:none}
-.old-pet-body{font-size:46px;line-height:48px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.18))}
-.old-pet.baby .old-pet-body{font-size:36px}
-.old-pet-label{display:inline-block;max-width:120px;padding:3px 6px;border-radius:8px;background:rgba(0,0,0,.58);color:#fff;font-size:11px;font-weight:800;white-space:nowrap}
-.old-food-grid,.old-buy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.old-food-grid button,.old-buy-grid button,.old-upgrade{border:0;border-radius:10px;padding:8px;background:var(--pn,#fff);color:var(--tx,#222);font-weight:800;border:1px solid var(--bd,#ddd)}
-.old-food-grid button.on{outline:3px solid #6fcf59;background:rgba(111,207,89,.18)}
-.old-food-grid small,.old-buy-grid small{display:block;font-size:10px;opacity:.7;margin-top:2px}
-.old-section-title{font-weight:900;font-size:13px;margin:4px 0}
-.old-upgrade{width:100%;margin-top:4px;background:#78b94e;color:#fff}
-
-/* Giao diện thú dùng đúng cơ chế cũ */
-.pet-old-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px;max-height:145px;overflow:auto}
-.pet-old-bar .seed{min-height:58px;padding:6px 4px;border-radius:10px;border:1px solid var(--bd,#ddd);background:var(--pn,#fff);color:var(--tx,#222);font-size:11px;font-weight:800;text-align:center;cursor:pointer}
-.pet-old-bar .seed.on{outline:3px solid #75bd55;background:rgba(117,189,85,.16)}
-.pet-old-bar .seed b{display:block;font-size:23px;line-height:25px}
-.pet-old-bar .seed img{width:32px;height:32px;object-fit:contain;vertical-align:middle}
-.pet-old-bar .seed small{font-size:10px}
-#pet-scene .an{position:absolute;display:flex;align-items:flex-end;justify-content:center;min-width:56px;cursor:pointer;transition:left 3.6s ease-in-out,top 3.6s ease-in-out;z-index:5}
-#pet-scene .an .pill{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;padding:3px 6px;border-radius:8px;background:rgba(0,0,0,.62);color:#fff;font-size:10px;font-weight:900;pointer-events:none}
-#pet-scene .an img{display:block;width:100%;height:auto;max-height:82px;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(0,0,0,.22))}
-#pet-scene .an .pill.cd{background:rgba(30,100,30,.78)}
-#pet-scene .an .pill:not(:empty){min-width:42px;text-align:center}
+.new-ranch{display:flex;flex-direction:column;gap:10px;min-height:460px}
+.new-ranch-top{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#fff0bd;border:2px solid #9b8154;color:#3b2919}
+.new-ranch-top span:first-of-type{margin-left:auto}
+.new-ranch-top i{font-style:normal}
+.new-pet-scene{position:relative;width:100%;min-height:320px;aspect-ratio:16/9;border-radius:18px;overflow:auto;background:url('./img/chuong-trai.webp') center/100% 100% no-repeat;border:3px solid #8b6336;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:18px;align-content:end}
+.new-pet{position:relative;min-height:135px;padding:8px;text-align:center;border-radius:15px;background:rgba(255,249,220,.88);border:2px solid #a97b45;box-shadow:0 4px 12px #0003;color:#3b2919}
+.new-pet img{width:78px;height:78px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0003)}
+.new-pet b,.new-pet small{display:block}.new-pet small{font-weight:800;font-size:11px;margin-top:2px}
+.new-pet-actions{display:flex;justify-content:center;gap:5px;margin-top:5px}.new-pet-actions button{border:1px solid #80603a;border-radius:8px;background:#fff4bb;padding:5px 8px;cursor:pointer;font-weight:900}
+.new-ranch-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.new-ranch-actions button{border:2px solid #79552d;border-radius:12px;padding:11px;background:linear-gradient(#fff4bd,#e5b74e);color:#3b2919;font-weight:1000;cursor:pointer}
+.new-ranch-help{padding:8px 10px;border-radius:10px;background:#fff7dc;color:#66553f;font-size:12px;text-align:center;font-weight:700}
+.pet-shop-popup{position:fixed;inset:0;z-index:100000;background:#0009;display:grid;place-items:center;padding:16px}
+.pet-shop-card{width:min(94vw,430px);max-height:88vh;overflow:auto;background:#fff9df;color:#3b2919;border:4px solid #8c6330;border-radius:20px;padding:14px;box-shadow:0 20px 70px #0008}
+.pet-shop-head{display:flex;align-items:center;justify-content:space-between;font-size:18px;margin-bottom:8px}.pet-shop-head button{border:0;border-radius:9px;background:#e6c77c;padding:7px 10px;font-weight:900;cursor:pointer}
+.pet-shop-money{padding:8px;border-radius:10px;background:#fff0bd;text-align:center;font-weight:1000;margin-bottom:9px}
+.pet-shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.pet-shop-item{border:2px solid #b4935c;border-radius:14px;background:#fffdf2;color:#3b2919;padding:10px;cursor:pointer;display:grid;gap:3px;text-align:center}
+.pet-shop-item img{width:82px;height:82px;object-fit:contain;margin:auto}.pet-shop-item b{font-size:15px}.pet-shop-item span{font-weight:1000}.pet-shop-item small{font-size:11px;color:#66553f}
 </style>
 </head>
 <body>
@@ -184,13 +171,13 @@ body{overflow:hidden}
 <div class="modal-bg" id="modal">
   <div class="modal">
     <h2 id="mt"></h2>
-    <p id="mb"></p>
+    <div id="mb"></div>
     <button class="close" id="mc">Đóng</button>
   </div>
 </div>
 
-<script src="./game.js?v=20261024-petfix3"></script>
-<script src="./nuoipet/pets.js?v=20261024-petfix3"></script>
+<script src="./game.js?v=20261024-newpet"></script>
+<script src="./nuoipet/pets.js?v=20261024-newpet"></script>
 \n<script>
 (function(){
   const data={
