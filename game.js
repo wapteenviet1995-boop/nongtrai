@@ -30,7 +30,8 @@
     version:1,coins:100,gems:0,xp:0,level:1,selectedCrop:'carrot',
     inventory:{carrot:0,corn:0,tomato:0,wheat:0},
     plots:Array.from({length:8},()=>({state:'empty',crop:null,plantedAt:0,readyAt:0})),
-    stats:{planted:0,harvested:0,earned:0}
+    stats:{planted:0,harvested:0,earned:0},
+    pets:{animals:[],capacity:4,feed:0}
   };
 
   let S=loadState();
@@ -254,7 +255,7 @@
         const old=document.querySelector('script[data-nong-pet]');
         if(old){ old.addEventListener('load',resolve,{once:true}); old.addEventListener('error',reject,{once:true}); return; }
         const s=document.createElement('script');
-        s.src='./nuoipet/pets.js?v=1';
+        s.src='./nuoipet/pets.js?v=20261024-newpet';
         s.async=false;
         s.dataset.nongPet='1';
         s.onload=()=>resolve();
