@@ -26,6 +26,7 @@ const setCoins=v=>S.coins=Math.max(0,Number(v)||0);
 const feedCount=()=>Number(S.pets.feed||0);
 
 function addCoins(n){setCoins(coins()+n);hud();save()}
+function spendCoins(n){if(coins()<n)return false;setCoins(coins()-n);hud();save();return true}
 function petIcon(p){return TYPES[p.type]?.img||TYPES.pet1.img}
 
 function ensureIds(){
@@ -46,14 +47,14 @@ function createPet(type){
   if(!t)return;
   if(S.pets.animals.length>=S.pets.capacity){toast('🐾 Chuồng đã đầy!');return}
   if(coins()<t.price){toast('🪙 Không đủ xu!');return}
-  setCoins(coins()-t.price);
+  if(!spendCoins(t.price)){toast('🪙 Không đủ xu!');return}
   S.pets.animals.push({
     id:'pet_'+Date.now()+'_'+Math.floor(Math.random()*9999),
     type,stage:'baby',readyAt:Date.now()+t.grow*1000,
     hunger:100,lastFed:Date.now(),products:0
   });
-  save();hud();render();
-  toast('🐾 Đã mua '+t.name+'!');
+  save();hud();render();setTimeout(startWalking,50);
+  toast('🐾 Đã mua '+t.name+' · -🪙'+t.price);
 }
 
 function feedPet(id){
@@ -79,7 +80,7 @@ function collectPet(id){
   p.products=0;
   addCoins(amount*t.value);
   toast('🎁 +'+amount+' '+t.product+' · 🪙'+amount*t.value);
-  render();
+  render();setTimeout(startWalking,50);
 }
 
 function sellPet(id){
@@ -90,8 +91,8 @@ function sellPet(id){
   if(!confirm('Bán '+t.name+' lấy 🪙'+price+'?'))return;
   S.pets.animals.splice(i,1);
   addCoins(price);
-  render();
-  toast('Đã bán '+t.name);
+  render();setTimeout(startWalking,50);
+  toast('Đã bán '+t.name+' · +🪙'+price);
 }
 
 function produce(){
@@ -151,10 +152,11 @@ function render(){
     const t=TYPES[p.type];
     const el=document.createElement('div');
     el.className='new-pet';
+    el.dataset.petId=p.id;
     el.style.position='absolute';
-    if(p.walkX==null)p.walkX=10+Math.random()*70;
-    if(p.walkY==null)p.walkY=28+Math.random()*55;
-    el.style.left=p.walkX+'%';el.style.top=p.walkY+'%';el.style.transform='translate(-50%,-50%)';el.style.transition='left 2.8s ease-in-out, top 2.8s ease-in-out';
+    if(p.walkX==null)p.walkX=10+Math.random()*75;
+    if(p.walkY==null)p.walkY=25+Math.random()*55;
+    el.style.left=p.walkX+'%';el.style.top=p.walkY+'%';el.style.transform='translate(-50%,-50%)';
     el.innerHTML='<img src="'+petIcon(p)+'"><b>'+t.name+'</b><small>'+ (p.stage==='baby'?'🍼 Đang lớn':p.hunger+'% no')+'</small><div class="new-pet-actions"><button data-feed>🍚</button><button data-get>🎁</button><button data-sell>💰</button></div>';
     el.querySelector('[data-feed]').onclick=()=>feedPet(p.id);
     el.querySelector('[data-get]').onclick=()=>collectPet(p.id);
@@ -181,13 +183,22 @@ function open(){
 
 ensureIds();
 setInterval(()=>{produce();render()},10000);
-setInterval(()=>{
+function startWalking(){
   const scene=document.getElementById('new-pet-scene');if(!scene)return;
   S.pets.animals.forEach(p=>{
-    p.walkX=8+Math.random()*84;
-    p.walkY=25+Math.random()*65;
+    const el=scene.querySelector('[data-pet-id="'+p.id+'"]');if(!el)return;
+    const move=()=>{
+      const nx=8+Math.random()*84,ny=24+Math.random()*60;
+      const dx=nx-(p.walkX||nx);
+      p.walkX=nx;p.walkY=ny;
+      el.style.transition='left '+(2.5+Math.random()*2.5)+'s linear, top '+(2.5+Math.random()*2.5)+'s linear';
+      el.style.left=nx+'%';el.style.top=ny+'%';
+      const img=el.querySelector('img');if(img)img.style.transform=dx<0?'scaleX(-1)':'scaleX(1)';
+      p.walkTimer=setTimeout(move,2600+Math.random()*2200);
+    };
+    clearTimeout(p.walkTimer);p.walkTimer=setTimeout(move,200+Math.random()*1000);
   });
-  render();
-},3000);
+}
+setTimeout(startWalking,100);
 window.nongPet={open,shop,feed:feedPet,collect:collectPet,buy:createPet,state:()=>S.pets};
 })();
