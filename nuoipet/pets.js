@@ -38,7 +38,13 @@ function rbar(){const B=document.getElementById('rb');if(!B)return;B.innerHTML='
 function rtick(){const now=Date.now();S.rn.forEach(a=>{if(!re[a.id])rmk(a);rupd(a,now);const el=re[a.id],sp=SP[a.sp],v=rvar(a),img=el.children[1],src=SPR[v?v.s:sp.baby];if(img.getAttribute('src')!==src)img.src=src;el.style.width=(v?sp.aw:sp.bw)+'%';const hu=a.fed<=now;let t,cd=0;if(!v){t=hu?'😋 Đói':'🍼 '+Math.floor(a.g/sp.grow*100)+'%';cd=!hu}else if(a.rd>0)t=IT[v.p][0]+' Thu!'+(a.rd>1?' ×'+a.rd:'');else if(hu)t='😋 Đói';else{t=IT[v.p][0]+' '+Math.ceil(v.t-a.pr)+'s';cd=1}if(el.firstChild.textContent!==t)el.firstChild.textContent=t;el.firstChild.classList.toggle('cd',!!cd);if(Math.random()<.18)rwalk(a,el)}Object.keys(re).forEach(id=>{if(!S.rn.some(a=>a.id===id)){re[id].remove();delete re[id]}});if(!(rc++%10))window.nongTrai.save?.()}
 
 function renderOldBar(){const bar=document.getElementById('pet-old-bar');if(!bar)return;rbar();}
-function open(){const body=document.getElementById('mb'),s=document.getElementById('pet-scene');if(!body||!s)return;if(!document.getElementById('rb')){const bar=document.createElement('div');bar.id='rb';bar.className='pet-old-bar';s.parentNode.insertBefore(bar,s)}document.getElementById('modal')?.classList.add('on');rtick();rbar();}
+function open(){
+ const body=document.getElementById('mb'); if(!body)return;
+ body.innerHTML='<div class="old-ranch"><div class="old-ranch-top"><b>🐾 Chuồng Nuôi Thú</b><span>🪙 '+Math.floor(S.c||0)+'</span></div><div id="pet-scene" class="pet-scene"></div><div id="rb" class="pet-old-bar"></div></div>';
+ const scene=document.getElementById('pet-scene');
+ document.getElementById('modal')?.classList.add('on');
+ rtick(); rbar();
+}
 window.nongPet={open,buy:rbuy,state:()=>S,feed:(i)=>{const a=S.rn[i];if(a)rclick(a,re[a.id])}};
 setInterval(rtick,1000);
 })();
