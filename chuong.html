@@ -10,11 +10,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#172b20;color:#3b2919}
+html,body{margin:0;width:100%;min-height:100%;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#7fbf58;color:#3b2919}
 body{min-height:100dvh;overflow-x:hidden}
-#barn-page{min-height:100dvh;position:relative;padding:12px}
-.barn-bg{position:fixed;inset:0;background:url('./img/chuong-trai.webp') center/cover no-repeat;z-index:-2}
-.barn-shade{position:fixed;inset:0;background:linear-gradient(180deg,#18351b66,#172b2055 55%,#0b1710aa);z-index:-1}
+#barn-page{min-height:100dvh;position:relative;padding:12px;z-index:2}
+ .barn-bg{position:fixed;inset:0;background:linear-gradient(#9bd66d 0 42%,#d9b66a 42% 100%);z-index:0}.barn-bg:after{content:'🏠';position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:min(38vw,280px);filter:drop-shadow(0 12px 10px #0005);opacity:.9}
+ .barn-shade{position:fixed;inset:0;background:linear-gradient(180deg,#ffffff18,#ffffff08 55%,#00000022);z-index:1;pointer-events:none}
 .topbar{max-width:900px;margin:0 auto 10px;display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
 .topbar button{border:3px solid #57371f;border-radius:14px;background:#fff0bd;color:#3b2919;padding:9px 13px;font-weight:1000;cursor:pointer;box-shadow:0 5px 14px #0005}
 .title{flex:1;min-width:190px;text-align:center;color:#fff8d5;text-shadow:0 3px 5px #000;font-weight:1000;font-size:clamp(20px,5vw,34px)}
@@ -24,7 +24,7 @@ body{min-height:100dvh;overflow-x:hidden}
 .new-ranch-top{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#fff0bd;border:2px solid #9b8154}
 .new-ranch-top span:first-of-type{margin-left:auto}
 .new-ranch-top i{font-style:normal}
-.new-pet-scene{position:relative;width:100%;min-height:420px;border-radius:18px;overflow:auto;background:url('./img/chuong-trai.webp') center/cover no-repeat;border:3px solid #8b6336;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:18px;align-content:end}
+.new-pet-scene{position:relative;width:100%;min-height:420px;border-radius:18px;overflow:auto;background:linear-gradient(180deg,#e9c985,#c88945 55%,#a76435);border:3px solid #8b6336;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:18px;align-content:end}
 .new-pet{min-height:120px;padding:9px;text-align:center;border-radius:15px;background:rgba(255,249,220,.9);border:2px solid #a97b45;box-shadow:0 4px 12px #0003;color:#3b2919}
 .new-pet img{width:72px;height:72px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0003)}
 .new-pet b,.new-pet small{display:block}.new-pet small{font-weight:800;font-size:12px;margin-top:2px}
