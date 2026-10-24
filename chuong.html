@@ -25,9 +25,9 @@ body{min-height:100dvh;overflow-x:hidden}
 .new-ranch-top span:first-of-type{margin-left:auto}
 .new-ranch-top i{font-style:normal}
 .new-pet-scene{position:fixed;inset:0;width:100%;height:100dvh;min-height:0;border-radius:0;overflow:auto;background:transparent!important;border:0!important;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:110px 18px 24px;align-content:end;z-index:3}
-.new-pet{min-height:120px;padding:9px;text-align:center;border-radius:15px;background:rgba(255,249,220,.72);border:2px solid #a97b45;box-shadow:0 4px 12px #0003;color:#3b2919}
-.new-pet img{width:72px;height:72px;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0003)}
-.new-pet b,.new-pet small{display:block}.new-pet small{font-weight:800;font-size:12px;margin-top:2px}
+.new-pet{width:92px;min-height:0;padding:3px;text-align:center;border-radius:12px;background:rgba(255,249,220,.30);border:0;box-shadow:none;color:#3b2919;will-change:left,top}
+.new-pet img{width:72px;height:72px;transition:transform .15s;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 3px 2px #0003)}
+.new-pet b,.new-pet small{display:none}.new-pet small{font-weight:800;font-size:12px;margin-top:2px}
 .new-pet-actions{display:flex;justify-content:center;gap:5px;margin-top:6px}.new-pet-actions button{border:1px solid #80603a;border-radius:8px;background:#fff4bb;padding:6px 9px;cursor:pointer;font-weight:900}
 .new-ranch-actions{display:none!important}
 .barn-bottom{position:fixed;z-index:30;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:8px;padding:8px;border:3px solid #5b3a1e;border-radius:22px;background:#2b211be8;box-shadow:0 7px 22px #0006}
@@ -82,7 +82,7 @@ body{min-height:100dvh;overflow-x:hidden}
   update();
   const mount=document.getElementById('ranchMount');
   const wrap=document.createElement('div');wrap.id='mb';mount.appendChild(wrap);
-  const script=document.createElement('script');script.src='./nuoipet/pets.js?v=20261024-newpet';script.onload=()=>window.nongPet?.open();script.onerror=()=>toast('❌ Không tải được hệ thống chuồng nuôi');document.body.appendChild(script);
+  const script=document.createElement('script');script.src='./nuoipet/pets.js?v=20261024-walk2';script.onload=()=>window.nongPet?.open();script.onerror=()=>toast('❌ Không tải được hệ thống chuồng nuôi');document.body.appendChild(script);
   
   if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){
     try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);const auth=firebase.auth();auth.onAuthStateChanged(async user=>{if(!user){location.replace('./auth.html');return}try{const snap=await firebase.firestore().collection('users').doc(user.uid).get();if(snap.exists&&snap.data().game){S=merge(clone(),snap.data().game);update();window.nongPet?.open()}}catch(e){}})}catch(e){}
