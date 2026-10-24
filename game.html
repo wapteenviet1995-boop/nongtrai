@@ -57,7 +57,7 @@ body{overflow:hidden}
 .hotspot:active{transform:translate(-50%,-50%) scale(.96)}
 .map-wrap .hotspot{z-index:6}
 .hs-dragon{left:51%;top:19%}.hs-ach{left:79%;top:22.5%}.hs-house{left:58%;top:43%}
-.hs-production{left:78%;top:52.5%}.hs-barn{left:24%;top:50%}.hs-field{left:49%;top:73%}
+.hs-production{left:78%;top:52.5%}.hs-barn{left:24%;top:50%;width:22vw;height:20vh;padding:0;min-width:110px;min-height:90px}.hs-field{left:49%;top:73%}
 .hs-mine{left:19%;top:88%}.hs-warehouse{left:82%;top:75%}
 /* Chuồng/Kho/Đào Mỏ đã có chữ sẵn trong ảnh nền: chỉ giữ vùng bấm trong suốt */
 .hs-dragon,.hs-ach,.hs-house,.hs-production,.hs-barn,.hs-field,.hs-mine,.hs-warehouse{
@@ -206,8 +206,26 @@ body{overflow:hidden}
     map:['🗺️ Bản đồ','Đây là bản đồ chính của Nông Trại.'],
     seeds:['🌱 Hạt giống','Chọn giống cây để bắt đầu trồng trọt.']
   };
-  function openFeature(key){
-    if(key==='barn' && window.nongPet){ window.nongPet.open(); return; }
+  async function openFeature(key){
+    if(key==='barn'){
+      if(window.nongPet){
+        document.getElementById('mt').textContent='🐄 Chuồng · Nuôi Thú';
+        window.nongPet.open();
+        return;
+      }
+      try{
+        await new Promise((resolve,reject)=>{
+          const s=document.createElement('script');
+          s.src='./nuoipet/pets.js?v='+Date.now();
+          s.onload=resolve; s.onerror=reject; document.body.appendChild(s);
+        });
+        if(window.nongPet){
+          document.getElementById('mt').textContent='🐄 Chuồng · Nuôi Thú';
+          window.nongPet.open();
+          return;
+        }
+      }catch(e){ console.error('Nuôi Thú:',e); }
+    }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
     document.getElementById('mt').textContent=d[0];
     document.getElementById('mb').innerHTML=d[1];
