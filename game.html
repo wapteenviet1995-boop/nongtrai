@@ -236,6 +236,10 @@ body{overflow:hidden}
       location.href='./kho.html';
       return;
     }
+    if(key==='field'){
+      location.href='./vuon.html';
+      return;
+    }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
     document.getElementById('mt').textContent=d[0];
     document.getElementById('mb').innerHTML=d[1];
