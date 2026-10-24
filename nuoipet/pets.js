@@ -117,25 +117,7 @@ function feedAll(){
   save();render();toast(n?'❤️ Đã cho '+n+' con ăn':'😊 Tất cả đều đã no');
 }
 
-function shop(){
-  const old=document.getElementById('pet-shop-popup');
-  if(old)old.remove();
-  const d=document.createElement('div');
-  d.id='pet-shop-popup';
-  d.className='pet-shop-popup';
-  d.innerHTML='<div class="pet-shop-card"><div class="pet-shop-head"><b>🛒 SHOP VẬT NUÔI</b><button data-close>✕</button></div><div class="pet-shop-money">🪙 '+Math.floor(coins())+'</div><div class="pet-shop-grid"></div></div>';
-  document.body.appendChild(d);
-  const grid=d.querySelector('.pet-shop-grid');
-  Object.entries(TYPES).forEach(([key,t])=>{
-    const b=document.createElement('button');
-    b.className='pet-shop-item';
-    b.innerHTML='<img src="'+t.baby+'" alt="'+t.name+'"><b>'+t.name+'</b><span>🪙 '+t.price+'</span><small>'+t.product+'</small>';
-    b.onclick=()=>{createPet(key);shop()};
-    grid.appendChild(b);
-  });
-  d.querySelector('[data-close]').onclick=()=>d.remove();
-  d.onclick=e=>{if(e.target===d)d.remove()};
-}
+function shop(){ return; }
 
 function render(){
   const scene=document.getElementById('new-pet-scene');
