@@ -100,6 +100,25 @@ body{overflow:hidden}
 }
 
 .pet-shop{font-size:14px}.pet-summary{padding:9px 11px;margin-bottom:8px;border-radius:12px;background:#fff0bd;border:2px solid #9b8154}.pet-list{display:grid;gap:8px;max-height:42vh;overflow:auto}.pet-card{display:grid;grid-template-columns:45px 1fr;gap:8px;padding:9px;border:2px solid #b4935c;border-radius:14px;background:#fffdf2}.pet-icon{font-size:34px;display:grid;place-items:center}.pet-info small,.pet-info strong{display:block;margin-top:3px}.pet-info strong{font-size:12px;color:#39713c}.pet-actions{grid-column:1/-1;display:flex;gap:6px}.pet-btn,.pet-buy-btn{border:2px solid #79552d;border-radius:10px;padding:7px 9px;background:#fff0bd;color:#3b2919;font-weight:900;cursor:pointer}.pet-btn:disabled{opacity:.45;cursor:not-allowed}.pet-heading{margin:12px 0 7px}.pet-buy{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.pet-buy-btn{display:grid;gap:2px;text-align:center}.pet-buy-btn small{font-weight:900}.pet-note,.pet-empty{font-size:12px;color:#66553f;margin:9px 0 0}
+
+/* Nuôi Thú cũ - chuồng động */
+.old-ranch{display:flex;flex-direction:column;gap:8px;height:100%;min-height:520px}
+.old-ranch-top{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.08);border-radius:12px}
+.old-ranch-top span{margin-left:auto}
+.old-ranch-top button{border:0;border-radius:9px;padding:7px 9px;background:#8b5e3c;color:#fff;font-weight:800}
+.old-ranch-top button.on{background:#c0392b}
+.pet-scene{position:relative;height:245px;overflow:hidden;border-radius:16px;background:linear-gradient(#b9e58c 0 68%,#8cc36a 68%);border:2px solid rgba(0,0,0,.12)}
+.pet-scene:before{content:'🌳   🪵   🌿        🌾     🌿   🪵';position:absolute;left:8px;top:8px;right:8px;opacity:.55;font-size:20px;white-space:nowrap;pointer-events:none}
+.old-pet{position:absolute;min-width:58px;text-align:center;cursor:pointer;transition:left .9s ease,top .9s ease,transform .35s ease;user-select:none}
+.old-pet-body{font-size:46px;line-height:48px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.18))}
+.old-pet.baby .old-pet-body{font-size:36px}
+.old-pet-label{display:inline-block;max-width:120px;padding:3px 6px;border-radius:8px;background:rgba(0,0,0,.58);color:#fff;font-size:11px;font-weight:800;white-space:nowrap}
+.old-food-grid,.old-buy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.old-food-grid button,.old-buy-grid button,.old-upgrade{border:0;border-radius:10px;padding:8px;background:var(--pn,#fff);color:var(--tx,#222);font-weight:800;border:1px solid var(--bd,#ddd)}
+.old-food-grid button.on{outline:3px solid #6fcf59;background:rgba(111,207,89,.18)}
+.old-food-grid small,.old-buy-grid small{display:block;font-size:10px;opacity:.7;margin-top:2px}
+.old-section-title{font-weight:900;font-size:13px;margin:4px 0}
+.old-upgrade{width:100%;margin-top:4px;background:#78b94e;color:#fff}
 </style>
 </head>
 <body>
