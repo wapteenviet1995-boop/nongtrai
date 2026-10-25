@@ -89,8 +89,8 @@ function layout(){const w=innerWidth,h=innerHeight;let Ws,l,t;
  if(zoom){const s=Math.min(w,h-130);Ws=s*1672/760;const k=Ws/1672;l=w/2-G[view][0]*k;t=(h+50)/2-G[view][1]*k}
  else{Ws=Math.min(w,h*1672/941);l=(w-Ws)/2;t=(h-Ws*941/1672)/2}
  stage.style.width=Ws+'px';stage.style.left=l+'px';stage.style.top=t+'px';
- $('zm').textContent=zoom?'🔭 Toàn cảnh':'🔍 Phóng to';$('vw').textContent=view?'◀ Khu 1':'Khu 2 ▶';$('vw').style.display=zoom?'':'none'}
-$('zm').onclick=()=>{zoom=!zoom;layout()};$('vw').onclick=()=>{view=1-view;layout()};addEventListener('resize',layout);layout();
+ $('vw').textContent=view?'◀ Khu 1':'Khu 2 ▶';$('vw').style.display=''}
+$('vw').onclick=()=>{view=1-view;layout()};addEventListener('resize',layout);layout();
 draw();setInterval(tick,250);
 
 $('island').onclick=()=>location.href='../game.html';
