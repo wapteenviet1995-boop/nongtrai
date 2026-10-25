@@ -34,7 +34,7 @@ const now=()=>Date.now()+S.skew;
 const MAIN_KEY='nongtrai_new_v1';let mainState=null,fbUser=null,cloudTimer=0;
 function loadMainLocal(){try{const d=JSON.parse(localStorage.getItem(MAIN_KEY));if(d&&typeof d==='object'){mainState=d;S.coins=Number(d.coins)||0;S.gems=Number(d.gems)||0}}catch(e){}}
 loadMainLocal();
-const save=()=>{try{localStorage.setItem('ntt_v2',JSON.stringify(S));mainState=mainState||JSON.parse(localStorage.getItem(MAIN_KEY)||'{}');mainState.coins=Number(S.coins)||0;mainState.gems=Number(S.gems)||0;localStorage.setItem(MAIN_KEY,JSON.stringify(mainState))}catch(e){}if(fbUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await firebase.firestore().collection('users').doc(fbUser.uid).set({game:mainState,petGame:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error('Lưu nuôi pet:',e)}},0)}};
+const save=()=>{try{localStorage.setItem('ntt_v2',JSON.stringify(S));mainState=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||{};mainState.coins=Number(S.coins)||0;mainState.gems=Number(S.gems)||0;localStorage.setItem(MAIN_KEY,JSON.stringify(mainState))}catch(e){}if(fbUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await firebase.firestore().collection('users').doc(fbUser.uid).set({game:mainState,petGame:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error('Lưu nuôi pet:',e)}},0)}};
 const $=id=>document.getElementById(id);
 const stage=$('stage');
 stage.style.backgroundImage='url('+IMG.bg+')';
