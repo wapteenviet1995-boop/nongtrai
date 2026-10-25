@@ -38,3 +38,6 @@ button.btn:active{transform:translateY(2px);box-shadow:none}
 .card b{display:block;font-size:28px}.card.sel{border-color:var(--accent);background:rgba(232,162,26,.2)}.card:disabled{opacity:.45;cursor:not-allowed}
 .card:not(:disabled):hover{transform:translateY(-3px)}
 @media(max-width:600px){button.btn{padding:7px 9px;font-size:13px}.pill{padding:4px 9px;font-size:13px}}
+
+/* HUD mobile: chia hàng cân đối */
+.hud{padding:0 8px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:stretch}.hud>*{min-width:0;text-align:center}.hud .pill{display:flex;align-items:center;justify-content:center}.hud .island{grid-column:span 2}.hud #shop{grid-column:span 2}.hud #all{grid-column:span 2}.hud #zm,.hud #vw,.hud #snd,.hud #reset{width:100%;padding-left:5px;padding-right:5px}@media(min-width:700px){.hud{display:flex;padding:0}.hud .island{order:-1}.hud>*{width:auto!important}}
