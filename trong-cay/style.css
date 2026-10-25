@@ -73,3 +73,10 @@ button.btn:active{transform:translateY(2px);box-shadow:none}
  .hud-actions #snd,.hud-actions #reset{width:44px}
  .island-float{top:calc(env(safe-area-inset-top,0px) + 96px);font-size:11px!important;padding:6px 8px!important}
 }
+
+
+/* Sau khi bỏ nút loa/reset: giữ nút chuyển Khu 1/Khu 2 luôn hiện */
+@media(max-width:600px){
+ .hud-actions{display:grid;grid-template-columns:minmax(118px,1.35fr) minmax(92px,1fr);justify-content:center}
+ .hud-actions #all,.hud-actions #vw{display:block!important;width:100%;max-width:none}
+}
