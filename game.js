@@ -58,6 +58,7 @@
     return cloneDefault();
   }
   function saveLocal(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
+  function refreshFromLocal(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;const d=JSON.parse(raw);S=mergeState(cloneDefault(),d);updateHUD();}catch(e){}}
   function scheduleSave(){
     saveLocal();
     clearTimeout(saveTimer);
@@ -237,6 +238,10 @@
       finally{location.replace('./login.html');}
     };
   }
+
+  window.addEventListener('storage',e=>{if(e.key===SAVE_KEY)refreshFromLocal();});
+  window.addEventListener('pageshow',()=>refreshFromLocal());
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshFromLocal();});
 
   auth.onAuthStateChanged(async user=>{
     if(!user){location.replace('./login.html');return;}
