@@ -18,10 +18,10 @@ const KEY='vuon-cay-v1',MAIN_KEY='nongtrai_new_v1',$=id=>document.getElementById
 const fresh=()=>({coins:30,xp:0,sel:'carrot',snd:true,plots:Array(40).fill(null)});
 let S=(()=>{try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.plots&&d.plots.length===40)return d}catch(e){}return fresh()})();
 let mainState=null,fbUser=null,cloudTimer=0;
-function loadMainLocal(){try{const d=JSON.parse(localStorage.getItem(MAIN_KEY));if(d&&typeof d==='object'){mainState=d;if(Number.isFinite(Number(d.coins)))S.coins=Number(d.coins);if(Number.isFinite(Number(d.xp)))S.xp=Number(d.xp)}}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));mainState=mainState||JSON.parse(localStorage.getItem(MAIN_KEY)||'{}');mainState.coins=Number(S.coins)||0;mainState.xp=Number(S.xp)||0;localStorage.setItem(MAIN_KEY,JSON.stringify(mainState))}catch(e){}if(fbUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await firebase.firestore().collection('users').doc(fbUser.uid).set({game:mainState,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error('Lưu vườn:',e)}},0)}}
+function loadMainLocal(){try{const d=JSON.parse(localStorage.getItem(MAIN_KEY));if(d&&typeof d==='object'){mainState=d;if(Number.isFinite(Number(d.coins)))S.coins=Number(d.coins)}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));mainState=mainState||JSON.parse(localStorage.getItem(MAIN_KEY)||'{}');mainState.coins=Number(S.coins)||0;localStorage.setItem(MAIN_KEY,JSON.stringify(mainState))}catch(e){}if(fbUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await firebase.firestore().collection('users').doc(fbUser.uid).set({game:mainState,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error('Lưu vườn:',e)}},0)}}
 loadMainLocal();
-const lvOf=x=>Math.floor(Math.sqrt(x/5))+1,level=()=>lvOf(S.xp),C=id=>CROPS.find(c=>c.id===id);
+const xpNeed=l=>50+(Math.max(1,l)-1)*35,level=()=>Math.max(1,Number(mainState?.level)||1),C=id=>CROPS.find(c=>c.id===id);
 const stage=$('stage'),els=[];let ac,prevCoins=S.coins;
 function beep(f,d=.12){if(S.snd===false)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
 for(let g=0;g<2;g++)for(let r=0;r<5;r++)for(let c=0;c<4;c++){
@@ -46,7 +46,7 @@ function tap(i){const b=els[i],now=Date.now();
   else say(c.n+' còn '+Math.ceil((c.sec*1000-(now-p.t))/1000)+' giây nữa sẽ chín.')}
  save();draw()}
 function harvest(i){const p=S.plots[i],c=C(p.c),b=els[i],l=level();
- S.coins+=c.sell;S.xp+=c.lv*3+2;S.plots[i]=null;fx(b,'+'+c.sell);burst(b._cx,b._cy,['🪙','🪙',c.e,'✨'],8);beep(660,.15);setTimeout(()=>beep(880,.15),90);
+ S.coins+=c.sell;mainState=mainState||{};mainState.xp=(Number(mainState.xp)||0)+c.lv*3+2;while(mainState.xp>=xpNeed(level())){mainState.xp-=xpNeed(level());mainState.level=level()+1}S.plots[i]=null;fx(b,'+'+c.sell);burst(b._cx,b._cy,['🪙','🪙',c.e,'✨'],8);beep(660,.15);setTimeout(()=>beep(880,.15),90);
  if(level()>l)levelUp()}
 function levelUp(){const l=level(),m=[];CROPS.filter(c=>c.lv===l).forEach(c=>m.push('hạt '+c.n+' '+c.e));
  const n=els.filter(b=>b._need===l).length;if(n)m.push(n+' ô đất mới');
@@ -70,8 +70,8 @@ function drawShop(){const g=$('grid');g.innerHTML='';CROPS.forEach(c=>{const b=d
 function draw(){
  $('coins').textContent='🪙 '+S.coins;
  if(S.coins>prevCoins)$('coins').animate([{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:300});prevCoins=S.coins;
- const l=level(),a=5*(l-1)**2,b=5*l*l;
- $('lvl').textContent='⭐ Cấp '+l+' · '+(S.xp-a)+'/'+(b-a)+' XP';$('xpb').style.width=(S.xp-a)/(b-a)*100+'%';
+ const l=level(),curXp=Number(mainState?.xp)||0,need=xpNeed(l);
+ $('lvl').textContent='⭐ Cấp '+l+' · '+curXp+'/'+need+' XP';$('xpb').style.width=Math.min(100,curXp/need*100)+'%';
  $('cur').textContent=C(S.sel).e;$('snd').textContent=S.snd===false?'🔇':'🔊';
  els.forEach(e=>{e.dataset.h=''});tick()}
 function tick(){const now=Date.now(),l=level();
@@ -94,4 +94,4 @@ $('vw').onclick=()=>{view=1-view;layout()};addEventListener('resize',layout);lay
 draw();setInterval(tick,250);
 
 $('island').onclick=()=>location.href='../game.html';
-if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(async u=>{if(!u){location.replace('../login.html');return}fbUser=u;try{const d=await firebase.firestore().collection('users').doc(u.uid).get({source:'server'});if(d.exists&&d.data().game){mainState=d.data().game;S.coins=Number(mainState.coins)||0;S.xp=Number(mainState.xp)||0;try{localStorage.setItem(MAIN_KEY,JSON.stringify(mainState));localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}prevCoins=S.coins;draw()}}catch(e){console.error('Đồng bộ vườn:',e)}})}catch(e){console.error(e)}}
+if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(async u=>{if(!u){location.replace('../login.html');return}fbUser=u;try{const d=await firebase.firestore().collection('users').doc(u.uid).get({source:'server'});if(d.exists&&d.data().game){mainState=d.data().game;S.coins=Number(mainState.coins)||0;try{localStorage.setItem(MAIN_KEY,JSON.stringify(mainState));localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}prevCoins=S.coins;draw()}}catch(e){console.error('Đồng bộ vườn:',e)}})}catch(e){console.error(e)}}
