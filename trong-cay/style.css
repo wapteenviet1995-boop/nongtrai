@@ -85,3 +85,9 @@ button.btn:active{transform:translateY(2px);box-shadow:none}
 .island-float{position:static!important;left:auto!important;top:auto!important}
 .hud-actions{display:grid!important;grid-template-columns:minmax(105px,1fr) minmax(82px,.85fr) minmax(82px,.85fr)!important;gap:6px!important;width:min(100%,420px);margin-left:auto;margin-right:auto}
 .hud-actions #all,.hud-actions #island,.hud-actions #vw{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;width:100%!important;max-width:none!important}
+
+@media(max-width:600px){
+ .hud-actions{grid-template-columns:minmax(118px,1.35fr) minmax(92px,1fr) 44px 44px 44px!important}
+ .hud-actions #all,.hud-actions #island,.hud-actions #vw{width:100%!important}
+ .hud-actions #snd,.hud-actions #reset{width:44px!important;padding-left:0!important;padding-right:0!important}
+}
