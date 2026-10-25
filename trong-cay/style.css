@@ -57,3 +57,19 @@ button.btn:active{transform:translateY(2px);box-shadow:none}
  .hud-actions #vw{flex:1;max-width:105px}
  .hud-actions #snd,.hud-actions #reset{width:42px;padding-left:0;padding-right:0}
 }
+
+/* Khớp ảnh mẫu: 3 nút hàng trên, 4 nút hàng dưới */
+.hud{top:calc(env(safe-area-inset-top,0px) + 6px)}
+.hud-main{flex-wrap:nowrap}
+.hud-actions{flex-wrap:nowrap}
+.island-float{position:fixed;z-index:31;left:8px;top:calc(env(safe-area-inset-top,0px) + 104px);background:var(--panel)!important}
+@media(max-width:600px){
+ .hud-main{display:grid;grid-template-columns:auto minmax(150px,1fr) auto}
+ .hud-main #coins{font-size:12px;padding:5px 9px}
+ .hud-main .level-pill{width:auto;max-width:none;min-width:0;padding:5px 9px}
+ .hud-main #shop{font-size:12px;padding:7px 10px}
+ .hud-actions{display:grid;grid-template-columns:minmax(118px,1.35fr) minmax(92px,1fr) 44px 44px}
+ .hud-actions #all,.hud-actions #vw{max-width:none;width:100%}
+ .hud-actions #snd,.hud-actions #reset{width:44px}
+ .island-float{top:calc(env(safe-area-inset-top,0px) + 96px);font-size:11px!important;padding:6px 8px!important}
+}
