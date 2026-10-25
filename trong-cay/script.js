@@ -14,10 +14,13 @@ const CROPS=[
 const W=1672,H=941,PW=125,PH=95;
 const X=[[232,381,528,676],[1011,1161,1311,1461]],Y=[[263,379,495,611,724],[261,377,494,610,722]];
 const NEED=[[1,1,2,3,4],[5,6,7,8,9]];
-const KEY='vuon-cay-v1',$=id=>document.getElementById(id);
+const KEY='vuon-cay-v1',MAIN_KEY='nongtrai_new_v1',$=id=>document.getElementById(id);
 const fresh=()=>({coins:30,xp:0,sel:'carrot',snd:true,plots:Array(40).fill(null)});
 let S=(()=>{try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.plots&&d.plots.length===40)return d}catch(e){}return fresh()})();
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+let mainState=null,fbUser=null,cloudTimer=0;
+function loadMainLocal(){try{const d=JSON.parse(localStorage.getItem(MAIN_KEY));if(d&&typeof d==='object'){mainState=d;if(Number.isFinite(Number(d.coins)))S.coins=Number(d.coins);if(Number.isFinite(Number(d.xp)))S.xp=Number(d.xp)}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));mainState=mainState||JSON.parse(localStorage.getItem(MAIN_KEY)||'{}');mainState.coins=Number(S.coins)||0;mainState.xp=Number(S.xp)||0;localStorage.setItem(MAIN_KEY,JSON.stringify(mainState))}catch(e){}if(fbUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await firebase.firestore().collection('users').doc(fbUser.uid).set({game:mainState,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error('Lưu vườn:',e)}},0)}}
+loadMainLocal();
 const lvOf=x=>Math.floor(Math.sqrt(x/5))+1,level=()=>lvOf(S.xp),C=id=>CROPS.find(c=>c.id===id);
 const stage=$('stage'),els=[];let ac,prevCoins=S.coins;
 function beep(f,d=.12){if(S.snd===false)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
@@ -89,3 +92,6 @@ function layout(){const w=innerWidth,h=innerHeight;let Ws,l,t;
  $('zm').textContent=zoom?'🔭 Toàn cảnh':'🔍 Phóng to';$('vw').textContent=view?'◀ Khu 1':'Khu 2 ▶';$('vw').style.display=zoom?'':'none'}
 $('zm').onclick=()=>{zoom=!zoom;layout()};$('vw').onclick=()=>{view=1-view;layout()};addEventListener('resize',layout);layout();
 draw();setInterval(tick,250);
+
+$('island').onclick=()=>location.href='../game.html';
+if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(async u=>{if(!u){location.replace('../login.html');return}fbUser=u;try{const d=await firebase.firestore().collection('users').doc(u.uid).get({source:'server'});if(d.exists&&d.data().game){mainState=d.data().game;S.coins=Number(mainState.coins)||0;S.xp=Number(mainState.xp)||0;try{localStorage.setItem(MAIN_KEY,JSON.stringify(mainState));localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}prevCoins=S.coins;draw()}}catch(e){console.error('Đồng bộ vườn:',e)}})}catch(e){console.error(e)}}
