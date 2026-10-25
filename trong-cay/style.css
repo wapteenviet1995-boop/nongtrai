@@ -38,3 +38,22 @@ button.btn:active{transform:translateY(2px);box-shadow:none}
 .card b{display:block;font-size:28px}.card.sel{border-color:var(--accent);background:rgba(232,162,26,.2)}.card:disabled{opacity:.45;cursor:not-allowed}
 .card:not(:disabled):hover{transform:translateY(-3px)}
 @media(max-width:600px){button.btn{padding:7px 9px;font-size:13px}.pill{padding:4px 9px;font-size:13px}}
+
+/* Thanh điều khiển 2 hàng theo bố cục game gốc */
+.hud{display:block;left:6px;right:6px;pointer-events:none}
+.hud-row{display:flex;justify-content:center;align-items:center;gap:6px;margin-bottom:7px;pointer-events:none}
+.hud-row>*{pointer-events:auto;white-space:nowrap}
+.hud-main .level-pill{min-width:155px}
+.hud-actions .island{background:var(--panel)}
+@media(max-width:600px){
+ .hud{left:5px;right:5px}
+ .hud-row{gap:5px;margin-bottom:6px}
+ .hud-main .pill,.hud-main button.btn{font-size:12px;padding:6px 8px}
+ .hud-main .level-pill{min-width:0;flex:1;max-width:205px}
+ .hud-main #coins{flex:0 0 auto}
+ .hud-main #shop{flex:0 1 auto}
+ .hud-actions button.btn{font-size:12px;padding:7px 9px}
+ .hud-actions #all{flex:1;max-width:130px}
+ .hud-actions #vw{flex:1;max-width:105px}
+ .hud-actions #snd,.hud-actions #reset{width:42px;padding-left:0;padding-right:0}
+}
