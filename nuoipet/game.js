@@ -129,9 +129,9 @@ setInterval(tick,250);setInterval(work,400);setInterval(save,5000);
 
 /* ---------- panels ---------- */
 const need=l=>10+l*5;
-function lvl(){let x=S.xp,l=1;while(x>=need(l)){x-=need(l);l++}return [l,x,need(l)]}
-function addXp(n){const b=lvl()[0];S.xp+=n;const a=lvl()[0];if(a>b){toast('🎉 Lên cấp '+a+'!');if(b<LV_H&&a>=LV_H)setTimeout(()=>toast('🔓 Đã mở khoá Thu hoạch tất cả'),2300);if(b<LV_F&&a>=LV_F)setTimeout(()=>toast('🔓 Đã mở khoá Cho ăn tất cả'),2300)}hud()}
-function lvUp(){const t=lvl()[0]+10;let x=0;for(let l=1;l<t;l++)x+=need(l);addXp(x-S.xp);save();staff()}
+function lvl(){const l=Math.max(1,Number(mainState?.level)||1),x=Math.max(0,Number(mainState?.xp)||0);return [l,x,50+(l-1)*35]}
+function addXp(n){mainState=mainState||{};let b=Math.max(1,Number(mainState.level)||1);mainState.xp=(Number(mainState.xp)||0)+n;const xpNeed=l=>50+(Math.max(1,l)-1)*35;while(mainState.xp>=xpNeed(b)){mainState.xp-=xpNeed(b);b++;mainState.level=b}const a=b;if(a>lvl()[0]){}hud();save()}
+function lvUp(){mainState=mainState||{};mainState.level=lvl()[0]+10;mainState.xp=0;hud();save();staff()}
 const used=()=>Object.values(S.inv).reduce((s,v)=>s+v,0);
 const total=()=>Object.keys(S.inv).reduce((s,k)=>s+S.inv[k]*T[k].v,0);
 const upCost=()=>S.cap*20;
