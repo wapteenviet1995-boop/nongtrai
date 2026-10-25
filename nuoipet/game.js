@@ -28,10 +28,13 @@ const ST={
  boy:{n:'Cậu bé xô nước',gem:20,lv:0,home:[30,66]},
  girl:{n:'Nhà thám hiểm',gem:25,lv:0,home:[40,72]}
 };
-let S={coins:99999,gems:30,inv:{},cap:30,xp:0,skew:0,staff:{},animals:[{id:1,type:'pig_baby',food:80,prog:0,ready:false,x:45,y:62},{id:2,type:'lamb',food:80,prog:0,ready:false,x:60,y:70}],nid:3};
+let S={coins:0,gems:0,inv:{},cap:30,xp:0,skew:0,staff:{},animals:[],nid:1};
 try{const r=localStorage.getItem('ntt_v2');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const now=()=>Date.now()+S.skew;
-const save=()=>{try{localStorage.setItem('ntt_v2',JSON.stringify(S))}catch(e){}};
+const MAIN_KEY='nongtrai_new_v1';let mainState=null,fbUser=null,cloudTimer=0;
+function loadMainLocal(){try{const d=JSON.parse(localStorage.getItem(MAIN_KEY));if(d&&typeof d==='object'){mainState=d;S.coins=Number(d.coins)||0;S.gems=Number(d.gems)||0}}catch(e){}}
+loadMainLocal();
+const save=()=>{try{localStorage.setItem('ntt_v2',JSON.stringify(S));mainState=mainState||JSON.parse(localStorage.getItem(MAIN_KEY)||'{}');mainState.coins=Number(S.coins)||0;mainState.gems=Number(S.gems)||0;localStorage.setItem(MAIN_KEY,JSON.stringify(mainState))}catch(e){}if(fbUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await firebase.firestore().collection('users').doc(fbUser.uid).set({game:mainState,petGame:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error('Lưu nuôi pet:',e)}},0)}};
 const $=id=>document.getElementById(id);
 const stage=$('stage');
 stage.style.backgroundImage='url('+IMG.bg+')';
@@ -210,3 +213,6 @@ function boot(){
 }
 addEventListener('resize',boot);
 boot();
+
+$('bIsland').onclick=()=>location.href='../game.html';
+if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(async u=>{if(!u){location.replace('../login.html');return}fbUser=u;try{const d=await firebase.firestore().collection('users').doc(u.uid).get({source:'server'});if(d.exists){const data=d.data();if(data.petGame)S=Object.assign(S,data.petGame);if(data.game){mainState=data.game;S.coins=Number(mainState.coins)||0;S.gems=Number(mainState.gems)||0}try{localStorage.setItem('ntt_v2',JSON.stringify(S));localStorage.setItem(MAIN_KEY,JSON.stringify(mainState||{}))}catch(e){}boot()}}catch(e){console.error('Đồng bộ nuôi pet:',e)}})}catch(e){console.error(e)}}
