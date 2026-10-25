@@ -80,3 +80,8 @@ button.btn:active{transform:translateY(2px);box-shadow:none}
  .hud-actions{display:grid;grid-template-columns:minmax(118px,1.35fr) minmax(92px,1fr);justify-content:center}
  .hud-actions #all,.hud-actions #vw{display:block!important;width:100%;max-width:none}
 }
+
+/* Cố định hàng điều hướng vườn: Thu hoạch | Về đảo | Khu 1/2 */
+.island-float{position:static!important;left:auto!important;top:auto!important}
+.hud-actions{display:grid!important;grid-template-columns:minmax(105px,1fr) minmax(82px,.85fr) minmax(82px,.85fr)!important;gap:6px!important;width:min(100%,420px);margin-left:auto;margin-right:auto}
+.hud-actions #all,.hud-actions #island,.hud-actions #vw{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;width:100%!important;max-width:none!important}
