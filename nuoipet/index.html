@@ -2,14 +2,19 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Nông Trại Thú Cưng</title>
+<script src="../config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="hud"><div class="chip" id="lv"></div><div class="chip" id="coins"></div><div class="chip" id="cnt"></div><div class="chip" id="gems"></div></div>
 <div id="stage"></div>
+<button id="bIsland" type="button">🏝️ Về đảo</button>
 <div id="bar">
 <button id="bShop">🛒<br>Cửa hàng</button>
 <button id="bKho">📦<br>Kho</button>
