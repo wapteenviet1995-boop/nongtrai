@@ -39,5 +39,5 @@ button.btn:active{transform:translateY(2px);box-shadow:none}
 .card:not(:disabled):hover{transform:translateY(-3px)}
 @media(max-width:600px){button.btn{padding:7px 9px;font-size:13px}.pill{padding:4px 9px;font-size:13px}}
 
-/* HUD mobile: chia hàng cân đối */
-.hud{padding:0 8px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:stretch}.hud>*{min-width:0;text-align:center}.hud .pill{display:flex;align-items:center;justify-content:center}.hud .island{grid-column:span 2}.hud #shop{grid-column:span 2}.hud #all{grid-column:span 2}.hud #zm,.hud #vw,.hud #snd,.hud #reset{width:100%;padding-left:5px;padding-right:5px}@media(min-width:700px){.hud{display:flex;padding:0}.hud .island{order:-1}.hud>*{width:auto!important}}
+/* HUD gọn: 2 hàng, giữ khu 1/khu 2 để di chuyển */
+.hud{padding:0 8px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-items:center}.hud>*{width:auto!important;flex:0 0 auto}.hud .island{order:1}.hud .pill:nth-of-type(1){order:2}.hud .pill:nth-of-type(2){order:3}.hud #shop{order:4}.hud #all{order:5}.hud #vw{order:6}.hud #snd{order:7}.hud #reset{order:8}@media(max-width:600px){.hud{top:calc(env(safe-area-inset-top,0px) + 5px);padding:0 5px;gap:4px}.hud>*{font-size:11px!important}.hud .pill{padding:4px 7px}.hud button.btn{padding:6px 7px;border-radius:10px}.hud .island{flex-basis:auto}}
