@@ -22,12 +22,38 @@
 <nav class="bottom"><button id="seedBtn">🌱 Hạt giống</button><button id="warehouseBtn">📦 Kho</button></nav>
 </main><div class="modal" id="modal"><div class="card"><h2>🌱 Chọn hạt giống</h2><div class="seeds" id="seeds"></div><button class="close" id="close">Đóng</button></div></div>
 <script>
-(()=>{'use strict';const KEY='nongtrai_new_v1',C={carrot:{id:'carrot',n:'Cà rốt',i:'🥕',c:5,s:12,t:3000,x:3},corn:{id:'corn',n:'Ngô',i:'🌽',c:8,s:19,t:5000,x:5},tomato:{id:'tomato',n:'Cà chua',i:'🍅',c:12,s:28,t:7000,x:8},wheat:{id:'wheat',n:'Lúa mì',i:'🌾',c:15,s:35,t:9000,x:10}};
-const D={version:1,coins:100,gems:0,xp:0,level:1,selectedCrop:'carrot',inventory:{carrot:0,corn:0,tomato:0,wheat:0},plots:Array.from({length:8},()=>({state:'empty',crop:null,plantedAt:0,readyAt:0})),stats:{planted:0,harvested:0,earned:0}};const merge=(a,b)=>{if(!b||typeof b!=='object')return a;Object.keys(b).forEach(k=>{if(a[k]&&typeof a[k]==='object'&&!Array.isArray(a[k])&&b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k]))merge(a[k],b[k]);else a[k]=b[k]});return a};let S=JSON.parse(JSON.stringify(D));try{const x=localStorage.getItem(KEY);if(x)merge(S,JSON.parse(x))}catch(e){}let user=null;
-async function save(){localStorage.setItem(KEY,JSON.stringify(S));if(user)try{await firebase.firestore().collection('users').doc(user.uid).set({game:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){}}
-function draw(){document.getElementById('coins').textContent=Math.floor(S.coins||0);document.getElementById('gems').textContent=Math.floor(S.gems||0);document.getElementById('plots').innerHTML='';S.plots.forEach((p,i)=>{if(p.state==='grow'&&Date.now()>=p.readyAt)p.state='ready';const b=document.createElement('button');b.type='button';b.className='plot '+(p.state==='grow'?'grow ':'')+(p.state==='ready'?'ready':'');if(p.state==='empty')b.innerHTML='<span>🟫</span><small>Ô '+(i+1)+'</small>'; else if(p.state==='grow'){const c=C[p.crop];b.innerHTML='<span>'+c.i+'</span><small>'+formatTime(Math.max(0,p.readyAt-Date.now()))+'</small>'}else{const c=C[p.crop];b.innerHTML='<span>'+c.i+'</span><small>Thu hoạch</small>'}b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();act(i)});b.addEventListener('touchend',e=>{e.preventDefault();act(i)},{passive:false});document.getElementById('plots').appendChild(b)})}\nfunction formatTime(ms){if(ms<=0)return 'Chín!';return Math.ceil(ms/1000)+'s'}\nfunction addXP(n){S.xp=(Number(S.xp)||0)+n;while(S.xp>=(50+(Number(S.level)||1)-1)*35+50){const need=50+(Number(S.level)||1-1)*35;S.xp-=need;S.level=(Number(S.level)||1)+1}}
-function act(i){const p=S.plots[i];if(p.state==='grow'){if(Date.now()>=p.readyAt){p.state='ready';save();draw()}else{const c=C[p.crop];alert('Cây '+c.n+' đang lớn. Còn '+formatTime(p.readyAt-Date.now())+'.')}return}if(p.state==='ready'){const c=C[p.crop];S.coins+=c.s;S.inventory[c.id]=(S.inventory[c.id]||0)+1;S.stats.harvested=(S.stats.harvested||0)+1;S.stats.earned=(S.stats.earned||0)+c.s;addXP(c.x);S.plots[i]={state:'empty',crop:null,plantedAt:0,readyAt:0};save();draw();return}const c=C[S.selectedCrop];if(S.coins<c.c){alert('Không đủ xu');return}S.coins-=c.c;S.plots[i]={state:'grow',crop:c.id,plantedAt:Date.now(),readyAt:Date.now()+c.t};S.stats.planted=(S.stats.planted||0)+1;addXP(1);save();draw()}
-document.getElementById('seedBtn').addEventListener('click',()=>{const seeds=document.getElementById('seeds');seeds.innerHTML='';Object.entries(C).forEach(([k,c])=>{const b=document.createElement('button');b.className='seed';b.innerHTML='<span style="font-size:36px">'+c.i+'</span><b>'+c.n+'</b><small>🪙 '+c.c+' · Bán 🪙'+c.s+'</small>';b.onclick=()=>{S.selectedCrop=k;document.getElementById('modal').classList.remove('on');save()};seeds.appendChild(b)});document.getElementById('modal').classList.add('on')});document.getElementById('close').addEventListener('click',()=>document.getElementById('modal').classList.remove('on'));document.getElementById('back').addEventListener('click',()=>{location.assign('./game.html')});document.getElementById('warehouseBtn').addEventListener('click',()=>{location.assign('./kho.html')});setInterval(draw,1000);
-if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(async u=>{if(!u){location.replace('./login.html');return}user=u;try{const d=await firebase.firestore().collection('users').doc(u.uid).get({source:'server'});if(d.exists&&d.data().game){S=merge(JSON.parse(JSON.stringify(D)),d.data().game);localStorage.setItem(KEY,JSON.stringify(S))}}catch(e){try{const d=await firebase.firestore().collection('users').doc(u.uid).get();if(d.exists&&d.data().game){S=merge(JSON.parse(JSON.stringify(D)),d.data().game);localStorage.setItem(KEY,JSON.stringify(S))}}catch(_){}}draw()})}else draw();
+(()=>{
+'use strict';
+const KEY='nongtrai_new_v1';
+const C={
+ carrot:{id:'carrot',n:'Cà rốt',i:'🥕',c:5,s:12,t:3000,x:3},
+ corn:{id:'corn',n:'Ngô',i:'🌽',c:8,s:19,t:5000,x:5},
+ tomato:{id:'tomato',n:'Cà chua',i:'🍅',c:12,s:28,t:7000,x:8},
+ wheat:{id:'wheat',n:'Lúa mì',i:'🌾',c:15,s:35,t:9000,x:10}
+};
+const D={version:1,coins:100,gems:0,xp:0,level:1,selectedCrop:'carrot',inventory:{carrot:0,corn:0,tomato:0,wheat:0},plots:Array.from({length:8},()=>({state:'empty',crop:null,plantedAt:0,readyAt:0})),stats:{planted:0,harvested:0,earned:0},pets:{animals:[],capacity:4,feed:0},warehouse:{capacity:100,level:1,petCapacity:5,petLevel:1}};
+function clone(){return JSON.parse(JSON.stringify(D))}
+function merge(a,b){if(!b||typeof b!=='object')return a;Object.keys(a).forEach(k=>{if(b[k]!==undefined){if(a[k]&&typeof a[k]==='object'&&!Array.isArray(a[k])&&b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k]))merge(a[k],b[k]);else a[k]=b[k]}});return a}
+let S=clone(),user=null;
+try{const raw=localStorage.getItem(KEY);if(raw)S=merge(clone(),JSON.parse(raw))}catch(e){}
+const el=id=>document.getElementById(id);
+function formatTime(ms){return ms<=0?'Chín!':Math.ceil(ms/1000)+'s'}
+function addXP(n){S.xp=(Number(S.xp)||0)+n;const need=()=>50+((Number(S.level)||1)-1)*35;while(S.xp>=need()){S.xp-=need();S.level=(Number(S.level)||1)+1}}
+async function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(user)try{await firebase.firestore().collection('users').doc(user.uid).set({game:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error(e)}}
+function draw(){
+ el('coins').textContent=Math.floor(Number(S.coins)||0);el('gems').textContent=Math.floor(Number(S.gems)||0);
+ const box=el('plots');box.innerHTML='';
+ (S.plots||D.plots).forEach((p,i)=>{if(p.state==='grow'&&Date.now()>=p.readyAt)p.state='ready';const b=document.createElement('button');b.type='button';b.className='plot '+(p.state==='ready'?'ready':'');if(p.state==='empty')b.innerHTML='<span>🟫</span><small>Ô '+(i+1)+'</small>';else if(p.state==='grow'){const x=C[p.crop];b.innerHTML='<span>'+x.i+'</span><small>'+formatTime(p.readyAt-Date.now())+'</small>'}else{const x=C[p.crop];b.innerHTML='<span>'+x.i+'</span><small>Thu hoạch</small>'}b.onclick=()=>act(i);box.appendChild(b)})
+}
+function act(i){const p=S.plots[i];if(p.state==='grow'){if(Date.now()>=p.readyAt){p.state='ready';save();draw()}else alert('Cây đang lớn. Còn '+formatTime(p.readyAt-Date.now()));return}if(p.state==='ready'){const x=C[p.crop];S.coins=(Number(S.coins)||0)+x.s;S.inventory[x.id]=(Number(S.inventory[x.id])||0)+1;S.stats.harvested=(Number(S.stats.harvested)||0)+1;S.stats.earned=(Number(S.stats.earned)||0)+x.s;addXP(x.x);S.plots[i]={state:'empty',crop:null,plantedAt:0,readyAt:0};save();draw();return}const x=C[S.selectedCrop]||C.carrot;if((Number(S.coins)||0)<x.c){alert('Không đủ xu');return}S.coins-=x.c;S.plots[i]={state:'grow',crop:x.id,plantedAt:Date.now(),readyAt:Date.now()+x.t};S.stats.planted=(Number(S.stats.planted)||0)+1;addXP(1);save();draw()}
+function openSeeds(){const box=el('seeds');box.innerHTML='';Object.entries(C).forEach(([k,x])=>{const b=document.createElement('button');b.type='button';b.className='seed';b.innerHTML='<span style="font-size:36px">'+x.i+'</span><b>'+x.n+'</b><small>🪙 '+x.c+' · Bán 🪙'+x.s+'</small>';b.onclick=()=>{S.selectedCrop=k;el('modal').classList.remove('on');save()};box.appendChild(b)});el('modal').classList.add('on')}
+el('seedBtn').onclick=openSeeds;
+el('warehouseBtn').onclick=()=>location.href='./kho.html';
+el('back').onclick=()=>location.href='./game.html';
+el('close').onclick=()=>el('modal').classList.remove('on');
+draw();setInterval(draw,1000);
+if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined')return;
+try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG)}catch(e){console.error(e);return}
+firebase.auth().onAuthStateChanged(async u=>{if(!u){location.replace('./login.html');return}user=u;try{const d=await firebase.firestore().collection('users').doc(u.uid).get();if(d.exists&&d.data().game){S=merge(clone(),d.data().game);localStorage.setItem(KEY,JSON.stringify(S))}}catch(e){console.error('Tải dữ liệu vườn:',e)}draw()});
 })();
 </script></body></html>
