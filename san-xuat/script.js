@@ -44,11 +44,12 @@ const UPG={1:{coins:250,parts:{oc:3,banhrang:2}},2:{coins:600,parts:{banhrang:4,
 const SPEED=lv=>0.8**((lv||1)-1);
 /* ========================================================== */
 
-const KEY='nt_san_xuat_v1';
-let S={coins:500,items:{},bld:{lo:{own:1,n:2,q:[]}},tab:'lo'};
+const KEY='nt_san_xuat_v1',MAIN_KEY='nongtrai_new_v1',PET_KEY='ntt_v2';
+let S={coins:0,items:{},bld:{lo:{own:1,n:2,q:[]}},tab:'lo'},MAIN={},PET={},fbUser=null;
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const $=id=>document.getElementById(id);
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+function syncIn(){try{MAIN=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||{};PET=JSON.parse(localStorage.getItem(PET_KEY)||'{}')||{};S.coins=Number(MAIN.coins)||0;S.items=S.items||{};const cm={lua:'wheat',carot:'carrot',cachua:'tomato',ngo:'corn',dau:'berry',bi:'pumpkin'};for(const [a,b] of Object.entries(cm))S.items[a]=Number(MAIN.inventory?.[b])||0;const pm={cow:'sua',lamb:'len',sheep:'len',sheep_flower:'len',pig:'thit',pig_baby:'thit'};for(const k of ['sua','len','thit'])S.items[k]=0;for(const [a,n] of Object.entries(PET.inv||{})){const b=pm[a];if(b)S.items[b]=(S.items[b]||0)+(Number(n)||0)}}catch(e){}}
+const save=()=>{try{MAIN=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||MAIN||{};MAIN.coins=Number(S.coins)||0;MAIN.inventory=MAIN.inventory||{};const cm={lua:'wheat',carot:'carrot',cachua:'tomato',ngo:'corn',dau:'berry',bi:'pumpkin'};for(const [a,b] of Object.entries(cm))MAIN.inventory[b]=Number(S.items[a])||0;MAIN.production=MAIN.production||{};MAIN.production.items={};for(const [k,n] of Object.entries(S.items))if(ITEMS[k]&&!['crop','pet'].includes(ITEMS[k][2]))MAIN.production.items[k]=n;localStorage.setItem(KEY,JSON.stringify(S));localStorage.setItem(MAIN_KEY,JSON.stringify(MAIN));if(fbUser)firebase.firestore().collection('users').doc(fbUser.uid).set({game:MAIN,production:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error(e)}};
 const have=k=>S.items[k]||0;
 const add=(k,n)=>{S.items[k]=have(k)+n;if(S.items[k]<=0)delete S.items[k]};
 const fmt=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
@@ -110,11 +111,14 @@ document.addEventListener('click',e=>{
   else if(d.sell){const n=have(d.sell),g=n*ITEMS[d.sell][3];delete S.items[d.sell];S.coins+=g;toast('Bán được 🪙 '+g)}
   save();render();
 });
-$('demo').onclick=()=>{for(const k in ITEMS)if(['crop','pet','mat'].includes(ITEMS[k][2]))add(k,5);toast('Đã thêm nguyên liệu thử');save();render()};
+
 $('sellAll').onclick=()=>{let g=0;for(const k of Object.keys(S.items))if(ITEMS[k][2]==='prod'){g+=S.items[k]*ITEMS[k][3];delete S.items[k]}
   if(!g)return toast('Chưa có thành phẩm');S.coins+=g;toast('Bán được 🪙 '+g);save();render()};
 setInterval(()=>{if(S.bld[S.tab])render()},1000);
-render();
+syncIn();render();
+$('island').onclick=()=>location.href='../game.html';
+window.addEventListener('pageshow',()=>{syncIn();render()});
+if(typeof firebase!=='undefined'&&typeof FB_CONFIG!=='undefined'){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);firebase.auth().onAuthStateChanged(async u=>{if(!u)return location.replace('../login.html');fbUser=u;try{const d=await firebase.firestore().collection('users').doc(u.uid).get();if(d.exists){const x=d.data();if(x.game)localStorage.setItem(MAIN_KEY,JSON.stringify(x.game));if(x.petGame)localStorage.setItem(PET_KEY,JSON.stringify(x.petGame));if(x.production)S=Object.assign(S,x.production);syncIn();render()}}catch(e){console.error(e)}})}catch(e){console.error(e)}}
 
 /* ====== NỐI VỚI GAME CỦA BẠN ======
    Game gọi các hàm này để đồng bộ kho và xu: */
