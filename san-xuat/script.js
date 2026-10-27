@@ -45,10 +45,11 @@ const SPEED=lv=>0.8**((lv||1)-1);
 /* ========================================================== */
 
 const KEY='nt_san_xuat_v1',MAIN_KEY='nongtrai_new_v1',PET_KEY='ntt_v2';
-let S={coins:0,items:{},bld:{lo:{own:1,n:2,q:[]}},tab:'lo'},MAIN={},PET={},fbUser=null;
+let S={coins:0,items:{},bld:{lo:{own:1,n:2,q:[],lv:1}},tab:'lo'},MAIN={},PET={},fbUser=null;
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const $=id=>document.getElementById(id);
-function syncIn(){try{MAIN=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||{};PET=JSON.parse(localStorage.getItem(PET_KEY)||'{}')||{};S.coins=Number(MAIN.coins)||0;S.items=S.items||{};const cm={lua:'wheat',carot:'carrot',cachua:'tomato',ngo:'corn',dau:'berry',bi:'pumpkin'};for(const [a,b] of Object.entries(cm))S.items[a]=Number(MAIN.inventory?.[b])||0;const pm={cow:'sua',lamb:'len',sheep:'len',sheep_flower:'len',pig:'thit',pig_baby:'thit'};for(const k of ['sua','len','thit'])S.items[k]=0;for(const [a,n] of Object.entries(PET.inv||{})){const b=pm[a];if(b)S.items[b]=(S.items[b]||0)+(Number(n)||0)}}catch(e){}}
+function normalize(){S.items=S.items||{};S.bld=S.bld||{};if(!S.bld.lo)S.bld.lo={own:1,n:2,q:[],lv:1};for(const id of Object.keys(S.bld)){const x=S.bld[id];x.n=Number(x.n)||BUILDINGS[id]?.slots||2;x.q=Array.isArray(x.q)?x.q:[];x.lv=Number(x.lv)||1}if(!BUILDINGS[S.tab])S.tab='lo'}
+function syncIn(){try{normalize();MAIN=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||{};PET=JSON.parse(localStorage.getItem(PET_KEY)||'{}')||{};S.coins=Number(MAIN.coins)||0;S.items=S.items||{};const cm={lua:'wheat',carot:'carrot',cachua:'tomato',ngo:'corn',dau:'berry',bi:'pumpkin'};for(const [a,b] of Object.entries(cm))S.items[a]=Number(MAIN.inventory?.[b])||0;const pm={cow:'sua',lamb:'len',sheep:'len',sheep_flower:'len',pig:'thit',pig_baby:'thit'};for(const k of ['sua','len','thit'])S.items[k]=0;for(const [a,n] of Object.entries(PET.inv||{})){const b=pm[a];if(b)S.items[b]=(S.items[b]||0)+(Number(n)||0)}}catch(e){}}
 const save=()=>{try{MAIN=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||MAIN||{};MAIN.coins=Number(S.coins)||0;MAIN.inventory=MAIN.inventory||{};const cm={lua:'wheat',carot:'carrot',cachua:'tomato',ngo:'corn',dau:'berry',bi:'pumpkin'};for(const [a,b] of Object.entries(cm))MAIN.inventory[b]=Number(S.items[a])||0;MAIN.production=MAIN.production||{};MAIN.production.items={};for(const [k,n] of Object.entries(S.items))if(ITEMS[k]&&!['crop','pet'].includes(ITEMS[k][2]))MAIN.production.items[k]=n;localStorage.setItem(KEY,JSON.stringify(S));localStorage.setItem(MAIN_KEY,JSON.stringify(MAIN));if(fbUser)firebase.firestore().collection('users').doc(fbUser.uid).set({game:MAIN,production:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error(e)}};
 const have=k=>S.items[k]||0;
 const add=(k,n)=>{S.items[k]=have(k)+n;if(S.items[k]<=0)delete S.items[k]};
@@ -56,6 +57,7 @@ const fmt=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60
 let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1600)}
 
 function render(){
+  normalize();
   $('coin').textContent='🪙 '+S.coins;
   $('tabs').innerHTML=Object.entries(BUILDINGS).map(([id,b])=>{
     const own=S.bld[id]?.own;
@@ -85,9 +87,9 @@ function render(){
       return `<div class="rec"><span class="em">${it[0]}</span><div class="inf"><b>${it[1]}</b><div class="need">${need}</div><div class="sub" style="margin:3px 0 0">⏱ ${fmt(r.t*SPEED(st.lv))} · ${it[2]==='part'?'linh kiện nâng cấp':'bán 🪙'+it[3]}</div></div><button class="btn" data-make="${RECIPES.indexOf(r)}" ${ok?'':'disabled'}>Làm</button></div>`}).join('');
     $('main').innerHTML=`<div class="card"><h2>${b.em} ${b.name} <span class="chip">Cấp ${st.lv||1}</span></h2><div class="slots">${slots}</div></div>${upg}<div class="card"><h2>📜 Công thức</h2>${recs}</div>`;
   }
-  const grp=t=>Object.entries(S.items).filter(([k])=>ITEMS[k][2]===t).map(([k,n])=>`<div class="it"><span class="em">${ITEMS[k][0]}</span>${ITEMS[k][1]}<br><b>×${n}</b>${t==='prod'?`<br><button data-sell="${k}">Bán 🪙${ITEMS[k][3]*n}</button>`:''}</div>`).join('');
+  const grp=t=>Object.entries(S.items).filter(([k])=>ITEMS[k]&&ITEMS[k][2]===t).map(([k,n])=>`<div class="it"><span class="em">${ITEMS[k][0]}</span>${ITEMS[k][1]}<br><b>×${n}</b>${t==='prod'?`<br><button data-sell="${k}">Bán 🪙${ITEMS[k][3]*n}</button>`:''}</div>`).join('');
   const sec=(t,l)=>{const g=grp(t);return g?`<div class="sub">${l}</div><div class="grid">${g}</div>`:''};
-  $('kho').innerHTML=(sec('crop','Cây trồng')+sec('pet','Sản phẩm vật nuôi')+sec('mat','Vật liệu')+sec('part','Linh kiện cơ khí')+sec('prod','Thành phẩm'))||'<span class="sub">Kho trống – bấm “Nhận nguyên liệu thử”.</span>';
+  $('kho').innerHTML=(sec('crop','Cây trồng')+sec('pet','Sản phẩm vật nuôi')+sec('mat','Vật liệu')+sec('part','Linh kiện cơ khí')+sec('prod','Thành phẩm'))||'<span class="sub">Kho đang trống.</span>';
 }
 
 document.addEventListener('click',e=>{
