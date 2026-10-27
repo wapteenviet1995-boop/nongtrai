@@ -2,14 +2,18 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Đào Mỏ</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap">
+<script src="../config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
-  <div class="hud"><div class="floor">TẦNG <span id="fl">1</span></div><div class="res">🎒 <span id="xu">0</span></div><div class="res">💎 <span id="dm">0</span></div></div>
+  <div class="hud"><button id="island" style="border:0;border-radius:10px;padding:7px 10px;font-weight:800;cursor:pointer">🏝️ Về đảo</button><div class="floor">TẦNG <span id="fl">1</span></div><div class="res">🎒 <span id="xu">0</span></div><div class="res">💎 <span id="dm">0</span></div></div>
   <div class="stage">
     <div class="side" id="items"></div>
     <div class="wrap"><div class="grid" id="grid"></div></div>
