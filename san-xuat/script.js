@@ -3,11 +3,12 @@
 const ITEMS={
   lua:['🌾','Lúa mì','crop',5],  carot:['🥕','Cà rốt','crop',6], cachua:['🍅','Cà chua','crop',8],
   ngo:['🌽','Ngô','crop',9],     dau:['🍓','Dâu tây','crop',12], bi:['🎃','Bí ngô','crop',14],
-  trung:['🥚','Trứng','pet',10], sua:['🥛','Sữa bò','pet',18],  thit:['🥓','Thịt heo','pet',25], len:['🧶','Len cừu','pet',20],
+  trung:['🥚','Trứng gà','pet',10], trungvit:['🥚','Trứng vịt','pet',14], sua:['🥛','Sữa bò','pet',18], suade:['🥛','Sữa dê','pet',22], matong:['🍯','Mật ong','pet',28], thit:['🥓','Thịt heo','pet',25], len:['🧶','Len cừu','pet',20],
   banhmi:['🍞','Bánh mì','prod',45], banhdau:['🍰','Bánh kem dâu','prod',110], banhbi:['🥧','Bánh bí ngô','prod',95],
   phomai:['🧀','Phô mai','prod',70], kem:['🍦','Kem dâu','prod',85], bo:['🧈','Bơ sữa','prod',60],
   sup:['🍲','Súp cà chua thịt','prod',90], bapbo:['🍿','Bắp rang bơ','prod',75], salad:['🥗','Salad trứng','prod',65],
   khan:['🧣','Khăn len','prod',60], mu:['🧢','Mũ len','prod',95], ao:['🧥','Áo len','prod',150],
+  trungmuoi:['🥚','Trứng vịt muối','prod',55], banhmat:['🥞','Bánh mật ong','prod',100], keodeo:['🍬','Kẹo mật ong','prod',85], suachua:['🥛','Sữa chua dê','prod',90], banhde:['🧁','Bánh sữa dê','prod',120],
   // vật liệu (giá = giá mua ở xưởng cơ khí) và linh kiện (dùng để nâng cấp, không bán)
   sat:['🔗','Sắt thanh','mat',30], go:['🪵','Gỗ','mat',15], than:['⚫','Than','mat',20],
   oc:['🔩','Ốc vít','part',0], banhrang:['⚙️','Bánh răng','part',0], dongco:['🛠️','Động cơ','part',0]
@@ -34,6 +35,11 @@ const RECIPES=[
   {b:'det',out:'khan',in:{len:2},t:30},
   {b:'det',out:'mu',in:{len:2,bi:1},t:45},
   {b:'det',out:'ao',in:{len:4,carot:1},t:70},
+  {b:'bep',out:'trungmuoi',in:{trungvit:2},t:35},
+  {b:'lo',out:'banhmat',in:{lua:2,trung:1,matong:1},t:50},
+  {b:'bep',out:'keodeo',in:{matong:2},t:40},
+  {b:'sua',out:'suachua',in:{suade:2},t:35},
+  {b:'lo',out:'banhde',in:{lua:2,suade:1,trung:1},t:55},
   {b:'co',out:'oc',in:{sat:1},t:10},
   {b:'co',out:'banhrang',in:{sat:2,than:1},t:20},
   {b:'co',out:'dongco',in:{banhrang:2,oc:2,than:2},t:45}
@@ -49,7 +55,7 @@ let S={coins:0,items:{},bld:{lo:{own:1,n:2,q:[],lv:1}},tab:'lo'},MAIN={},PET={},
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const $=id=>document.getElementById(id);
 function normalize(){S.items=S.items||{};S.bld=S.bld||{};if(!S.bld.lo)S.bld.lo={own:1,n:2,q:[],lv:1};for(const id of Object.keys(S.bld)){const x=S.bld[id];x.n=Number(x.n)||BUILDINGS[id]?.slots||2;x.q=Array.isArray(x.q)?x.q:[];x.lv=Number(x.lv)||1}if(!BUILDINGS[S.tab])S.tab='lo'}
-function syncIn(){try{normalize();MAIN=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||{};PET=JSON.parse(localStorage.getItem(PET_KEY)||'{}')||{};S.coins=Number(MAIN.coins)||0;S.items=S.items||{};const cm={lua:'wheat',carot:'carrot',cachua:'tomato',ngo:'corn',dau:'berry',bi:'pumpkin'};for(const [a,b] of Object.entries(cm))S.items[a]=Number(MAIN.inventory?.[b])||0;const pm={cow:'sua',lamb:'len',sheep:'len',sheep_flower:'len',pig:'thit',pig_baby:'thit'};for(const k of ['sua','len','thit'])S.items[k]=0;for(const [a,n] of Object.entries(PET.inv||{})){const b=pm[a];if(b)S.items[b]=(S.items[b]||0)+(Number(n)||0)}}catch(e){}}
+function syncIn(){try{normalize();MAIN=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||{};PET=JSON.parse(localStorage.getItem(PET_KEY)||'{}')||{};S.coins=Number(MAIN.coins)||0;S.items=S.items||{};const cm={lua:'wheat',carot:'carrot',cachua:'tomato',ngo:'corn',dau:'berry',bi:'pumpkin'};for(const [a,b] of Object.entries(cm))S.items[a]=Number(MAIN.inventory?.[b])||0;const pm={cow:'sua',lamb:'len',sheep:'len',sheep_flower:'len',pig:'thit',pig_baby:'thit',chicken:'trung',duck:'trungvit',goat:'suade',bee:'matong'};for(const k of ['sua','len','thit','trung','trungvit','suade','matong'])S.items[k]=0;for(const [a,n] of Object.entries(PET.inv||{})){const b=pm[a];if(b)S.items[b]=(S.items[b]||0)+(Number(n)||0)}}catch(e){}}
 const save=()=>{try{MAIN=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||MAIN||{};MAIN.coins=Number(S.coins)||0;MAIN.inventory=MAIN.inventory||{};const cm={lua:'wheat',carot:'carrot',cachua:'tomato',ngo:'corn',dau:'berry',bi:'pumpkin'};for(const [a,b] of Object.entries(cm))MAIN.inventory[b]=Number(S.items[a])||0;MAIN.production=MAIN.production||{};MAIN.production.items={};for(const [k,n] of Object.entries(S.items))if(ITEMS[k]&&!['crop','pet'].includes(ITEMS[k][2]))MAIN.production.items[k]=n;localStorage.setItem(KEY,JSON.stringify(S));localStorage.setItem(MAIN_KEY,JSON.stringify(MAIN));if(fbUser)firebase.firestore().collection('users').doc(fbUser.uid).set({game:MAIN,production:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error(e)}};
 const have=k=>S.items[k]||0;
 const add=(k,n)=>{S.items[k]=have(k)+n;if(S.items[k]<=0)delete S.items[k]};
