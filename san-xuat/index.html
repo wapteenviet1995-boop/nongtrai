@@ -2,21 +2,25 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Khu Sản Xuất – Nông Trại Đảo Bay</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><h1>🏭 Khu Sản Xuất</h1><div class="coin" id="coin"></div></div>
+  <div class="top"><h1>🏭 Khu Sản Xuất</h1><div class="coin" id="coin"></div><button class="btn o" id="island">🏝️ Về đảo</button></div>
   <div class="tabs" id="tabs"></div>
   <div id="main"></div>
   <div class="card"><h2>📦 Kho</h2><div id="kho"></div>
-    <div class="row" style="margin-top:10px"><button class="btn o" id="demo">+ Nhận nguyên liệu thử</button><button class="btn" id="sellAll">Bán hết thành phẩm</button></div>
+    <div class="row" style="margin-top:10px"><button class="btn" id="sellAll">Bán hết thành phẩm</button></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="../config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
