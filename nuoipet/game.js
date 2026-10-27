@@ -10,7 +10,8 @@ const IMG={
  sheep_flower:"img/sheep_flower.webp",
  pig_flower:"img/pig_flower.webp",
  cow:"img/cow.webp",
- lamb:"img/lamb.webp"
+ lamb:"img/lamb.webp",
+ chicken:"../img/ga.png",duck:"../img/vit.png",goat:"../img/de.png",bee:"../img/ong.png"
 };
 const LV_H=50,LV_F=60;const DAY=864e5, RENT=7*DAY, CAP=10, FEED_COST=4;
 const T={
@@ -22,6 +23,10 @@ const T={
  pig_blue:{n:'Heo xanh',p:'Ngọc xanh',e:'💠',v:35,t:25,c:300,s:13},
  sheep_flower:{n:'Cừu hoa đỏ',p:'Len hoa',e:'🧶',v:30,t:22,c:320,s:14},
  cow:{n:'Bò sữa',p:'Sữa',e:'🥛',v:40,t:22,c:400,s:14},
+ chicken:{n:'Gà',p:'Trứng',e:'🥚',v:18,t:16,c:120,s:11},
+ duck:{n:'Vịt',p:'Trứng vịt',e:'🥚',v:22,t:18,c:160,s:12},
+ goat:{n:'Dê',p:'Sữa dê',e:'🥛',v:32,t:20,c:280,s:13},
+ bee:{n:'Ong',p:'Mật ong',e:'🍯',v:45,t:25,c:350,s:9},
  pig_gold:{n:'Heo vàng có cánh',p:'Kim Cương',e:'💎',g:1,t:60,gc:12,s:13}
 };
 const ST={
