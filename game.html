@@ -240,6 +240,10 @@ body{overflow:hidden}
       location.href='./trong-cay/index.html';
       return;
     }
+    if(key==='mine'){
+      location.href='./dao-mo/index.html';
+      return;
+    }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
     document.getElementById('mt').textContent=d[0];
     document.getElementById('mb').innerHTML=d[1];
