@@ -150,7 +150,7 @@ body{overflow:hidden}
 .pet-shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
 .pet-shop-item{border:2px solid #b4935c;border-radius:14px;background:#fffdf2;color:#3b2919;padding:10px;cursor:pointer;display:grid;gap:3px;text-align:center}
 .pet-shop-item img{width:82px;height:82px;object-fit:contain;margin:auto}.pet-shop-item b{font-size:15px}.pet-shop-item span{font-weight:1000}.pet-shop-item small{font-size:11px;color:#66553f}
-</style>
+</style>\n<link rel="stylesheet" href="./don-hang/style.css">
 </head>
 <body>
 <main id="game">
@@ -182,7 +182,7 @@ body{overflow:hidden}
     </div>
   </header>
 
-  <aside class="notice">
+  <button class="order-fab" id="orderBtn">📋 Đơn hàng</button>\n\n  <aside class="notice">
     <h3>🔔 THÔNG BÁO</h3>
     <div>🎉 Sự kiện mới đã bắt đầu!<br>🐉 Rồng mới đã xuất hiện!<br>🏆 BXH tuần đã cập nhật!<br>🎁 Đăng nhập hôm nay nhận quà!</div>
   </aside>
@@ -201,7 +201,7 @@ body{overflow:hidden}
   <div class="profile-dock"><button id="profileDockBtn">👤 Hồ sơ</button></div>
 </main>
 
-<div class="profile-panel" id="profilePanel"><div class="profile-card"><h2>👤 Hồ sơ</h2><div class="profile-info"><b>Nông Dân Anh</b><br><small>⏳ Đang tải dữ liệu...</small></div><button class="profile-logout" id="profileLogout">🚪 Đăng xuất</button><button class="profile-close" id="profileClose">Đóng</button></div></div>
+<div class="order-overlay"><div class="order-board"><div class="order-head"><span>📋</span><h2>Giao Đơn Hàng</h2><button class="order-close">✕</button></div><div class="order-grid"><div class="orders"></div><aside class="side"><div><b>Tiến độ hôm nay</b><div class="progress"><i></i></div><strong class="progtext">0/5</strong><p>Hoàn thành đơn hàng để nhận Xu và XP.</p></div><div class="truck">🚚</div><button class="back">🏝️ Về đảo</button></aside></div></div></div><div class="order-toast"></div>\n\n<div class="profile-panel" id="profilePanel"><div class="profile-card"><h2>👤 Hồ sơ</h2><div class="profile-info"><b>Nông Dân Anh</b><br><small>⏳ Đang tải dữ liệu...</small></div><button class="profile-logout" id="profileLogout">🚪 Đăng xuất</button><button class="profile-close" id="profileClose">Đóng</button></div></div>
 
 <div class="modal-bg" id="modal">
   <div class="modal">
@@ -211,7 +211,7 @@ body{overflow:hidden}
   </div>
 </div>
 
-<script src="./game.js?v=20261024-newpet"></script>
+<script src="./game.js?v=20261024-newpet"></script>\n<script src="./don-hang/script.js"></script>
 
 <script>
 (function(){
