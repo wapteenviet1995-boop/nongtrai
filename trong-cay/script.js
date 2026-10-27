@@ -19,7 +19,9 @@ const fresh=()=>({coins:30,xp:0,sel:'carrot',snd:true,plots:Array(40).fill(null)
 let S=(()=>{try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.plots&&d.plots.length===40)return d}catch(e){}return fresh()})();
 let mainState=null,fbUser=null,cloudTimer=0;
 function loadMainLocal(){try{const d=JSON.parse(localStorage.getItem(MAIN_KEY));if(d&&typeof d==='object'){mainState=d;if(Number.isFinite(Number(d.coins)))S.coins=Number(d.coins);if(d.inventory)S.inventory=d.inventory}}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));mainState=mainState||JSON.parse(localStorage.getItem(MAIN_KEY)||'{}');mainState.coins=Number(S.coins)||0;localStorage.setItem(MAIN_KEY,JSON.stringify(mainState))}catch(e){}if(fbUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await firebase.firestore().collection('users').doc(fbUser.uid).set({game:mainState,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error('Lưu vườn:',e)}},0)}}
+function refreshMoney(){const before=Number(S.coins)||0;loadMainLocal();if(Number(S.coins)!==before){draw()}}
+window.addEventListener('pageshow',refreshMoney);window.addEventListener('focus',refreshMoney);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshMoney()});window.addEventListener('storage',e=>{if(e.key===MAIN_KEY)refreshMoney()});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));mainState=JSON.parse(localStorage.getItem(MAIN_KEY)||'{}')||mainState||{};mainState.coins=Number(S.coins)||0;localStorage.setItem(MAIN_KEY,JSON.stringify(mainState))}catch(e){}if(fbUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(async()=>{try{await firebase.firestore().collection('users').doc(fbUser.uid).set({game:mainState,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true})}catch(e){console.error('Lưu vườn:',e)}},0)}}
 loadMainLocal();
 const xpNeed=l=>50+(Math.max(1,l)-1)*35,level=()=>Math.max(1,Number(mainState?.level)||1),C=id=>CROPS.find(c=>c.id===id);
 const stage=$('stage'),els=[];let ac,prevCoins=S.coins;
