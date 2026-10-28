@@ -41,3 +41,17 @@ button:focus-visible{outline:3px solid #fff;outline-offset:2px}
 .hint{font-size:13px;opacity:.8;margin:6px 0 0}
 #toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:var(--panel);border:3px solid var(--line);border-radius:14px;padding:6px 14px;font-weight:700;display:none;z-index:99;max-width:90vw;text-align:center}
 @media (prefers-reduced-motion:reduce){.animal .in,.staff .in,.bub{animation:none}}
+
+/* Gà, Vịt, Dê, Ong: ảnh PNG không có khung nền và chuyển động riêng */
+.animal-new{background:transparent!important;border:0!important;box-shadow:none!important;filter:none}
+.animal-new .in{background:transparent!important;border:0!important;box-shadow:none!important}
+.animal-new img{background:transparent!important;border:0!important;box-shadow:none!important;filter:drop-shadow(0 3px 2px #0004)}
+.animal-new .bar{z-index:3}
+.animal-chicken.moving .in,.animal-duck.moving .in{animation:petWalk .34s ease-in-out infinite}
+.animal-goat.moving .in{animation:goatWalk .38s ease-in-out infinite}
+.animal-bee .in{animation:beeHover .48s ease-in-out infinite}
+.animal-bee.moving .in{animation:beeFly .24s ease-in-out infinite}
+@keyframes petWalk{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-5%) rotate(1deg)}}
+@keyframes goatWalk{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-4%) rotate(1deg)}}
+@keyframes beeHover{0%,100%{transform:translateY(-3%)}50%{transform:translateY(5%)}}
+@keyframes beeFly{0%,100%{transform:translateY(-7%) rotate(-2deg)}50%{transform:translateY(5%) rotate(2deg)}}
