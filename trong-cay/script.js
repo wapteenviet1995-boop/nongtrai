@@ -1,19 +1,19 @@
 const CROPS=[
-{id:'carrot',n:'Cà rốt',e:'🥕',cost:5,sec:10,sell:11,lv:1},
-{id:'wheat',n:'Lúa mì',e:'🌾',cost:9,sec:20,sell:20,lv:1},
-{id:'potato',n:'Khoai tây',e:'🥔',cost:12,sec:30,sell:28,lv:2},
-{id:'tomato',n:'Cà chua',e:'🍅',cost:16,sec:40,sell:38,lv:2},
-{id:'eggplant',n:'Cà tím',e:'🍆',cost:22,sec:55,sell:52,lv:3},
-{id:'corn',n:'Bắp',e:'🌽',cost:28,sec:70,sell:66,lv:3},
-{id:'berry',n:'Dâu tây',e:'🍓',cost:45,sec:120,sell:108,lv:4},
-{id:'pumpkin',n:'Bí ngô',e:'🎃',cost:90,sec:240,sell:230,lv:5},
-{id:'melon',n:'Dưa hấu',e:'🍉',cost:130,sec:300,sell:330,lv:6},
-{id:'grape',n:'Nho',e:'🍇',cost:180,sec:360,sell:470,lv:7},
-{id:'pine',n:'Dứa',e:'🍍',cost:260,sec:480,sell:700,lv:8},
-{id:'sun',n:'Hướng dương',e:'🌻',cost:400,sec:600,sell:1100,lv:9}];
+{id:'carrot',n:'Cà rốt',e:'🥕',cost:6,sec:30,sell:11,lv:1},
+{id:'wheat',n:'Lúa mì',e:'🌾',cost:10,sec:45,sell:20,lv:1},
+{id:'potato',n:'Khoai tây',e:'🥔',cost:18,sec:70,sell:30,lv:3},
+{id:'tomato',n:'Cà chua',e:'🍅',cost:28,sec:100,sell:45,lv:5},
+{id:'eggplant',n:'Cà tím',e:'🍆',cost:42,sec:140,sell:68,lv:7},
+{id:'corn',n:'Bắp',e:'🌽',cost:60,sec:180,sell:95,lv:9},
+{id:'berry',n:'Dâu tây',e:'🍓',cost:90,sec:240,sell:145,lv:11},
+{id:'pumpkin',n:'Bí ngô',e:'🎃',cost:140,sec:330,sell:220,lv:13},
+{id:'melon',n:'Dưa hấu',e:'🍉',cost:210,sec:420,sell:330,lv:15},
+{id:'grape',n:'Nho',e:'🍇',cost:300,sec:540,sell:470,lv:17},
+{id:'pine',n:'Dứa',e:'🍍',cost:430,sec:720,sell:680,lv:20},
+{id:'sun',n:'Hướng dương',e:'🌻',cost:650,sec:900,sell:1020,lv:24}];
 const W=1672,H=941,PW=125,PH=95;
 const X=[[232,381,528,676],[1011,1161,1311,1461]],Y=[[263,379,495,611,724],[261,377,494,610,722]];
-const NEED=[[1,1,2,3,4],[5,6,7,8,9]];
+const NEED=[[1,1,3,6,10],[14,18,22,27,32]];
 const KEY='vuon-cay-v1',MAIN_KEY='nongtrai_new_v1',$=id=>document.getElementById(id);
 const fresh=()=>({coins:30,xp:0,sel:'carrot',snd:true,plots:Array(40).fill(null),inventory:{}});
 let S=(()=>{try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.plots&&d.plots.length===40)return d}catch(e){}return fresh()})();
