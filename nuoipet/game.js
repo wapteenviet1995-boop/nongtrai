@@ -13,21 +13,21 @@ const IMG={
  lamb:"img/lamb.webp",
  chicken:"../img/ga.png",duck:"../img/vit.png",goat:"../img/de.png",bee:"../img/ong.png"
 };
-const LV_H=50,LV_F=60;const DAY=864e5, RENT=7*DAY, CAP=10, FEED_COST=4;
+const LV_H=20,LV_F=25;const DAY=864e5, RENT=7*DAY, CAP=10, FEED_COST=8;
 const T={
- pig_baby:{n:'Heo con',p:'Nấm',e:'🍄',v:6,t:12,c:40,s:9},
- lamb:{n:'Cừu con',p:'Len',e:'🧶',v:12,t:14,c:100,s:11},
- pig:{n:'Heo hồng',p:'Nấm',e:'🍄',v:14,t:14,c:120,s:12},
- sheep:{n:'Cừu sừng',p:'Len',e:'🧶',v:18,t:16,c:150,s:13},
- pig_flower:{n:'Heo hoa vàng',p:'Hoa',e:'🌼',v:22,t:18,c:250,s:12},
- pig_blue:{n:'Heo xanh',p:'Ngọc xanh',e:'💠',v:35,t:25,c:300,s:13},
- sheep_flower:{n:'Cừu hoa đỏ',p:'Len hoa',e:'🧶',v:30,t:22,c:320,s:14},
- cow:{n:'Bò sữa',p:'Sữa',e:'🥛',v:40,t:22,c:400,s:14},
- chicken:{n:'Gà',p:'Trứng',e:'🥚',v:18,t:16,c:120,s:11},
- duck:{n:'Vịt',p:'Trứng vịt',e:'🥚',v:22,t:18,c:160,s:12},
- goat:{n:'Dê',p:'Sữa dê',e:'🥛',v:32,t:20,c:280,s:13},
- bee:{n:'Ong',p:'Mật ong',e:'🍯',v:45,t:25,c:350,s:9},
- pig_gold:{n:'Heo vàng có cánh',p:'Kim Cương',e:'💎',g:1,t:60,gc:12,s:13}
+ pig_baby:{n:'Heo con',p:'Nấm',e:'🍄',v:6,t:35,c:80,s:9,lv:1},
+ chicken:{n:'Gà',p:'Trứng',e:'🥚',v:18,t:45,c:150,s:11,lv:2},
+ lamb:{n:'Cừu con',p:'Len',e:'🧶',v:12,t:55,c:180,s:11,lv:3},
+ pig:{n:'Heo hồng',p:'Nấm',e:'🍄',v:14,t:65,c:240,s:12,lv:4},
+ duck:{n:'Vịt',p:'Trứng vịt',e:'🥚',v:22,t:75,c:320,s:12,lv:5},
+ sheep:{n:'Cừu sừng',p:'Len',e:'🧶',v:18,t:90,c:420,s:13,lv:6},
+ goat:{n:'Dê',p:'Sữa dê',e:'🥛',v:32,t:110,c:600,s:13,lv:8},
+ cow:{n:'Bò sữa',p:'Sữa',e:'🥛',v:40,t:130,c:850,s:14,lv:10},
+ pig_flower:{n:'Heo hoa vàng',p:'Hoa',e:'🌼',v:22,t:150,c:1100,s:12,lv:12},
+ bee:{n:'Ong',p:'Mật ong',e:'🍯',v:45,t:180,c:1500,s:9,lv:14},
+ pig_blue:{n:'Heo xanh',p:'Ngọc xanh',e:'💠',v:35,t:210,c:1900,s:13,lv:16},
+ sheep_flower:{n:'Cừu hoa đỏ',p:'Len hoa',e:'🧶',v:30,t:240,c:2400,s:14,lv:18},
+ pig_gold:{n:'Heo vàng có cánh',p:'Kim Cương',e:'💎',g:1,t:600,gc:20,s:13,lv:25}
 };
 const ST={
  boy:{n:'Cậu bé xô nước',gem:20,lv:0,home:[30,66]},
@@ -178,13 +178,13 @@ $('veil').onclick=e=>{if(e.target.id==='veil')shut()};
 function head(t){return '<h2>'+t+'<button onclick="shut()" style="padding:0 12px" aria-label="Đóng">✕</button></h2>'}
 function shop(){
  let h=head('Cửa hàng thú cưng');
- for(const k in T){const d=T[k],gem=d.gc;
-  h+='<div class="row"><img src="'+IMG[k]+'" alt=""><div class="t"><b>'+d.n+'</b><br>Cho '+d.p+' '+d.e+(d.g?' ×'+d.g:' · '+d.v+' xu')+' mỗi '+d.t+'s</div><button onclick="buy(\''+k+'\')">'+(gem?'💎 '+gem:'🪙 '+d.c)+'</button></div>'}
+ for(const k in T){const d=T[k],gem=d.gc,lock=lvl()[0]<(d.lv||1);
+  h+='<div class="row"><img src="'+IMG[k]+'" alt=""><div class="t"><b>'+d.n+(lock?' 🔒':'')+'</b><br>Cho '+d.p+' '+d.e+(d.g?' ×'+d.g:' · '+d.v+' xu')+' mỗi '+d.t+'s<br>'+(lock?'Mở ở cấp '+d.lv:'Cấp '+(d.lv||1))+'</div><button '+(lock?'disabled ':'')+'onclick="buy(\''+k+'\')">'+(gem?'💎 '+gem:'🪙 '+d.c)+'</button></div>'}
  h+='<p class="hint">Chạm vào thú: có bong bóng sản phẩm thì thu hoạch, đói thì cho ăn ('+FEED_COST+' xu). Thú đói sẽ ngừng sản xuất.</p>';
  open(h);
 }
 function buy(k){
- const d=T[k];
+ const d=T[k];if(lvl()[0]<(d.lv||1)){toast('🔒 '+d.n+' mở ở cấp '+d.lv);return}
  if(S.animals.length>=CAP){toast('Chuồng đã đầy ('+CAP+' con)');return}
  if(d.gc){if(S.gems<d.gc){toast('Không đủ Kim Cương');return}S.gems-=d.gc}
  else{if(S.coins<d.c){toast('Không đủ xu');return}S.coins-=d.c}
