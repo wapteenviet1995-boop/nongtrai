@@ -248,6 +248,10 @@ body{overflow:hidden}
       location.href='./san-xuat/index.html';
       return;
     }
+    if(key==='dragon'){
+      location.href='./dao-rong/index.html';
+      return;
+    }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
     document.getElementById('mt').textContent=d[0];
     document.getElementById('mb').innerHTML=d[1];
