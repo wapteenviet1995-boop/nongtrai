@@ -1,10 +1,10 @@
 (()=>{'use strict';
 const MAIN_KEY='nongtrai_new_v1',DRAGON_KEY='nongtrai_dragons_v1';
 const TYPES={
- ice:{name:'Rồng Băng',icon:'❄️',img:'../img/rong-bang.png',lv:15,rarity:'Hiếm',power:'Giảm thời gian bảo quản',cls:'ice'},
- fire:{name:'Rồng Lửa',icon:'🔥',img:'../img/rong-lua.png',lv:18,rarity:'Hiếm',power:'Tăng tốc sản xuất',cls:'fire'},
- grass:{name:'Rồng Cỏ',icon:'🌿',img:'../img/rong-co.png',lv:15,rarity:'Thường',power:'Tăng sản lượng cây trồng',cls:'grass'},
- gem:{name:'Rồng Ngọc',icon:'💎',img:'../img/rong-ngoc.png',lv:35,rarity:'Huyền thoại',power:'Tăng phần thưởng nhiệm vụ',cls:'gem'}
+ ice:{name:'Rồng Băng',icon:'❄️',img:'./img/1793200749268.png',lv:15,rarity:'Hiếm',power:'Giảm thời gian bảo quản',cls:'ice'},
+ fire:{name:'Rồng Lửa',icon:'🔥',img:'./img/1793230407100.png',lv:18,rarity:'Hiếm',power:'Tăng tốc sản xuất',cls:'fire'},
+ grass:{name:'Rồng Cỏ',icon:'🌿',img:'./img/1793230423492.png',lv:15,rarity:'Thường',power:'Tăng sản lượng cây trồng',cls:'grass'},
+ gem:{name:'Rồng Ngọc',icon:'💎',img:'./img/1793230430249.png',lv:35,rarity:'Huyền thoại',power:'Tăng phần thưởng nhiệm vụ',cls:'gem'}
 };
 let G=load(MAIN_KEY,{coins:100,gems:0,level:1}),D=load(DRAGON_KEY,{owned:{grass:1},eggs:[],selected:'grass'});
 const field=document.getElementById('dragonField'),panel=document.getElementById('panel'),body=document.getElementById('panelBody');
