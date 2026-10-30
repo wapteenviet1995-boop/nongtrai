@@ -85,14 +85,15 @@ body{overflow:hidden}
 }
 .notice h3{margin:0 0 7px;color:#ffe083}.notice div{font-size:13px;font-weight:750;line-height:1.55}
 .bottom{
-  position:absolute;z-index:10;left:50%;bottom:10px;transform:translateX(-50%);
+  position:absolute;z-index:10;left:50%;bottom:18px;transform:translateX(-50%);
   display:flex;gap:8px;align-items:center;padding:8px;
-  border:3px solid #5b3a1e;border-radius:23px;background:#2b211be8;
-  box-shadow:0 7px 22px #0006;max-width:96vw;overflow:auto
+  border:3px solid #5b3a1eb8;border-radius:23px;background:#2b211bb8;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  box-shadow:0 7px 22px #0005;max-width:96vw;overflow:auto
 }
 .nav{
-  min-width:76px;border:2px solid #694724;border-radius:14px;padding:7px 9px;
-  background:#fff0bd;color:#3a2412;font-weight:1000;cursor:pointer
+  min-width:76px;border:2px solid #694724b8;border-radius:14px;padding:7px 9px;
+  background:#fff0bddd;color:#3a2412;font-weight:1000;cursor:pointer
 }
 .nav.main{min-width:190px;background:linear-gradient(#6ee05e,#2d9d45);color:#fff;border-color:#285f2d;font-size:16px}
 .modal-bg{position:fixed;inset:0;background:#0008;display:none;place-items:center;z-index:50}
@@ -106,7 +107,7 @@ body{overflow:hidden}
   .player b{font-size:13px}.player small{font-size:10px}.xp{width:90px}
   .pill{min-width:72px;padding:7px 8px;font-size:12px}.icon-btn{width:39px;height:39px;font-size:18px}
   .notice{display:none}.modal{width:96vw;max-height:88dvh;padding:10px}.new-pet-scene{min-height:220px;padding:10px}.new-pet{min-height:96px}.new-pet img{width:56px;height:56px}.hotspot{font-size:11px;padding:6px 8px;border-width:2px}
-  .bottom{bottom:6px;padding:5px}.nav{min-width:64px;font-size:10px;padding:6px}.nav.main{min-width:120px;font-size:12px}
+  .bottom{bottom:12px;padding:5px}.nav{min-width:64px;font-size:10px;padding:6px}.nav.main{min-width:120px;font-size:12px}
 }
 
 
@@ -184,7 +185,7 @@ body{overflow:hidden}
     </div>
   </header>
 
-  <button class="order-fab" id="orderBtn" type="button" onclick="if(window.openOrders)window.openOrders()" style="position:fixed;right:14px;top:88px;z-index:999999;display:block;pointer-events:auto;cursor:pointer;border:3px solid #74421f;border-radius:17px;background:linear-gradient(#fff0a8,#f0a62b);padding:10px 13px;font-weight:1000;box-shadow:0 5px 15px #0005;color:#3a220e;">📋 Đơn hàng</button>\n\n  <aside class="notice">
+  <button class="order-fab" id="orderBtn" type="button" onclick="if(window.openOrders)window.openOrders()" style="position:fixed;right:14px;top:78px;z-index:999999;display:block;pointer-events:auto;cursor:pointer;border:3px solid #74421fb8;border-radius:17px;background:linear-gradient(#fff0a8dd,#f0a62bdd);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);padding:10px 13px;font-weight:1000;box-shadow:0 5px 15px #0005;color:#3a220e;">📋 Đơn hàng</button>\n\n  <aside class="notice">
     <h3>🔔 THÔNG BÁO</h3>
     <div>🎉 Sự kiện mới đã bắt đầu!<br>🐉 Rồng mới đã xuất hiện!<br>🏆 BXH tuần đã cập nhật!<br>🎁 Đăng nhập hôm nay nhận quà!</div>
   </aside>
