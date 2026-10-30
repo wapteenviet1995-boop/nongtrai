@@ -219,8 +219,8 @@ body{overflow:hidden}
   </div>
 </div>
 
-<script src="./game.js?v=20261024-newpet"></script>
-<script src="./social-v2.js?v=20261027profile2"></script>\n<script src="./don-hang/script.js?v=20261026orders"></script>
+<script src="./game.js?v=20261031-achievement-fix"></script>
+<script src="./social-v2.js?v=20261027profile2"></script>\n<script src="./don-hang/script.js?v=20261031-orders-fix"></script>
 
 <script>
 (function(){
@@ -298,16 +298,5 @@ body{overflow:hidden}
 </script>
 
 
-<script>
-(function(){
- const DATA=[
- ['👩‍🌾','Lily - Quán cà phê','🐄 Bò 2 · 🌾 Lúa mì 3',80,30,1],['👨‍🌾','Ông John - Nông trại','🐄 Bò 2 · 🍯 Ong 1',100,35,3],['👩','Mai - Cửa hàng','🍓 Dâu 2 · 🥚 Vịt 3',140,45,5],['👨‍🍳','Tùng - Xưởng sản xuất','🌾 Lúa mì 5 · 🥛 Dê 2 · 🍯 Ong 1',180,55,7],['🍰','Tiệm bánh','🌾 Lúa mì 4 · 🥕 Cà rốt 3 · 🍅 Cà chua 2',220,65,8],['🏪','Siêu thị','🧀 Phô mai 2 · 🥖 Bánh mì 2 · 🥛 Sữa chua 1',300,80,10],['🥛','Nhà máy sữa','🐄 Bò 3 · 🥚 Trứng gà 2 · 🥛 Dê 2',360,90,12],['🏨','Khách sạn','🍰 Bánh mật 2 · 🍨 Kem 2 · 🎂 Bánh dê 1',450,110,15],['🏬','Trung tâm thương mại','🌽 Bắp 5 · 🍓 Dâu 3 · 🎃 Bí ngô 2',520,125,16],['🚢','Thương lái','🧵 Áo 2 · ⚙️ Bánh răng 2 · 🍯 Mật ong 4',650,150,20],['⚙️','Xưởng cơ khí','🔧 Động cơ 2 · ⚙️ Bánh răng 4 · 🧵 Áo 2',800,180,22],['👑','Cung điện Nông Trại','🧀 Phô mai 4 · 🍨 Kem 3 · 🎂 Bánh dê 3',1200,260,28]
- ];
- function draw(){const box=document.querySelector('.orders');if(!box)return;box.innerHTML=DATA.map((x,i)=>'<div class="order"><div class="face">'+x[0]+'</div><div class="who"><b>'+x[1]+'</b><div class="needs"><span class="need">'+x[2]+'</span></div><small>🔓 Mở từ Lv.'+x[5]+'</small></div><div class="reward">🪙 '+x[3]+'<br>⭐ '+x[4]+' XP<button class="deliver" type="button" data-order="'+i+'">Giao hàng</button></div></div>').join('');}
- function show(){draw();const o=document.querySelector('.order-overlay');if(o){o.classList.add('on');o.style.cssText+=';display:grid!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;';}}
- window.__orderFallbackOpen=show;
- const btn=document.getElementById('orderBtn');if(btn)btn.onclick=function(e){e.preventDefault();show();};
- document.addEventListener('click',function(e){if(e.target.closest('.order-close')){e.preventDefault();const o=document.querySelector('.order-overlay');if(o){o.classList.remove('on');o.style.setProperty('display','none','important');}}});
-})();
-</script></body>
+</body>
 </html>
