@@ -111,3 +111,5 @@ function tg(){B.auto=!B.auto;rb();if(B.auto)setTimeout(au,500)}
 function au(){if(!B||B.over||!B.auto||busy)return;const p=B.p;mv(p.hp<p.max*.3&&Math.random()<.6?2:p.mp>=25?1:0)}
 setInterval(()=>{if(S.hatched&&!B){decay(1);if(avg()>50)S.xp+=0;save();render()}},5000);
 render(true);
+
+$('backIsland').onclick=()=>location.href='../game.html';
