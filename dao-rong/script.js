@@ -1,10 +1,13 @@
 const EL={fire:{n:'Lửa',c:'#ef5b2b',d:'#b8341a',l:'#ffd9a8',e:'🔥'},leaf:{n:'Mộc',c:'#46c15f',d:'#2a8a40',l:'#e0f7c8',e:'🍃'},water:{n:'Nước',c:'#3aa0ff',d:'#1f6fc4',l:'#cdeaff',e:'💧'},ice:{n:'Băng',c:'#8fd3f4',d:'#4a9bd1',l:'#e8f7ff',e:'❄️'},lightning:{n:'Sấm',c:'#f6c90e',d:'#c98a0a',l:'#fff3b0',e:'⚡'},dark:{n:'Bóng Tối',c:'#6b3fa0',d:'#3a2060',l:'#d9c6f0',e:'🌑'},rainbow:{n:'Cầu Vồng',c:'#f49ac1',d:'#c46a9a',l:'#ffe3f1',e:'🌈'}};
-const IMG={ice:'img/ice.webp',fire:'img/fire.webp',leaf:'img/leaf.webp',rainbow:'img/rainbow.webp',dark:'img/dark.webp',lightning:'img/lightning.webp',water:'img/water.webp'};const KEY='rong_con_v1',$=id=>document.getElementById(id),cp=v=>Math.max(0,Math.min(100,v));
+const IMG={ice:'img/ice.webp',fire:'img/fire.webp',leaf:'img/leaf.webp',rainbow:'img/rainbow.webp',dark:'img/dark.webp',lightning:'img/lightning.webp',water:'img/water.webp'};const KEY='rong_con_v1',MAIN_KEY='nongtrai_new_v1',$=id=>document.getElementById(id),cp=v=>Math.max(0,Math.min(100,v));
+function mainLoad(){try{return JSON.parse(localStorage.getItem(MAIN_KEY))||{}}catch(e){return {}}}
+function syncMoneyIn(){const g=mainLoad();S.coins=Number(g.coins)||0;S.mainGems=Number(g.gems)||0}
+function syncMoneyOut(){const g=mainLoad();g.coins=Math.max(0,Number(S.coins)||0);g.gems=Math.max(0,Number(S.mainGems)||0);try{localStorage.setItem(MAIN_KEY,JSON.stringify(g))}catch(e){}}
 const fresh=()=>({el:null,taps:0,hatched:false,xp:0,coins:20,wins:0,stg:0,gem:{},st:{hp:0,atk:0,def:0,mp:0},inv:[],eq:{},h:80,f:80,cl:80,en:80,t:Date.now()});
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==='object')return Object.assign(fresh(),s)}catch(e){}return fresh()}
-let S=load(),key='',sleepUntil=0,armed=false;
+let S=load(),key='',sleepUntil=0,armed=false;syncMoneyIn();
 if(S.stg===undefined)S.stg=S.hatched?(S.xp<30?0:S.xp<100?1:2):0;
-function save(){S.t=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){S.t=Date.now();syncMoneyOut();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function decay(n){S.h=cp(S.h-n);S.f=cp(S.f-n);S.cl=cp(S.cl-.7*n);S.en=cp(S.en-.6*n)}
 decay(Math.min(120,Math.floor((Date.now()-S.t)/5000)));
 const STG=['baby','teen','adult'],stage=()=>!S.el?'pick':!S.hatched?'egg':STG[S.stg||0];
@@ -30,7 +33,7 @@ function render(force){if(B)return rb();
  }
  if($('gb')){$('gb').textContent=gtxt();$('pb').textContent=ptxt()}
  if($('br'))$('br').innerHTML=bar('🍖 No bụng',S.h,'#f08c00')+bar('🎾 Vui vẻ',S.f,'#e64980')+bar('🛁 Sạch sẽ',S.cl,'#1c7ed6')+bar('⚡ Năng lượng',S.en,'#37b24d'); if($('stats'))$('stats').innerHTML=statHtml();
- $('co').textContent='🪙 '+S.coins;
+ $('co').textContent='🪙 '+S.coins;if($('gm'))$('gm').textContent='💎 '+(S.mainGems||0);
  $('lv').textContent=st==='pick'||st==='egg'?'Trứng rồng':'Cấp '+lvl()+' · '+S.xp+' XP · 🏆'+(S.wins||0);
 }
 function choose(e){S.el=e;S.taps=0;save();render()}
@@ -88,7 +91,7 @@ function hb(n,h,m){return `<div class="b">${n} ${Math.max(0,Math.round(h))}/${m}
 function rb(a,d){const w=S.wins||0,e=B.e,sg=e.boss||w>=7?'adult':w>=3?'teen':'baby';
  $('st').innerHTML=`<div class="bt"><div>${hb((e.boss?'👑 Boss ':'Rồng hoang ')+EL[e.el].n,e.hp,e.max)}<div class="${a==='p'?'hit':a==='e'?'lr':''}"><div style="transform:scaleX(-1)">${dragonSvg(e.el,sg,1)}</div></div></div><div>${hb('Rồng bạn',B.p.hp,B.p.max)}<div class="${a==='p'?'ll':a==='e'?'hit':''}">${dragonSvg(S.el,stage(),0,1)}</div></div></div><div class="sub" style="margin-top:6px;min-height:42px">${B.log}</div>`;
  $('bx').innerHTML=B.over?`<button style="width:100%;padding:12px" onclick="leave()">Quay về chuồng 🏠</button>`:`<div class="sub" style="text-align:center">⚡ Mana ${B.p.mp}/100 · Khắc hệ (vòng): 🔥>🍃>💧>❄️>⚡>🌑>🌈>🔥</div><div class="acts" style="grid-template-columns:repeat(3,1fr)"><button onclick="mv(0)"><span>⚔️</span>Đánh<br>+10 mana</button><button onclick="mv(1)"><span>${EL[S.el].e}</span>Chiêu<br>-25 mana</button><button onclick="mv(2)"><span>🛡️</span>Thủ<br>+hồi máu</button></div><button style="width:100%;margin-top:8px;padding:10px" onclick="tg()">🤖 Tự động đánh: ${B.auto?'BẬT':'TẮT'}</button>`;
- $('co').textContent='🪙 '+S.coins;$('lv').textContent='⚔️ Đấu trường · 🏆'+(S.wins||0);if(a&&d)dm((a==='d'?'+':'-')+d,a==='p'?'e':'p',a==='d'?'#37b24d':'#e03131')}
+ $('co').textContent='🪙 '+S.coins;if($('gm'))$('gm').textContent='💎 '+(S.mainGems||0);$('lv').textContent='⚔️ Đấu trường · 🏆'+(S.wins||0);if(a&&d)dm((a==='d'?'+':'-')+d,a==='p'?'e':'p',a==='d'?'#37b24d':'#e03131')}
 function mv(i){if(busy||B.over)return;const p=B.p,e=B.e;let l='',dd=0;
  if(i===1&&p.mp<25)return toast('Không đủ mana ⚡');
  p.def=false;
