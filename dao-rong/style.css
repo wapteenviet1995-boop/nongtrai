@@ -35,3 +35,4 @@ button:active{transform:scale(.95)}
 .stats{margin:10px auto 0;max-width:330px;background:var(--bg);border:1px solid var(--bar);border-radius:16px;padding:10px;text-align:left}.stats-title{text-align:center;font-size:14px;font-weight:800;margin-bottom:7px}.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.stats-grid span{background:var(--card);border-radius:10px;padding:7px 8px;font-size:12px;display:flex;justify-content:space-between;gap:5px}.stats-grid b{white-space:nowrap}
 
 .back-island{display:block;width:100%;margin-top:8px;border:2px solid #79552d;border-radius:12px;padding:10px 14px;background:linear-gradient(#fff4bd,#e5b74e);color:#3b2919;font-weight:1000;cursor:pointer;box-shadow:0 4px 12px #0004}
+\n.outside-back{margin:12px 0 4px;position:relative;z-index:10}\n
