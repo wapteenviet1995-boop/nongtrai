@@ -254,7 +254,7 @@
     if(!a)return;
     refreshAchievements();
     const st=S.achievements?.[id];
-    if(!st?.unlocked||st.claimed)return;
+    if(!st?.unlocked||isAchievementClaimed(id))return;
 
     achievementClaimBusy=true;
     try{
