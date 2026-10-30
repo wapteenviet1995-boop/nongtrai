@@ -31,6 +31,7 @@
     inventory:{carrot:0,corn:0,tomato:0,wheat:0},
     plots:Array.from({length:8},()=>({state:'empty',crop:null,plantedAt:0,readyAt:0})),
     stats:{planted:0,harvested:0,earned:0},
+    achievements:{},
     pets:{animals:[],capacity:4,feed:0}
   };
 
@@ -82,6 +83,56 @@
     }catch(e){console.warn('Cloud load:',e);}
   }
 
+  const ACHIEVEMENTS=[
+    {id:'plant1',icon:'🌱',name:'Bắt đầu gieo trồng',desc:'Trồng cây lần đầu tiên.',need:1,reward:10,xp:5,ok:s=>s.stats.planted>=1},
+    {id:'plant10',icon:'🌾',name:'Nông dân chăm chỉ',desc:'Trồng đủ 10 cây.',need:10,reward:30,xp:10,ok:s=>s.stats.planted>=10},
+    {id:'harvest1',icon:'🧺',name:'Vụ mùa đầu tiên',desc:'Thu hoạch cây đầu tiên.',need:1,reward:15,xp:5,ok:s=>s.stats.harvested>=1},
+    {id:'harvest20',icon:'🌽',name:'Bội thu',desc:'Thu hoạch 20 cây.',need:20,reward:60,xp:20,ok:s=>s.stats.harvested>=20},
+    {id:'earn100',icon:'🪙',name:'Xu đầu tiên',desc:'Kiếm 100 Xu từ nông trại.',need:100,reward:40,xp:15,ok:s=>s.stats.earned>=100},
+    {id:'earn1000',icon:'💰',name:'Kho bạc nông trại',desc:'Kiếm 1.000 Xu từ nông trại.',need:1000,reward:120,xp:35,ok:s=>s.stats.earned>=1000},
+    {id:'level5',icon:'⭐',name:'Nông dân cấp 5',desc:'Đạt cấp 5.',need:5,reward:80,xp:25,ok:s=>s.level>=5},
+    {id:'level10',icon:'🏅',name:'Nông dân kỳ cựu',desc:'Đạt cấp 10.',need:10,reward:180,xp:50,ok:s=>s.level>=10},
+    {id:'level20',icon:'👑',name:'Bậc thầy nông trại',desc:'Đạt cấp 20.',need:20,reward:500,xp:100,ok:s=>s.level>=20}
+  ];
+  function achievementDone(id){return !!(S.achievements&&S.achievements[id]);}
+  function achievementProgress(a){
+    if(a.id==='plant1'||a.id==='plant10')return Math.min(S.stats.planted,a.need);
+    if(a.id==='harvest1'||a.id==='harvest20')return Math.min(S.stats.harvested,a.need);
+    if(a.id==='earn100'||a.id==='earn1000')return Math.min(S.stats.earned,a.need);
+    return Math.min(S.level,a.need);
+  }
+  function refreshAchievements(){
+    S.achievements=S.achievements||{};
+    let changed=false;
+    ACHIEVEMENTS.forEach(a=>{
+      if(!S.achievements[a.id] && a.ok(S)){ S.achievements[a.id]={unlocked:true,claimed:false}; changed=true; }
+    });
+    if(changed)saveLocal();
+  }
+  function openAchievements(){
+    refreshAchievements();
+    const unlocked=ACHIEVEMENTS.filter(a=>S.achievements[a.id]?.unlocked).length;
+    let html='<p><b>🏆 '+unlocked+'/'+ACHIEVEMENTS.length+' thành tựu đã mở</b></p><div style="display:grid;gap:8px">';
+    ACHIEVEMENTS.forEach(a=>{
+      const st=S.achievements[a.id];
+      const progress=achievementProgress(a);
+      const claimed=!!st?.claimed;
+      html+='<div style="padding:10px;border:2px solid '+(st?'#d6a63a':'#cdbb99')+';border-radius:14px;background:'+(st?'#fff4bd':'#eee8d8')+';color:#3b2919">'+
+        '<div style="display:flex;gap:8px;align-items:center"><span style="font-size:28px">'+a.icon+'</span><div style="flex:1"><b>'+a.name+'</b><br><small>'+a.desc+'</small></div><b>'+progress+'/'+a.need+'</b></div>'+
+        '<div style="margin-top:6px">🎁 +🪙'+a.reward+' · ⭐'+a.xp+' XP '+(claimed?'<span>✅ Đã nhận</span>':st?'<button class="ach-claim" data-ach="'+a.id+'" style="float:right;border:0;border-radius:9px;background:#4ca54b;color:white;padding:6px 10px;font-weight:900">Nhận thưởng</button>':'<span style="float:right">🔒 Chưa mở</span>')+'</div></div>';
+    });
+    html+='</div>';
+    showModal('🏆 Thành tựu',html);
+    document.querySelectorAll('.ach-claim').forEach(btn=>btn.onclick=()=>claimAchievement(btn.dataset.ach));
+  }
+  function claimAchievement(id){
+    refreshAchievements();
+    const a=ACHIEVEMENTS.find(x=>x.id===id), st=S.achievements[id];
+    if(!a||!st?.unlocked||st.claimed)return;
+    st.claimed=true; S.coins+=a.reward; addXP(a.xp); scheduleSave(); updateHUD();
+    toast('🏆 '+a.name+' · +🪙'+a.reward);
+    openAchievements();
+  }
   function xpNeed(level){return 50+(level-1)*35;}
   function addXP(amount){
     S.xp+=amount;
@@ -91,6 +142,7 @@
   }
 
   function updateHUD(){
+    refreshAchievements();
     const coin=$('coins');
     if(coin)coin.textContent=Math.floor(S.coins);
     const gem=$('gems');
@@ -281,6 +333,7 @@
     openSeeds:openSeedShop,
     openInfo:openFarmInfo,
     openPets,
+    openAchievements,
     state:()=>S,
     save:scheduleSave,
     refresh:updateHUD,
