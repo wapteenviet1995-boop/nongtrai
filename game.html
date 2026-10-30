@@ -184,8 +184,7 @@ body{overflow:hidden}
       <button class="icon-btn" id="profileBtn" title="Hồ sơ">👤</button>
     </div>
   </header>
-
-  <button class="order-fab" id="orderBtn" type="button" onclick="if(window.openOrders)window.openOrders()" style="position:fixed;right:14px;top:78px;z-index:999999;display:block;pointer-events:auto;cursor:pointer;border:3px solid #74421fb8;border-radius:17px;background:linear-gradient(#fff0a8dd,#f0a62bdd);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);padding:10px 13px;font-weight:1000;box-shadow:0 5px 15px #0005;color:#3a220e;">📋 Đơn hàng</button>\n\n  <aside class="notice">
+  <aside class="notice">
     <h3>🔔 THÔNG BÁO</h3>
     <div>🎉 Sự kiện mới đã bắt đầu!<br>🐉 Rồng mới đã xuất hiện!<br>🏆 BXH tuần đã cập nhật!<br>🎁 Đăng nhập hôm nay nhận quà!</div>
   </aside>
@@ -277,7 +276,7 @@ body{overflow:hidden}
   const bottomSocialBtn=document.getElementById('bottomSocialBtn');
   const bottomProfileBtn=document.getElementById('bottomProfileBtn');
   bottomOrderBtn.onclick=()=>{ if(window.openOrders) window.openOrders(); else if(window.__orderFallbackOpen) window.__orderFallbackOpen(); };
-  bottomSocialBtn.onclick=()=>document.getElementById('socialBtn')?.click();
+  bottomSocialBtn.onclick=()=>{if(window.openSocial)window.openSocial();else document.getElementById('socialPanel')?.classList.add('on')};
   const profilePanel=document.getElementById('profilePanel');
   const openProfile=()=>profilePanel.classList.add('on');
   document.getElementById('profileBtn').onclick=openProfile;
