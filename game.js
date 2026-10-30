@@ -68,10 +68,60 @@
   async function saveCloud(){
     if(!currentUser)return;
     try{
-      await firebase.firestore().collection('users').doc(currentUser.uid).set({
+      const db=firebase.firestore();
+      await db.collection('users').doc(currentUser.uid).set({
         game:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()
       },{merge:true});
+      await syncLeaderboard(db);
     }catch(e){console.warn('Cloud save:',e);}
+  }
+  function playerName(){
+    if(currentUser){
+      return currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Nông Dân');
+    }
+    return 'Nông Dân';
+  }
+  function leaderboardScore(){
+    return (Number(S.level)||1)*100000+(Number(S.xp)||0);
+  }
+  async function syncLeaderboard(db){
+    if(!currentUser)return;
+    try{
+      await db.collection('leaderboard').doc(currentUser.uid).set({
+        uid:currentUser.uid,
+        name:playerName(),
+        level:Number(S.level)||1,
+        xp:Number(S.xp)||0,
+        score:leaderboardScore(),
+        updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+      },{merge:true});
+    }catch(e){console.warn('Leaderboard save:',e);}
+  }
+  async function loadLeaderboard(){
+    try{
+      const snap=await firebase.firestore().collection('leaderboard').orderBy('score','desc').limit(20).get();
+      return snap.docs.map((d,i)=>({rank:i+1,...d.data()}));
+    }catch(e){
+      console.warn('Leaderboard load:',e);
+      return [];
+    }
+  }
+  function renderLeaderboard(rows){
+    const medals=['🥇','🥈','🥉'];
+    if(!rows.length)return '<div style="padding:14px;text-align:center;background:#fff7dc;border-radius:12px">Chưa có dữ liệu BXH. Hãy chơi và lưu lại để xuất hiện trên BXH.</div>';
+    return '<div style="display:grid;gap:7px">'+rows.map(r=>{
+      const me=currentUser&&r.uid===currentUser.uid;
+      const medal=medals[r.rank-1]||(''+r.rank);
+      return '<div style="display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;padding:9px;border:2px solid '+(me?'#d99b35':'#d6c49f')+';border-radius:12px;background:'+(me?'#fff0b0':'#fffdf3')+';color:#3b2919">'+
+        '<b style="font-size:20px;text-align:center">'+medal+'</b><div><b>'+(r.name||'Nông Dân')+(me?' ⭐':'')+'</b><br><small>Lv.'+(Number(r.level)||1)+' · '+(Number(r.xp)||0)+' XP</small></div><b>🏆 '+(Number(r.score)||0)+'</b></div>';
+    }).join('')+'</div>';
+  }
+  async function openLeaderboard(){
+    const html='<p>🏆 <b>Top 20 người chơi</b> — xếp theo cấp độ và XP.</p><div id="leaderboardList">Đang tải BXH...</div>';
+    showModal('🏆 Bảng xếp hạng',html);
+    const rows=await loadLeaderboard();
+    const box=document.getElementById('leaderboardList');
+    if(box)box.innerHTML=renderLeaderboard(rows);
   }
   async function loadCloud(user){
     try{
@@ -138,7 +188,7 @@
   function openAchievements(){
     refreshAchievements();
     const unlocked=ACHIEVEMENTS.filter(a=>S.achievements[a.id]?.unlocked).length;
-    let html='<p><b>🏆 '+unlocked+'/'+ACHIEVEMENTS.length+' thành tựu đã mở</b></p><div style="display:grid;gap:8px">';
+    let html='<div style="display:flex;gap:7px;margin-bottom:10px"><button id="achTab" class="btn" style="flex:1">🏆 Thành tựu</button><button id="rankTab" class="btn" style="flex:1">🥇 BXH</button></div><div id="achContent"><p><b>'+unlocked+'/'+ACHIEVEMENTS.length+' thành tựu đã mở</b></p><div style="display:grid;gap:8px">';
     ACHIEVEMENTS.forEach(a=>{
       const st=S.achievements[a.id];
       const progress=achievementProgress(a);
@@ -147,9 +197,12 @@
         '<div style="display:flex;gap:8px;align-items:center"><span style="font-size:28px">'+a.icon+'</span><div style="flex:1"><b>'+a.name+'</b><br><small>'+a.desc+'</small></div><b>'+progress+'/'+a.need+'</b></div>'+
         '<div style="margin-top:6px">🎁 +🪙'+a.reward+' · ⭐'+a.xp+' XP '+(claimed?'<span>✅ Đã nhận</span>':st?'<button class="ach-claim" data-ach="'+a.id+'" style="float:right;border:0;border-radius:9px;background:#4ca54b;color:white;padding:6px 10px;font-weight:900">Nhận thưởng</button>':'<span style="float:right">🔒 Chưa mở</span>')+'</div></div>';
     });
-    html+='</div>';
-    showModal('🏆 Thành tựu',html);
+    html+='</div></div>';
+    showModal('🏆 Thành tựu & BXH',html);
     document.querySelectorAll('.ach-claim').forEach(btn=>btn.onclick=()=>claimAchievement(btn.dataset.ach));
+    const at=document.getElementById('achTab'),rt=document.getElementById('rankTab');
+    if(at)at.onclick=()=>openAchievements();
+    if(rt)rt.onclick=()=>openLeaderboard();
   }
   function claimAchievement(id){
     refreshAchievements();
@@ -325,6 +378,7 @@
     if(!user){location.replace('./login.html');return;}
     currentUser=user;
     await loadCloud(user);
+    await syncLeaderboard(firebase.firestore());
     updateHUD();
     const profileLevel=document.getElementById('profileLevel');
     if(profileLevel)profileLevel.textContent='⭐ Lv.'+S.level+' · '+S.xp+'/'+xpNeed(S.level)+' XP';
@@ -360,6 +414,7 @@
     openInfo:openFarmInfo,
     openPets,
     openAchievements,
+    openLeaderboard,
     checkAchievements:refreshAchievements,
     state:()=>S,
     save:scheduleSave,
