@@ -201,7 +201,7 @@ body{overflow:hidden}
   <div class="profile-dock"><button id="profileDockBtn">👤 Hồ sơ</button></div>
 </main>
 
-<div class="order-overlay"><div class="order-board"><div class="order-head"><span>📋</span><h2>Giao Đơn Hàng</h2><button class="order-close">✕</button></div><div class="order-grid"><div class="orders"></div><aside class="side"><div><b>Tiến độ hôm nay</b><div class="progress"><i></i></div><strong class="progtext">0/5</strong><p>Hoàn thành đơn hàng để nhận Xu và XP.</p></div><div class="truck">🚚</div><button class="back">🏝️ Về đảo</button></aside></div></div></div><div class="order-toast"></div>\n\n<div class="profile-panel" id="profilePanel"><div class="profile-card"><h2>👤 Hồ sơ</h2><div class="profile-info"><b>Nông Dân Anh</b><br><small>⏳ Đang tải dữ liệu...</small></div><button class="profile-logout" id="profileLogout">🚪 Đăng xuất</button><button class="profile-close" id="profileClose">Đóng</button></div></div>
+<div class="order-overlay"><div class="order-board"><div class="order-head"><span>📋</span><h2>Giao Đơn Hàng</h2><button class="order-close" type="button" onclick="document.querySelector('.order-overlay').classList.remove('on')">✕</button></div><div class="order-grid"><div class="orders"></div><aside class="side"><div><b>Tiến độ hôm nay</b><div class="progress"><i></i></div><strong class="progtext">0/5</strong><p>Hoàn thành đơn hàng để nhận Xu và XP.</p></div><div class="truck">🚚</div><button class="back" type="button" onclick="location.href='./game.html'">🏝️ Về đảo</button></aside></div></div></div><div class="order-toast"></div>\n\n<div class="profile-panel" id="profilePanel"><div class="profile-card"><h2>👤 Hồ sơ</h2><div class="profile-info"><b>Nông Dân Anh</b><br><small>⏳ Đang tải dữ liệu...</small></div><button class="profile-logout" id="profileLogout">🚪 Đăng xuất</button><button class="profile-close" id="profileClose">Đóng</button></div></div>
 
 <div class="modal-bg" id="modal">
   <div class="modal">
@@ -278,26 +278,5 @@ body{overflow:hidden}
 })();
 </script>
 
-<script>
-(function(){
-  const KEY='nongtrai_new_v1';
-  const orders=[
-    ['👩‍🌾','Lily - Quán cà phê','🐄 Bò 2 · 🌾 Lúa mì 3','🪙 80','⭐ 30'],
-    ['👨‍🌾','Ông John - Nông trại','🐄 Bò 2 · 🍯 Ong 1','🪙 100','⭐ 35'],
-    ['👩','Mai - Cửa hàng','🍓 Dâu 2 · 🥚 Vịt 3','🪙 140','⭐ 45'],
-    ['👨‍🍳','Tùng - Xưởng sản xuất','🌾 Lúa mì 5 · 🥛 Dê 2 · 🍯 Ong 1','🪙 180','⭐ 55']
-  ];
-  function state(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return {}}}
-  function draw(){
-    const box=document.querySelector('.orders'); if(!box)return;
-    const s=state(); const lv=Number(s.level)||1;
-    const visible=orders.filter((x,i)=>lv>=[1,3,5,7][i]);
-    box.innerHTML=visible.map((x,i)=>'<div class="order"><div class="face">'+x[0]+'</div><div class="who"><b>'+x[1]+'</b><div class="needs"><span class="need">'+x[2]+'</span></div></div><div class="reward">'+x[3]+'<br>'+x[4]+'<button class="deliver" disabled>Giao hàng</button></div></div>').join('');
-    const p=document.querySelector('.progtext'); if(p)p.textContent='0/5 nhiệm vụ đã giao';
-    const bar=document.querySelector('.progress i'); if(bar)bar.style.width='0%';
-  }
-  window.openOrders=function(){draw();const o=document.querySelector('.order-overlay');if(o){o.classList.add('on');o.style.setProperty('display','grid','important');o.style.visibility='visible';o.style.opacity='1'}};
-  document.addEventListener('click',function(e){if(e.target.closest('#orderBtn'))window.openOrders();if(e.target.closest('.order-close')){const o=document.querySelector('.order-overlay');if(o)o.classList.remove('on')}if(e.target.closest('.back'))location.href='./game.html'});
-})();
-</script></body>
+</body>
 </html>
