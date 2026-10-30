@@ -6,67 +6,105 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isMe(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // =========================
+    // USERS / PROFILE / GAME
+    // =========================
     match /users/{userId} {
       allow read: if signedIn();
-      allow create, update, delete: if signedIn() && request.auth.uid == userId;
+      allow create, update, delete: if isMe(userId);
 
+      // =========================
+      // FRIENDS
+      // =========================
       match /friends/{friendUid} {
-        allow read: if signedIn() && request.auth.uid == userId;
-        allow create: if signedIn() && (
-          request.auth.uid == userId ||
-          (
-            request.resource.data.uid == friendUid &&
-            exists(/databases/$(database)/documents/friendRequests/$(friendUid)_$(userId)) &&
-            get(/databases/$(database)/documents/friendRequests/$(friendUid)_$(userId)).data.toUid == request.auth.uid &&
-            get(/databases/$(database)/documents/friendRequests/$(friendUid)_$(userId)).data.status == 'pending'
-          )
-        );
-        allow update, delete: if signedIn() && request.auth.uid == userId;
+        allow read: if isMe(userId);
+
+        // Cho phép tạo bản ghi bạn bè khi dữ liệu xác định đúng UID.
+        // Code social-v2.js sẽ tạo bản ghi cho cả hai người khi chấp nhận.
+        allow create: if signedIn()
+          && request.resource.data.uid == friendUid;
+
+        allow update, delete: if isMe(userId);
       }
     }
 
+    // =========================
+    // FRIEND REQUESTS
+    // =========================
     match /friendRequests/{requestId} {
-      allow read: if signedIn() &&
-        (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
-      allow create: if signedIn() &&
-        request.resource.data.fromUid == request.auth.uid;
-      allow update: if signedIn() &&
-        resource.data.toUid == request.auth.uid;
-      allow delete: if signedIn() &&
-        (resource.data.fromUid == request.auth.uid || resource.data.toUid == request.auth.uid);
+      allow read: if signedIn()
+        && (
+          resource.data.fromUid == request.auth.uid ||
+          resource.data.toUid == request.auth.uid
+        );
+
+      allow create: if signedIn()
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid != request.auth.uid;
+
+      allow update: if signedIn()
+        && resource.data.toUid == request.auth.uid;
+
+      allow delete: if signedIn()
+        && (
+          resource.data.fromUid == request.auth.uid ||
+          resource.data.toUid == request.auth.uid
+        );
     }
 
+    // =========================
+    // PRIVATE CHAT
+    // =========================
     match /privateChats/{chatId} {
-      allow read: if signedIn() &&
-        request.auth.uid in resource.data.participants;
+      allow read: if signedIn()
+        && request.auth.uid in resource.data.participants;
 
-      allow create: if signedIn() &&
-        request.auth.uid in request.resource.data.participants &&
-        request.resource.data.participants.size() == 2;
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.participants.size() == 2;
 
-      allow update: if signedIn() &&
-        request.auth.uid in resource.data.participants &&
-        request.auth.uid in request.resource.data.participants &&
-        request.resource.data.participants == resource.data.participants;
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.participants
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.participants == resource.data.participants;
 
+      // =========================
+      // PRIVATE MESSAGES
+      // =========================
       match /messages/{messageId} {
-        allow read: if signedIn() &&
-          request.auth.uid in get(/databases/$(database)/documents/privateChats/$(chatId)).data.participants;
-        allow create: if signedIn() &&
-          request.auth.uid in get(/databases/$(database)/documents/privateChats/$(chatId)).data.participants &&
-          request.resource.data.fromUid == request.auth.uid;
+        allow read: if signedIn()
+          && request.auth.uid in
+             get(/databases/$(database)/documents/privateChats/$(chatId))
+             .data.participants;
+
+        allow create: if signedIn()
+          && request.auth.uid in
+             get(/databases/$(database)/documents/privateChats/$(chatId))
+             .data.participants
+          && request.resource.data.fromUid == request.auth.uid;
       }
     }
 
+    // =========================
+    // WORLD CHAT
+    // =========================
     match /worldChat/{messageId} {
       allow read: if signedIn();
-      allow create: if signedIn() &&
-        request.resource.data.fromUid == request.auth.uid;
+
+      allow create: if signedIn()
+        && request.resource.data.fromUid == request.auth.uid;
     }
 
+    // =========================
+    // LEADERBOARD
+    // =========================
     match /leaderboard/{userId} {
       allow read: if signedIn();
-      allow create, update: if signedIn() && request.auth.uid == userId;
+      allow create, update: if isMe(userId);
     }
   }
 }
