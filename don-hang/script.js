@@ -70,12 +70,7 @@ function toast(t){
  clearTimeout(window.__orderToast);
  window.__orderToast=setTimeout(()=>e.style.display='none',1800);
 }
-function getOrders(){
- const level=Number(G.level)||1;
- const normal=BASE.map((x,id)=>({...x,id})).filter(x=>level>=x[5]);
- const rare=RARE.map((x,i)=>({...x,rare:true,id:'r'+i})).filter(x=>level>=x[5] && Math.random()<0.35);
- return normal.concat(rare);
-}
+function getOrders(){return BASE.map((x,id)=>({...x,id}));}
 function render(){
  load();
  const box=$('.orders'); if(!box)return;
@@ -83,18 +78,15 @@ function render(){
  box.innerHTML=list.map(x=>{
    const [face,name,need,coin,xp,lv]=x;
    const saved=O.orders.find(q=>String(q.id)===String(x.id))||{done:false};
-   let ok=true;
    const ns=Object.entries(need).map(([k,n])=>{
-     const h=have(k);if(h<n)ok=false;
+     const h=have(k);
      return '<span class="need">'+(ITEMS[k]?.[0]||'📦')+' '+h+'/'+n+'</span>';
    }).join('');
-   return '<div class="order '+(x.rare?'rare-order':'')+'">'+
+   return '<div class="order">'+
     '<div class="face">'+face+'</div>'+
-    '<div class="who"><b>'+(x.rare?'⭐ NHIỆM VỤ HIẾM · ':'')+name+'</b>'+
-    '<div class="needs">'+ns+'</div></div>'+
+    '<div class="who"><b>'+name+'</b><div class="needs">'+ns+'</div><small>🔓 Mở từ Lv.'+lv+'</small></div>'+
     '<div class="reward">🪙 '+coin+'<br>⭐ '+xp+' XP'+
-    '<button class="deliver" type="button" data-order="'+x.id+'" '+((!ok||saved.done)?'disabled':'')+'>'+
-    (saved.done?'Đã giao':'Giao hàng')+'</button></div></div>';
+    '<button class="deliver" type="button" data-order="'+x.id+'">'+(saved.done?'Đã giao':'Giao hàng')+'</button></div></div>';
  }).join('');
  const done=Number(O.done)||0;
  const bar=$('.progress i');if(bar)bar.style.width=Math.min(100,done*10)+'%';
@@ -117,15 +109,15 @@ document.addEventListener('click',e=>{
  if(e.target.closest('.order-close')){e.preventDefault();e.stopPropagation();closeOrders();return;}
  if(e.target.closest('.back')){e.preventDefault();closeOrders();return;}
  const btn=e.target.closest('.deliver[data-order]');
- if(!btn || btn.disabled)return;
- const id=btn.dataset.order;
- const x=BASE.find((v,i)=>String(i)===String(id));
+ if(!btn)return;
+ const id=String(btn.dataset.order);
+ const x=BASE[Number(id)];
  if(!x){toast('Đơn hàng không hợp lệ');return;}
  load();
- const saved=O.orders.find(q=>String(q.id)===String(id));
- if(!saved || saved.done){render();return;}
+ const saved=O.orders.find(q=>String(q.id)===id);
+ if(!saved||saved.done){render();return;}
  for(const [k,n] of Object.entries(x[2])){
-   if(have(k)<n){toast('❌ Chưa đủ hàng');return;}
+   if(have(k)<n){toast('❌ Chưa đủ hàng cho đơn này');return;}
  }
  for(const [k,n] of Object.entries(x[2]))take(k,n);
  G.coins=(Number(G.coins)||0)+Number(x[3]);
