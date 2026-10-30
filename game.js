@@ -292,6 +292,10 @@
     const xpBar=document.querySelector('.xp i');
     if(levelText)levelText.textContent='⭐ Lv.'+S.level+' · '+S.xp+'/'+xpNeed(S.level)+' XP';
     if(xpBar)xpBar.style.width=Math.min(100,(S.xp/xpNeed(S.level))*100)+'%';
+    const topName=document.querySelector('.player b');
+    if(topName)topName.textContent=profileData?.displayName||currentUser?.displayName||currentUser?.email?.split('@')[0]||'Nông Dân';
+    const topAvatar=document.querySelector('.player .avatar');
+    if(topAvatar){if(profileData?.photoURL){topAvatar.innerHTML='<img src="'+profileData.photoURL.replace(/"/g,'&quot;')+'" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%">';}else topAvatar.textContent='👨‍🌾';}
     renderPlots();
   }
 
