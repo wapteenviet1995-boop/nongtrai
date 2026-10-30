@@ -3,6 +3,7 @@
 
   const $ = id => document.getElementById(id);
   const SAVE_KEY = 'nongtrai_new_v1';
+  const CLAIM_KEY = 'nongtrai_claimed_achievements_v1';
 
   if (typeof firebase === 'undefined' || typeof FB_CONFIG === 'undefined') {
     location.replace('./login.html');
@@ -37,6 +38,7 @@
   };
 
   let S=loadState();
+  loadClaimedAchievements();
   let currentUser=null;
   let saveTimer=null;
 
@@ -60,6 +62,23 @@
     return cloneDefault();
   }
   function saveLocal(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
+  function saveClaimedAchievements(){
+    try{
+      const ids=Object.keys(S.achievements||{}).filter(id=>S.achievements[id]?.claimed);
+      localStorage.setItem(CLAIM_KEY,JSON.stringify(ids));
+    }catch(e){}
+  }
+  function loadClaimedAchievements(){
+    try{
+      const ids=JSON.parse(localStorage.getItem(CLAIM_KEY)||'[]');
+      if(Array.isArray(ids)){
+        S.achievements=S.achievements||{};
+        ids.forEach(id=>{
+          S.achievements[id]={...(S.achievements[id]||{}),unlocked:true,claimed:true};
+        });
+      }
+    }catch(e){}
+  }
   function refreshFromLocal(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;const d=JSON.parse(raw);S=mergeState(cloneDefault(),d);updateHUD();}catch(e){}}
   function scheduleSave(){
     saveLocal();
@@ -140,8 +159,12 @@
         Object.keys(localAch).forEach(id=>{
           if(localAch[id]?.claimed) S.achievements[id]={...(S.achievements[id]||{}),...localAch[id],claimed:true,unlocked:true};
         });
+        loadClaimedAchievements();
+        saveClaimedAchievements();
         saveLocal();
       }
+      loadClaimedAchievements();
+      saveLocal();
     }catch(e){console.warn('Cloud load:',e);}
   }
 
@@ -195,7 +218,7 @@
     ACHIEVEMENTS.forEach(a=>{
       if(!S.achievements[a.id] && a.ok(S)){ S.achievements[a.id]={unlocked:true,claimed:false}; changed=true; }
     });
-    if(changed)saveLocal();
+    if(changed){saveLocal();saveClaimedAchievements();}
   }
   function openAchievements(){
     refreshAchievements();
@@ -224,6 +247,7 @@
     st.claimed=true;
     S.coins+=a.reward;
     addXP(a.xp);
+    saveClaimedAchievements();
     saveLocal();
     updateHUD();
     toast('🏆 '+a.name+' · +🪙'+a.reward);
