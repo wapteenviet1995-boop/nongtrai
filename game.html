@@ -190,17 +190,18 @@ body{overflow:hidden}
   </aside>
 
 
-  <nav class="bottom">
+  <nav class="bottom" id="bottomMenu">
     <button class="nav" data-feature="map">🗺️<br>Bản đồ</button>
-    <button class="nav" data-feature="seeds">🌱<br>Hạt giống</button>
+    <button class="nav" data-feature="field">🌾<br>Ruộng</button>
+    <button class="nav" data-feature="barn">🐄<br>Chuồng</button>
     <button class="nav" data-feature="warehouse">📦<br>Kho</button>
-    <button class="nav main" data-feature="field">🌾 Vào Nông Trại<br><small>Trồng trọt · Thu hoạch</small></button>
+    <button class="nav" id="bottomOrderBtn" type="button">📋<br>Đơn hàng</button>
+    <button class="nav" id="bottomSocialBtn" type="button">👥<br>Bạn bè</button>
+    <button class="nav" id="bottomProfileBtn" type="button">👤<br>Hồ sơ</button>
     <button class="nav" data-feature="dragon">🐉<br>Đảo Rồng</button>
     <button class="nav" data-feature="achieve">🏆<br>Thành tựu</button>
     <button class="nav" data-feature="mine">⛏️<br>Đào Mỏ</button>
   </nav>
-
-  <div class="social-dock"><button id="socialBtn" type="button">👥 Bạn bè & Chat</button></div><div class="profile-dock"><button id="profileDockBtn">👤 Hồ sơ</button></div>
 </main>
 
 <div class="order-overlay"><div class="order-board"><div class="order-head"><span>📋</span><h2>Giao Đơn Hàng</h2><button class="order-close" type="button" onclick="document.querySelector('.order-overlay').classList.remove('on')">✕</button></div><div class="order-grid"><div class="orders"></div><aside class="side"><div><b>Tiến độ hôm nay</b><div class="progress"><i></i></div><strong class="progtext">0/5</strong><p>Hoàn thành đơn hàng để nhận Xu và XP.</p></div><div class="truck">🚚</div><button class="back" type="button" onclick="location.href='./game.html'">🏝️ Về đảo</button></aside></div></div></div><div class="order-toast"></div>\n\n<div class="profile-panel" id="profilePanel"><div class="profile-card"><div class="profile-title">🌿 Hồ Sơ <button class="profile-x" id="profileClose" type="button">✕</button></div><div class="profile-main"><div class="profile-avatar-wrap"><img id="profileAvatar" class="profile-avatar-img" src="" alt="Avatar Gmail" style="display:none"><div id="profileAvatarFallback" class="profile-avatar-fallback">👨‍🌾</div><button class="profile-edit" id="profileEditBtn" type="button">✏️ Chỉnh sửa hồ sơ</button></div><div class="profile-fields"><div class="profile-row"><label>👤 Tên hiển thị</label><div id="profileNameView">Đang tải...</div><input id="profileNameInput" maxlength="30" style="display:none"></div><div class="profile-row"><label>🎂 Tuổi</label><div id="profileAgeView">Chưa cập nhật</div><input id="profileAgeInput" type="number" min="1" max="120" placeholder="Nhập tuổi" style="display:none"></div><div class="profile-row"><label>✉️ Email</label><div id="profileEmailView">Đang tải...</div></div></div></div><div class="profile-stats"><div class="profile-stat">⭐ Cấp<br><b id="profileLevel">Lv.1</b></div><div class="profile-stat">🪙 Xu<br><b id="profileCoins">0</b></div><div class="profile-stat">💎 Kim cương<br><b id="profileGems">0</b></div></div><div class="profile-actions"><button class="profile-save" id="profileSave" type="button" style="display:none">💾 Lưu hồ sơ</button><button class="profile-close" id="profileCancel" type="button" style="display:none">Hủy</button><button class="profile-logout" id="profileLogout" type="button">🚪 Đăng xuất</button></div><div class="profile-note">Đăng ký/đăng nhập bằng Google sẽ tự lấy ảnh đại diện Google của bạn.</div></div></div>
@@ -219,7 +220,7 @@ body{overflow:hidden}
 </div>
 
 <script src="./game.js?v=20261024-newpet"></script>
-<script src="./social-v2.js?v=20261027profile1"></script>\n<script src="./don-hang/script.js?v=20261026orders"></script>
+<script src="./social-v2.js?v=20261027profile2"></script>\n<script src="./don-hang/script.js?v=20261026orders"></script>
 
 <script>
 (function(){
@@ -271,10 +272,15 @@ body{overflow:hidden}
     document.getElementById('modal').classList.add('on');
   }
   document.querySelectorAll('[data-feature]').forEach(b=>b.addEventListener('click',()=>openFeature(b.dataset.feature)));
+  const bottomOrderBtn=document.getElementById('bottomOrderBtn');
+  const bottomSocialBtn=document.getElementById('bottomSocialBtn');
+  const bottomProfileBtn=document.getElementById('bottomProfileBtn');
+  bottomOrderBtn.onclick=()=>{ if(window.openOrders) window.openOrders(); else if(window.__orderFallbackOpen) window.__orderFallbackOpen(); };
+  bottomSocialBtn.onclick=()=>document.getElementById('socialBtn')?.click();
   const profilePanel=document.getElementById('profilePanel');
   const openProfile=()=>profilePanel.classList.add('on');
   document.getElementById('profileBtn').onclick=openProfile;
-  document.getElementById('profileDockBtn').onclick=openProfile;
+  bottomProfileBtn.onclick=openProfile;
   document.getElementById('profileClose').onclick=()=>profilePanel.classList.remove('on');
   profilePanel.onclick=e=>{if(e.target===profilePanel)profilePanel.classList.remove('on')};
   document.getElementById('profileLogout').onclick=async()=>{
