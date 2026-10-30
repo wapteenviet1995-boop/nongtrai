@@ -70,7 +70,7 @@ function toast(t){
  clearTimeout(window.__orderToast);
  window.__orderToast=setTimeout(()=>e.style.display='none',1800);
 }
-function getOrders(){return BASE.map((x,id)=>({...x,id}));}
+function getOrders(){return BASE.map((x,id)=>{const row=[...x];row.id=id;return row;});}
 function render(){
  load();
  const box=$('.orders'); if(!box)return;
