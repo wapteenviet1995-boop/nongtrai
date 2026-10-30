@@ -239,28 +239,88 @@
     if(at)at.onclick=()=>openAchievements();
     if(rt)rt.onclick=()=>openLeaderboard();
   }
+  let achievementClaimBusy=false;
   async function claimAchievement(id){
+    if(achievementClaimBusy)return;
+    const a=ACHIEVEMENTS.find(x=>x.id===id);
+    if(!a)return;
     refreshAchievements();
-    const a=ACHIEVEMENTS.find(x=>x.id===id), st=S.achievements[id];
-    if(!a||!st?.unlocked||st.claimed)return;
-    // Đánh dấu đã nhận trước khi cộng thưởng để không thể nhận lần 2 khi reload.
-    st.claimed=true;
-    S.coins+=a.reward;
-    addXP(a.xp);
-    saveClaimedAchievements();
-    saveLocal();
-    updateHUD();
-    toast('🏆 '+a.name+' · +🪙'+a.reward);
-    if(currentUser){
-      try{
-        await firebase.firestore().collection('users').doc(currentUser.uid).set({
-          game:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-        },{merge:true});
-        await syncLeaderboard(firebase.firestore());
-      }catch(e){console.warn('Achievement cloud save:',e);}
+    const st=S.achievements?.[id];
+    if(!st?.unlocked||st.claimed)return;
+
+    achievementClaimBusy=true;
+    try{
+      if(currentUser){
+        const ref=firebase.firestore().collection('users').doc(currentUser.uid);
+        let granted=false;
+        await firebase.firestore().runTransaction(async tx=>{
+          const snap=await tx.get(ref);
+          const data=snap.exists?(snap.data()||{}):{};
+          const game=mergeState(cloneDefault(),data.game||{});
+          game.achievements=game.achievements||{};
+          const claims={...(data.achievementClaims||{})};
+
+          // Kiểm tra trên server để chống nhận trùng dù mở game trên nhiều thiết bị/tab.
+          if(claims[id]===true || game.achievements[id]?.claimed===true){
+            S=mergeState(cloneDefault(),game);
+            S.achievements=S.achievements||{};
+            S.achievements[id]={...(S.achievements[id]||{}),unlocked:true,claimed:true};
+            return;
+          }
+
+          if(!game.achievements[id]?.unlocked){
+            game.achievements[id]={...(game.achievements[id]||{}),unlocked:true,claimed:false};
+          }
+
+          game.achievements[id].unlocked=true;
+          game.achievements[id].claimed=true;
+          game.coins=(Number(game.coins)||0)+a.reward;
+
+          let xp=Number(game.xp)||0, level=Number(game.level)||1;
+          xp+=a.xp;
+          while(xp>=xpNeed(level)){xp-=xpNeed(level);level++;}
+          game.xp=xp;
+          game.level=level;
+          claims[id]=true;
+
+          tx.set(ref,{
+            game,
+            achievementClaims:claims,
+            updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+          },{merge:true});
+
+          S=game;
+          granted=true;
+        });
+
+        saveClaimedAchievements();
+        saveLocal();
+        updateHUD();
+
+        if(granted){
+          toast('🏆 '+a.name+' · +🪙'+a.reward);
+        }else{
+          toast('✅ Thành tựu này đã nhận trước đó');
+        }
+      }else{
+        // Chế độ cục bộ: đánh dấu trước khi cộng để reload không nhận lại.
+        st.claimed=true;
+        S.coins=(Number(S.coins)||0)+a.reward;
+        addXP(a.xp);
+        saveClaimedAchievements();
+        saveLocal();
+        updateHUD();
+        toast('🏆 '+a.name+' · +🪙'+a.reward);
+      }
+    }catch(e){
+      console.warn('Achievement claim:',e);
+      toast('❌ Không nhận được thưởng: '+(e.code||'firebase-error'));
+    }finally{
+      achievementClaimBusy=false;
     }
     openAchievements();
   }
+
   let profileData={displayName:'',age:null,photoURL:''};
   async function loadProfile(){
     const u=currentUser;if(!u)return;
