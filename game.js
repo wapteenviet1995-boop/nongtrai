@@ -84,6 +84,12 @@
   }
 
   const ACHIEVEMENTS=[
+    {id:'warehouse5',icon:'📦',name:'Kho rộng rãi',desc:'Nâng cấp Kho ít nhất 5 lần.',need:5,reward:100,xp:25,ok:s=>getUpgradeCount(s,'warehouse')>=5},
+    {id:'warehouse10',icon:'🏭',name:'Đại kho nông trại',desc:'Nâng cấp Kho ít nhất 10 lần.',need:10,reward:250,xp:60,ok:s=>getUpgradeCount(s,'warehouse')>=10},
+    {id:'machine5',icon:'⚙️',name:'Máy sản xuất mạnh',desc:'Nâng cấp máy sản xuất ít nhất 5 lần.',need:5,reward:120,xp:30,ok:s=>getUpgradeCount(s,'production')>=5},
+    {id:'machine10',icon:'🔧',name:'Bậc thầy sản xuất',desc:'Nâng cấp máy sản xuất ít nhất 10 lần.',need:10,reward:300,xp:70,ok:s=>getUpgradeCount(s,'production')>=10},
+    {id:'dragon3',icon:'🐉',name:'Người sưu tập Rồng',desc:'Sưu tập 3 con rồng.',need:3,reward:180,xp:45,ok:s=>getDragonCount(s)>=3},
+    {id:'dragon10',icon:'🐲',name:'Bộ sưu tập Rồng',desc:'Sưu tập 10 con rồng.',need:10,reward:500,xp:120,ok:s=>getDragonCount(s)>=10},
     {id:'plant1',icon:'🌱',name:'Bắt đầu gieo trồng',desc:'Trồng cây lần đầu tiên.',need:1,reward:10,xp:5,ok:s=>s.stats.planted>=1},
     {id:'plant10',icon:'🌾',name:'Nông dân chăm chỉ',desc:'Trồng đủ 10 cây.',need:10,reward:30,xp:10,ok:s=>s.stats.planted>=10},
     {id:'harvest1',icon:'🧺',name:'Vụ mùa đầu tiên',desc:'Thu hoạch cây đầu tiên.',need:1,reward:15,xp:5,ok:s=>s.stats.harvested>=1},
@@ -94,11 +100,31 @@
     {id:'level10',icon:'🏅',name:'Nông dân kỳ cựu',desc:'Đạt cấp 10.',need:10,reward:180,xp:50,ok:s=>s.level>=10},
     {id:'level20',icon:'👑',name:'Bậc thầy nông trại',desc:'Đạt cấp 20.',need:20,reward:500,xp:100,ok:s=>s.level>=20}
   ];
+  function getUpgradeCount(s,type){
+    const candidates=type==='warehouse'?['warehouse','storage','kho']:['production','machine','sanXuat'];
+    for(const k of candidates){
+      const v=s[k]?.upgrades ?? s[k]?.upgradeCount ?? s[k]?.level;
+      if(Number.isFinite(Number(v))) return Number(v);
+    }
+    return 0;
+  }
+  function getDragonCount(s){
+    const candidates=[s.dragons,s.dragon?.collection,s.dragon?.dragons,s.dragonCollection,s.daoRong?.dragons];
+    for(const v of candidates){
+      if(Array.isArray(v)) return v.length;
+      if(v&&typeof v==='object') return Object.keys(v).filter(k=>v[k]&&v[k].collected!==false).length;
+      if(Number.isFinite(Number(v))) return Number(v);
+    }
+    return 0;
+  }
   function achievementDone(id){return !!(S.achievements&&S.achievements[id]);}
   function achievementProgress(a){
     if(a.id==='plant1'||a.id==='plant10')return Math.min(S.stats.planted,a.need);
     if(a.id==='harvest1'||a.id==='harvest20')return Math.min(S.stats.harvested,a.need);
     if(a.id==='earn100'||a.id==='earn1000')return Math.min(S.stats.earned,a.need);
+    if(a.id.startsWith('warehouse'))return Math.min(getUpgradeCount(S,'warehouse'),a.need);
+    if(a.id.startsWith('machine'))return Math.min(getUpgradeCount(S,'production'),a.need);
+    if(a.id.startsWith('dragon'))return Math.min(getDragonCount(S),a.need);
     return Math.min(S.level,a.need);
   }
   function refreshAchievements(){
@@ -334,6 +360,7 @@
     openInfo:openFarmInfo,
     openPets,
     openAchievements,
+    checkAchievements:refreshAchievements,
     state:()=>S,
     save:scheduleSave,
     refresh:updateHUD,
