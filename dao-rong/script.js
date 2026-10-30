@@ -24,12 +24,12 @@ function render(force){if(B)return rb();
  if(force||k!==key){key=k;let h='';
   if(st==='pick')h=`<div class="nm">Chọn một quả trứng rồng</div><div class="sub">Mỗi nguyên tố có màu sắc riêng</div><div class="pick">${Object.keys(EL).map(e=>`<button onclick="choose('${e}')"><img src="${IMG[e]}" style="width:100%;max-width:64px;height:64px;object-fit:contain"><br>${EL[e].e} ${EL[e].n}</button>`).join('')}</div>`;
   else if(st==='egg')h=eggSvg()+`<div class="nm">Trứng ${EL[S.el].n}</div><div class="sub">Chạm vào trứng để ấp nở (${S.taps}/8)</div>`;
-  else h=dragonSvg()+`<div class="nm">${EL[S.el].e} ${SN[st]} ${EL[S.el].n}</div><div class="sub">${MOOD[mood()]} · chạm vào rồng để vuốt ve</div>`;
+  else h=dragonSvg()+`<div class="nm">${EL[S.el].e} ${SN[st]} ${EL[S.el].n}</div><div class="sub">${MOOD[mood()]} · chạm vào rồng để vuốt ve</div><div class="stats" id="stats"></div>`;
   $('st').innerHTML=h;
   $('bx').innerHTML=st==='baby'||st==='teen'||st==='adult'?`<div class="bars" id="br"></div><div class="acts"><button onclick="act('feed')"><span>🍖</span>Cho ăn<br>-5🪙</button><button onclick="act('play')"><span>🎾</span>Chơi</button><button onclick="act('wash')"><span>🛁</span>Tắm</button><button onclick="act('sleep')"><span>🌙</span>Ngủ</button></div><div class="acts" style="grid-template-columns:1fr 1fr"><button id="pb" onclick="po()" style="padding:12px"></button><button id="gb" onclick="ev()" style="padding:12px"></button></div><button style="width:100%;margin-top:8px;padding:12px" onclick="eo()">🎒 Trang bị</button><button style="width:100%;margin-top:8px;padding:12px" onclick="arena()">⚔️ Đấu trường</button>`:'';
  }
  if($('gb')){$('gb').textContent=gtxt();$('pb').textContent=ptxt()}
- if($('br'))$('br').innerHTML=bar('🍖 No bụng',S.h,'#f08c00')+bar('🎾 Vui vẻ',S.f,'#e64980')+bar('🛁 Sạch sẽ',S.cl,'#1c7ed6')+bar('⚡ Năng lượng',S.en,'#37b24d');
+ if($('br'))$('br').innerHTML=bar('🍖 No bụng',S.h,'#f08c00')+bar('🎾 Vui vẻ',S.f,'#e64980')+bar('🛁 Sạch sẽ',S.cl,'#1c7ed6')+bar('⚡ Năng lượng',S.en,'#37b24d'); if($('stats'))$('stats').innerHTML=statHtml();
  $('co').textContent='🪙 '+S.coins;
  $('lv').textContent=st==='pick'||st==='egg'?'Trứng rồng':'Cấp '+lvl()+' · '+S.xp+' XP · 🏆'+(S.wins||0);
 }
@@ -66,7 +66,8 @@ function ie(id){const t=IT[id],q=S.eq||(S.eq={}),inv=S.inv||(S.inv=[]);
  else if(S.coins>=t.p){S.coins-=t.p;inv.push(id);q[t.s]=id;toast('Đã mua '+t.n+' '+t.e)}
  else return toast('Không đủ xu 🪙');
  save();eqp();render(true)}
-const NEED=[5,12],lvl=()=>Math.floor(S.xp/20)+1,sp=k=>(S.st&&S.st[k])||0;
+const NEED=[99,999],lvl=()=>Math.floor(S.xp/20)+1,sp=k=>(S.st&&S.st[k])||0;
+function statHtml(){const l=lvl(),g=.7+avg()/100*.6,hp=60+l*10+bn('hat')+sp('hp')*10+(S.stg||0)*20,atk=Math.round((8+l*2)*g+bn('weapon')+sp('atk')*2+(S.stg||0)*4),def=Math.min(60,bn('armor')+sp('def')*2),mp=40+sp('mp')*8;return `<div class="stats-title">📊 Chỉ số Rồng</div><div class="stats-grid"><span>❤️ Máu <b>${hp}</b></span><span>⚔️ Sức đánh <b>${atk}</b></span><span>🛡️ Phòng thủ <b>${def}%</b></span><span>⚡ Mana <b>${mp}</b></span><span>⭐ Cấp <b>${l}</b></span><span>💎 Ngọc <b>${gc()}</b></span></div>`}
 const pts=()=>lvl()-1-Object.values(S.st||{}).reduce((a,b)=>a+b,0),gc=()=>(S.gem&&S.gem[S.el])||0;
 const gtxt=()=>(S.stg||0)>=2?'💎 Tối đa':'💎 '+gc()+'/'+NEED[S.stg||0]+' Ngọc '+EL[S.el].n,ptxt=()=>'🎯 Cộng điểm'+(pts()>0?' ('+pts()+')':'');
 function ev(){const g=S.stg||0;if(g>=2)return toast('Rồng đã tiến hoá tối đa 🌟');
