@@ -150,22 +150,39 @@
     try{
       const snap=await firebase.firestore().collection('users').doc(user.uid).get();
       if(snap.exists&&snap.data().game){
-        const cloudGame=snap.data().game;
+        const data=snap.data()||{};
+        const cloudGame=data.game||{};
         const localBefore=S;
         S=mergeState(cloneDefault(),cloudGame);
-        // Không làm mất trạng thái thành tựu đã nhận ở máy nếu cloud còn dữ liệu cũ.
+
+        // Hợp nhất trạng thái đã nhận từ cả game.achievements, achievementClaims và máy hiện tại.
+        // achievementClaims là dấu vết server bền vững để UI không hiện lại nút "Nhận thưởng".
         S.achievements=S.achievements||{};
         const localAch=localBefore.achievements||{};
         Object.keys(localAch).forEach(id=>{
-          if(localAch[id]?.claimed) S.achievements[id]={...(S.achievements[id]||{}),...localAch[id],claimed:true,unlocked:true};
+          if(localAch[id]?.claimed===true){
+            S.achievements[id]={...(S.achievements[id]||{}),...localAch[id],claimed:true,unlocked:true};
+          }
         });
+        const cloudClaims=data.achievementClaims||{};
+        Object.keys(cloudClaims).forEach(id=>{
+          if(cloudClaims[id]===true){
+            S.achievements[id]={...(S.achievements[id]||{}),unlocked:true,claimed:true};
+          }
+        });
+
         loadClaimedAchievements();
         saveClaimedAchievements();
         saveLocal();
+      }else{
+        loadClaimedAchievements();
+        saveLocal();
       }
+    }catch(e){
+      console.warn('Cloud load:',e);
       loadClaimedAchievements();
       saveLocal();
-    }catch(e){console.warn('Cloud load:',e);}
+    }
   }
 
   const ACHIEVEMENTS=[
