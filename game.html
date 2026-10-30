@@ -252,6 +252,11 @@ body{overflow:hidden}
       location.href='./dao-rong/index.html';
       return;
     }
+    if(key==='achieve'){
+      if(window.nongTrai&&typeof window.nongTrai.openAchievements==='function') window.nongTrai.openAchievements();
+      else { document.getElementById('mt').textContent='🏆 Thành tựu & BXH'; document.getElementById('mb').innerHTML='Đang tải thành tựu...'; document.getElementById('modal').classList.add('on'); }
+      return;
+    }
     const d=data[key]||['Nông Trại','Khu vực đang được xây dựng.'];
     document.getElementById('mt').textContent=d[0];
     document.getElementById('mb').innerHTML=d[1];
