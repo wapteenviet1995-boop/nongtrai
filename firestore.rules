@@ -102,6 +102,25 @@ service cloud.firestore {
     // =========================
     // LEADERBOARD
     // =========================
+
+    match /marketListings/{listingId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.sellerUid == request.auth.uid
+        && request.resource.data.status == 'active';
+      allow update: if signedIn()
+        && (
+          resource.data.sellerUid == request.auth.uid ||
+          (
+            resource.data.status == 'active' &&
+            request.resource.data.sellerUid == resource.data.sellerUid &&
+            request.resource.data.item == resource.data.item &&
+            request.resource.data.qty == resource.data.qty &&
+            request.resource.data.price == resource.data.price
+          )
+        );
+    }
+
     match /leaderboard/{userId} {
       allow read: if signedIn();
       allow create, update: if isMe(userId);
