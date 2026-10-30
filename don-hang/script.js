@@ -27,7 +27,7 @@ const RARE=[
  ['👑','Hoàng gia',{banhde:3,phomai:3,kem:3},1800,350,25],
  ['🐉','Sứ giả Đảo Rồng',{pig_blue:2,matong:5,dongco:2},2500,500,30]
 ];
-let G={},P={},O={done:0,day:'',orders:[]};
+let G={},P={},O={done:0,day:'',orders:[]},busy=false;
 const $=s=>document.querySelector(s);
 function load(){
  try{G=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){G={};}
@@ -110,23 +110,37 @@ document.addEventListener('click',e=>{
  if(e.target.closest('.back')){e.preventDefault();closeOrders();return;}
  const btn=e.target.closest('.deliver[data-order]');
  if(!btn)return;
+ e.preventDefault();e.stopPropagation();
+ if(busy)return;
  const id=String(btn.dataset.order);
  const x=BASE[Number(id)];
  if(!x){toast('Đơn hàng không hợp lệ');return;}
  load();
  const saved=O.orders.find(q=>String(q.id)===id);
  if(!saved||saved.done){render();return;}
+ if((Number(G.level)||1)<Number(x[5])){toast('🔒 Cần đạt Lv.'+x[5]+' để giao đơn này');return;}
  for(const [k,n] of Object.entries(x[2])){
    if(have(k)<n){toast('❌ Chưa đủ hàng cho đơn này');return;}
  }
- for(const [k,n] of Object.entries(x[2]))take(k,n);
- G.coins=(Number(G.coins)||0)+Number(x[3]);
- G.xp=(Number(G.xp)||0)+Number(x[4]);
- saved.done=true;O.done=(Number(O.done)||0)+1;
- save();
- const coins=$('#coins');if(coins)coins.textContent=G.coins;
- render();
- toast('✅ Giao hàng thành công! +'+x[3]+' xu');
+ busy=true;btn.disabled=true;
+ try{
+   for(const [k,n] of Object.entries(x[2]))take(k,n);
+   G.coins=(Number(G.coins)||0)+Number(x[3]);
+
+   // XP dùng cùng công thức với game chính để đơn hàng có thể làm tăng cấp đúng cách.
+   let xp=(Number(G.xp)||0)+Number(x[4]);
+   let level=Number(G.level)||1;
+   const xpNeed=lv=>50+(lv-1)*35;
+   while(xp>=xpNeed(level)){xp-=xpNeed(level);level++;}
+   G.xp=xp;G.level=level;
+
+   saved.done=true;O.done=(Number(O.done)||0)+1;
+   save();
+   const coins=$('#coins');if(coins)coins.textContent=Math.floor(G.coins);
+   if(window.nongTrai?.refresh)window.nongTrai.refresh();
+   render();
+   toast('✅ Giao hàng thành công! +'+x[3]+' xu · +'+x[4]+' XP');
+ }finally{busy=false;}
 });
 window.addEventListener('pageshow',load);
 })();
