@@ -32,6 +32,7 @@
     plots:Array.from({length:8},()=>({state:'empty',crop:null,plantedAt:0,readyAt:0})),
     stats:{planted:0,harvested:0,earned:0},
     achievements:{},
+    profile:{displayName:'',age:null,photoURL:''},
     pets:{animals:[],capacity:4,feed:0}
   };
 
@@ -236,6 +237,43 @@
     }
     openAchievements();
   }
+  let profileData={displayName:'',age:null,photoURL:''};
+  async function loadProfile(){
+    const u=currentUser;if(!u)return;
+    let p={displayName:u.displayName||u.email?.split('@')[0]||'Nông Dân',age:null,photoURL:u.photoURL||''};
+    try{const snap=await firebase.firestore().collection('users').doc(u.uid).get();if(snap.exists&&snap.data().profile)p={...p,...snap.data().profile};}catch(e){console.warn('Profile load:',e);}
+    profileData=p;renderProfile();
+  }
+  function renderProfile(){
+    const p=profileData||{};const av=$('profileAvatar'),fb=$('profileAvatarFallback');
+    if(av){if(p.photoURL){av.src=p.photoURL;av.style.display='block';if(fb)fb.style.display='none';}else{av.style.display='none';if(fb)fb.style.display='grid';}}
+    if($('profileNameView'))$('profileNameView').textContent=p.displayName||'Nông Dân';
+    if($('profileAgeView'))$('profileAgeView').textContent=p.age?String(p.age)+' tuổi':'Chưa cập nhật';
+    if($('profileEmailView'))$('profileEmailView').textContent=currentUser?.email||'—';
+    if($('profileLevel'))$('profileLevel').textContent='Lv.'+S.level+' · '+S.xp+'/'+xpNeed(S.level)+' XP';
+    if($('profileCoins'))$('profileCoins').textContent=Math.floor(S.coins);
+    if($('profileGems'))$('profileGems').textContent=Math.floor(S.gems);
+    const input=$('profileNameInput'),age=$('profileAgeInput');if(input)input.value=p.displayName||'';if(age)age.value=p.age||'';
+  }
+  function setProfileEdit(on){
+    ['profileNameInput','profileAgeInput'].forEach(id=>{const e=$(id);if(e)e.style.display=on?'block':'none';});
+    ['profileNameView','profileAgeView'].forEach(id=>{const e=$(id);if(e)e.style.display=on?'none':'block';});
+    if($('profileEditBtn'))$('profileEditBtn').style.display=on?'none':'block';
+    if($('profileSave'))$('profileSave').style.display=on?'block':'none';
+    if($('profileCancel'))$('profileCancel').style.display=on?'block':'none';
+  }
+  async function saveProfile(){
+    if(!currentUser)return;
+    const name=($('profileNameInput')?.value||'').trim()||'Nông Dân';
+    const ageRaw=Number($('profileAgeInput')?.value);const age=Number.isFinite(ageRaw)&&ageRaw>=1&&ageRaw<=120?Math.floor(ageRaw):null;
+    try{
+      await currentUser.updateProfile({displayName:name});
+      profileData={...profileData,displayName:name,age,photoURL:currentUser.photoURL||profileData.photoURL||''};
+      await firebase.firestore().collection('users').doc(currentUser.uid).set({email:currentUser.email,profile:profileData,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+      saveLocal();renderProfile();setProfileEdit(false);updateHUD();await syncLeaderboard(firebase.firestore());toast('✅ Đã lưu hồ sơ');
+    }catch(e){console.warn('Profile save:',e);toast('❌ Không lưu được hồ sơ');}
+  }
+  function openProfile(){renderProfile();setProfileEdit(false);$('profilePanel')?.classList.add('on');}
   function xpNeed(level){return 50+(level-1)*35;}
   function addXP(amount){
     S.xp+=amount;
@@ -385,6 +423,14 @@
   const modal=$('modal');
   if(modal)modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('on');});
 
+  $('profileBtn')?.addEventListener('click',openProfile);
+  $('profileDockBtn')?.addEventListener('click',openProfile);
+  $('profileClose')?.addEventListener('click',()=>{setProfileEdit(false);$('profilePanel')?.classList.remove('on');});
+  $('profileCancel')?.addEventListener('click',()=>{renderProfile();setProfileEdit(false);});
+  $('profileEditBtn')?.addEventListener('click',()=>setProfileEdit(true));
+  $('profileSave')?.addEventListener('click',saveProfile);
+  $('profilePanel')?.addEventListener('click',e=>{if(e.target===$('profilePanel'))$('profilePanel').classList.remove('on');});
+
   const logout=$('logout');
   if(logout){
     logout.onclick=async()=>{
@@ -402,6 +448,7 @@
     if(!user){location.replace('./login.html');return;}
     currentUser=user;
     await loadCloud(user);
+    await loadProfile();
     await syncLeaderboard(firebase.firestore());
     updateHUD();
     const profileLevel=document.getElementById('profileLevel');
