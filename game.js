@@ -100,10 +100,10 @@
   async function loadLeaderboard(){
     try{
       const snap=await firebase.firestore().collection('leaderboard').orderBy('score','desc').limit(20).get();
-      return snap.docs.map((d,i)=>({rank:i+1,...d.data()}));
+      return {rows:snap.docs.map((d,i)=>({rank:i+1,...d.data()})),error:''};
     }catch(e){
       console.warn('Leaderboard load:',e);
-      return [];
+      return {rows:[],error:(e&&e.code)||'permission-denied'};
     }
   }
   function renderLeaderboard(rows){
@@ -119,15 +119,26 @@
   async function openLeaderboard(){
     const html='<p>🏆 <b>Top 20 người chơi</b> — xếp theo cấp độ và XP.</p><div id="leaderboardList">Đang tải BXH...</div>';
     showModal('🏆 Bảng xếp hạng',html);
-    const rows=await loadLeaderboard();
+    const result=await loadLeaderboard();
     const box=document.getElementById('leaderboardList');
-    if(box)box.innerHTML=renderLeaderboard(rows);
+    if(box){
+      box.innerHTML=result.rows.length?renderLeaderboard(result.rows):
+        '<div style="padding:14px;background:#fff7dc;border-radius:12px;color:#6b3d19"><b>⚠️ Chưa tải được BXH.</b><br><small>Mã lỗi Firebase: '+result.error+'</small><br><br>Phần lưu BXH cần quyền đọc/ghi collection <b>leaderboard</b> trong Firestore Rules.</div>';
+    }
   }
   async function loadCloud(user){
     try{
       const snap=await firebase.firestore().collection('users').doc(user.uid).get();
       if(snap.exists&&snap.data().game){
-        S=mergeState(cloneDefault(),snap.data().game);
+        const cloudGame=snap.data().game;
+        const localBefore=S;
+        S=mergeState(cloneDefault(),cloudGame);
+        // Không làm mất trạng thái thành tựu đã nhận ở máy nếu cloud còn dữ liệu cũ.
+        S.achievements=S.achievements||{};
+        const localAch=localBefore.achievements||{};
+        Object.keys(localAch).forEach(id=>{
+          if(localAch[id]?.claimed) S.achievements[id]={...(S.achievements[id]||{}),...localAch[id],claimed:true,unlocked:true};
+        });
         saveLocal();
       }
     }catch(e){console.warn('Cloud load:',e);}
@@ -204,12 +215,25 @@
     if(at)at.onclick=()=>openAchievements();
     if(rt)rt.onclick=()=>openLeaderboard();
   }
-  function claimAchievement(id){
+  async function claimAchievement(id){
     refreshAchievements();
     const a=ACHIEVEMENTS.find(x=>x.id===id), st=S.achievements[id];
     if(!a||!st?.unlocked||st.claimed)return;
-    st.claimed=true; S.coins+=a.reward; addXP(a.xp); scheduleSave(); updateHUD();
+    // Đánh dấu đã nhận trước khi cộng thưởng để không thể nhận lần 2 khi reload.
+    st.claimed=true;
+    S.coins+=a.reward;
+    addXP(a.xp);
+    saveLocal();
+    updateHUD();
     toast('🏆 '+a.name+' · +🪙'+a.reward);
+    if(currentUser){
+      try{
+        await firebase.firestore().collection('users').doc(currentUser.uid).set({
+          game:S,updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+        },{merge:true});
+        await syncLeaderboard(firebase.firestore());
+      }catch(e){console.warn('Achievement cloud save:',e);}
+    }
     openAchievements();
   }
   function xpNeed(level){return 50+(level-1)*35;}
