@@ -220,6 +220,14 @@
     });
     if(changed){saveLocal();saveClaimedAchievements();}
   }
+  function isAchievementClaimed(id){
+    if(S.achievements?.[id]?.claimed===true)return true;
+    try{
+      const ids=JSON.parse(localStorage.getItem(CLAIM_KEY)||'[]');
+      return Array.isArray(ids)&&ids.includes(id);
+    }catch(e){return false;}
+  }
+
   function openAchievements(){
     refreshAchievements();
     const unlocked=ACHIEVEMENTS.filter(a=>S.achievements[a.id]?.unlocked).length;
@@ -227,7 +235,7 @@
     ACHIEVEMENTS.forEach(a=>{
       const st=S.achievements[a.id];
       const progress=achievementProgress(a);
-      const claimed=!!st?.claimed;
+      const claimed=isAchievementClaimed(a.id);
       html+='<div style="padding:10px;border:2px solid '+(st?'#d6a63a':'#cdbb99')+';border-radius:14px;background:'+(st?'#fff4bd':'#eee8d8')+';color:#3b2919">'+
         '<div style="display:flex;gap:8px;align-items:center"><span style="font-size:28px">'+a.icon+'</span><div style="flex:1"><b>'+a.name+'</b><br><small>'+a.desc+'</small></div><b>'+progress+'/'+a.need+'</b></div>'+
         '<div style="margin-top:6px">🎁 +🪙'+a.reward+' · ⭐'+a.xp+' XP '+(claimed?'<span>✅ Đã nhận</span>':st?'<button class="ach-claim" data-ach="'+a.id+'" style="float:right;border:0;border-radius:9px;background:#4ca54b;color:white;padding:6px 10px;font-weight:900">Nhận thưởng</button>':'<span style="float:right">🔒 Chưa mở</span>')+'</div></div>';
@@ -297,11 +305,14 @@
         saveLocal();
         updateHUD();
 
-        if(granted){
-          toast('🏆 '+a.name+' · +🪙'+a.reward);
-        }else{
-          toast('✅ Thành tựu này đã nhận trước đó');
+        if(!granted){
+          S.achievements=S.achievements||{};
+          S.achievements[id]={...(S.achievements[id]||{}),unlocked:true,claimed:true};
+          saveClaimedAchievements();
+          saveLocal();
         }
+        if(granted) toast('🏆 '+a.name+' · +🪙'+a.reward);
+        else toast('✅ Thành tựu này đã nhận trước đó');
       }else{
         // Chế độ cục bộ: đánh dấu trước khi cộng để reload không nhận lại.
         st.claimed=true;
