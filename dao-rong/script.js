@@ -90,7 +90,7 @@ function arena(){if(S.en<10)return toast('Rồng quá mệt, hãy cho ngủ trư
 function hb(n,h,m){return `<div class="b">${n} ${Math.max(0,Math.round(h))}/${m}<div class="t"><i style="width:${Math.max(0,h)/m*100}%;background:#e03131"></i></div></div>`}
 function rb(a,d){const w=S.wins||0,e=B.e,sg=e.boss||w>=7?'adult':w>=3?'teen':'baby';
  $('st').innerHTML=`<div class="bt"><div>${hb((e.boss?'👑 Boss ':'Rồng hoang ')+EL[e.el].n,e.hp,e.max)}<div class="${a==='p'?'hit':a==='e'?'lr':''}"><div style="transform:scaleX(-1)">${dragonSvg(e.el,sg,1)}</div></div></div><div>${hb('Rồng bạn',B.p.hp,B.p.max)}<div class="${a==='p'?'ll':a==='e'?'hit':''}">${dragonSvg(S.el,stage(),0,1)}</div></div></div><div class="sub" style="margin-top:6px;min-height:42px">${B.log}</div>`;
- $('bx').innerHTML=B.over?`<button style="width:100%;padding:12px" onclick="leave()">Quay về chuồng 🏠</button>`:`<div class="sub" style="text-align:center">⚡ Mana ${B.p.mp}/100 · Khắc hệ (vòng): 🔥>🍃>💧>❄️>⚡>🌑>🌈>🔥</div><div class="acts" style="grid-template-columns:repeat(3,1fr)"><button onclick="mv(0)"><span>⚔️</span>Đánh<br>+10 mana</button><button onclick="mv(1)"><span>${EL[S.el].e}</span>Chiêu<br>-25 mana</button><button onclick="mv(2)"><span>🛡️</span>Thủ<br>+hồi máu</button></div><button style="width:100%;margin-top:8px;padding:10px" onclick="tg()">🤖 Tự động đánh: ${B.auto?'BẬT':'TẮT'}</button>`;
+ $('bx').innerHTML=B.over?`<button style="width:100%;padding:12px" onclick="leave()">Quay về chuồng 🏠</button><button class="back-island" onclick="location.href='../game.html'">🏝️ Quay về đảo</button>`:`<div class="sub" style="text-align:center">⚡ Mana ${B.p.mp}/100 · Khắc hệ (vòng): 🔥>🍃>💧>❄️>⚡>🌑>🌈>🔥</div><div class="acts" style="grid-template-columns:repeat(3,1fr)"><button onclick="mv(0)"><span>⚔️</span>Đánh<br>+10 mana</button><button onclick="mv(1)"><span>${EL[S.el].e}</span>Chiêu<br>-25 mana</button><button onclick="mv(2)"><span>🛡️</span>Thủ<br>+hồi máu</button></div><button style="width:100%;margin-top:8px;padding:10px" onclick="tg()">🤖 Tự động đánh: ${B.auto?'BẬT':'TẮT'}</button>`;
  $('co').textContent='🪙 '+S.coins;if($('gm'))$('gm').textContent='💎 '+(S.mainGems||0);$('lv').textContent='⚔️ Đấu trường · 🏆'+(S.wins||0);if(a&&d)dm((a==='d'?'+':'-')+d,a==='p'?'e':'p',a==='d'?'#37b24d':'#e03131')}
 function mv(i){if(busy||B.over)return;const p=B.p,e=B.e;let l='',dd=0;
  if(i===1&&p.mp<25)return toast('Không đủ mana ⚡');
@@ -112,4 +112,3 @@ function au(){if(!B||B.over||!B.auto||busy)return;const p=B.p;mv(p.hp<p.max*.3&&
 setInterval(()=>{if(S.hatched&&!B){decay(1);if(avg()>50)S.xp+=0;save();render()}},5000);
 render(true);
 
-$('backIsland').onclick=()=>location.href='../game.html';
