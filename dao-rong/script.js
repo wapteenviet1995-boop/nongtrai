@@ -1,5 +1,5 @@
 const EL={fire:{n:'Lửa',c:'#ef5b2b',d:'#b8341a',l:'#ffd9a8',e:'🔥'},leaf:{n:'Mộc',c:'#46c15f',d:'#2a8a40',l:'#e0f7c8',e:'🍃'},water:{n:'Nước',c:'#3aa0ff',d:'#1f6fc4',l:'#cdeaff',e:'💧'},ice:{n:'Băng',c:'#8fd3f4',d:'#4a9bd1',l:'#e8f7ff',e:'❄️'},lightning:{n:'Sấm',c:'#f6c90e',d:'#c98a0a',l:'#fff3b0',e:'⚡'},dark:{n:'Bóng Tối',c:'#6b3fa0',d:'#3a2060',l:'#d9c6f0',e:'🌑'},rainbow:{n:'Cầu Vồng',c:'#f49ac1',d:'#c46a9a',l:'#ffe3f1',e:'🌈'}};
-const IMG={ice:'assets/ice.webp',fire:'assets/fire.webp',leaf:'assets/leaf.webp',rainbow:'assets/rainbow.webp',dark:'assets/dark.webp',lightning:'assets/lightning.webp',water:'assets/water.webp'};const KEY='rong_con_v1',$=id=>document.getElementById(id),cp=v=>Math.max(0,Math.min(100,v));
+const IMG={ice:'img/ice.webp',fire:'img/fire.webp',leaf:'img/leaf.webp',rainbow:'img/rainbow.webp',dark:'img/dark.webp',lightning:'img/lightning.webp',water:'img/water.webp'};const KEY='rong_con_v1',$=id=>document.getElementById(id),cp=v=>Math.max(0,Math.min(100,v));
 const fresh=()=>({el:null,taps:0,hatched:false,xp:0,coins:20,wins:0,stg:0,gem:{},st:{hp:0,atk:0,def:0,mp:0},inv:[],eq:{},h:80,f:80,cl:80,en:80,t:Date.now()});
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==='object')return Object.assign(fresh(),s)}catch(e){}return fresh()}
 let S=load(),key='',sleepUntil=0,armed=false;
