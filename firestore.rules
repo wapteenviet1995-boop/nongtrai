@@ -103,22 +103,41 @@ service cloud.firestore {
     // LEADERBOARD
     // =========================
 
+    // =========================
+    // PLAYER MARKET
+    // =========================
     match /marketListings/{listingId} {
+      // Người đã đăng nhập có thể xem chợ.
       allow read: if signedIn();
+
+      // Chỉ người bán được tạo tin của chính mình.
       allow create: if signedIn()
         && request.resource.data.sellerUid == request.auth.uid
-        && request.resource.data.status == 'active';
+        && request.resource.data.status == 'active'
+        && request.resource.data.qty is int
+        && request.resource.data.qty > 0
+        && request.resource.data.price is int
+        && request.resource.data.price > 0;
+
+      // Người bán có thể gỡ tin; người mua có thể chuyển active -> sold
+      // nhưng không được thay đổi món, số lượng, giá hay UID người bán.
       allow update: if signedIn()
         && (
-          resource.data.sellerUid == request.auth.uid ||
+          resource.data.sellerUid == request.auth.uid
+          ||
           (
-            resource.data.status == 'active' &&
-            request.resource.data.sellerUid == resource.data.sellerUid &&
-            request.resource.data.item == resource.data.item &&
-            request.resource.data.qty == resource.data.qty &&
-            request.resource.data.price == resource.data.price
+            resource.data.status == 'active'
+            && request.resource.data.status == 'sold'
+            && request.resource.data.buyerUid == request.auth.uid
+            && request.resource.data.sellerUid == resource.data.sellerUid
+            && request.resource.data.item == resource.data.item
+            && request.resource.data.qty == resource.data.qty
+            && request.resource.data.price == resource.data.price
           )
         );
+
+      allow delete: if signedIn()
+        && resource.data.sellerUid == request.auth.uid;
     }
 
     match /leaderboard/{userId} {
