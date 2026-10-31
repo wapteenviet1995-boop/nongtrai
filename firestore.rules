@@ -100,6 +100,24 @@ service cloud.firestore {
     }
 
     // =========================
+    // SYSTEM MESSAGES / THÔNG BÁO HỆ THỐNG
+    // =========================
+    match /systemMessages/{messageId} {
+      // Chỉ người nhận được đọc thông báo của mình.
+      allow read: if signedIn()
+        && resource.data.toUid == request.auth.uid;
+
+      // Người mua có thể tạo thông báo bán hàng cho người bán.
+      allow create: if signedIn()
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.type == 'market_sale';
+
+      allow update, delete: if signedIn()
+        && resource.data.toUid == request.auth.uid;
+    }
+
+    // =========================
     // LEADERBOARD
     // =========================
 
