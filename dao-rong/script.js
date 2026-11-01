@@ -5,7 +5,10 @@ function syncMoneyIn(){const g=mainLoad();S.coins=Number(g.coins)||0;S.mainGems=
 function syncMoneyOut(){const g=mainLoad();g.coins=Math.max(0,Number(S.coins)||0);g.gems=Math.max(0,Number(S.mainGems)||0);try{localStorage.setItem(MAIN_KEY,JSON.stringify(g))}catch(e){}}
 const fresh=()=>({el:null,taps:0,hatched:false,xp:0,coins:20,wins:0,stg:0,gem:{},st:{hp:0,atk:0,def:0,mp:0},inv:[],eq:{},h:80,f:80,cl:80,en:80,t:Date.now()});
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==='object')return Object.assign(fresh(),s)}catch(e){}return fresh()}
-let S=load(),key='',sleepUntil=0,armed=false;syncMoneyIn();
+let S=load(),key='',sleepUntil=0,armed=false;
+// Chuyển dữ liệu hệ Cầu Vồng cũ sang hệ Ngọc, giữ nguyên tiến trình người chơi.
+if(S.el==='rainbow')S.el='gem';if(S.gem&&S.gem.rainbow!==undefined){S.gem.gem=(S.gem.gem||0)+S.gem.rainbow;delete S.gem.rainbow;}
+syncMoneyIn();
 if(S.stg===undefined)S.stg=S.hatched?(S.xp<30?0:S.xp<100?1:2):0;
 function save(){S.t=Date.now();syncMoneyOut();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function decay(n){S.h=cp(S.h-n);S.f=cp(S.f-n);S.cl=cp(S.cl-.7*n);S.en=cp(S.en-.6*n)}
