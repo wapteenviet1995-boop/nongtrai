@@ -11,7 +11,7 @@ const IMG={
  pig_flower:"img/pig_flower.webp",
  cow:"img/cow.webp",
  lamb:"img/lamb.webp",
- chicken:"../img/ga.png",duck:"../img/vit.png",goat:"../img/de.png",bee:"../img/ong.png"
+ chicken:"img/ga.png",duck:"img/vit.png",goat:"img/de.png",bee:"img/ong.png"
 };
 const LV_H=20,LV_F=25;const DAY=864e5, RENT=7*DAY, CAP=10, FEED_COST=8;
 const T={
