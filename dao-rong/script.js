@@ -5,7 +5,7 @@ function syncMoneyIn(){const g=mainLoad();S.coins=Number(g.coins)||0;S.mainGems=
 function syncMoneyOut(){const g=mainLoad();g.coins=Math.max(0,Number(S.coins)||0);g.gems=Math.max(0,Number(S.mainGems)||0);try{localStorage.setItem(MAIN_KEY,JSON.stringify(g))}catch(e){}}
 const fresh=()=>({el:null,taps:0,hatched:false,xp:0,coins:20,wins:0,stg:0,gem:{},st:{hp:0,atk:0,def:0,mp:0},inv:[],eq:{},h:80,f:80,cl:80,en:80,t:Date.now()});
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==='object')return Object.assign(fresh(),s)}catch(e){}return fresh()}
-let S=load(),key='',sleepUntil=0,armed=false;
+let S=load(),key='',sleepUntil=0,armed=false,previewing=false;
 // Chuyển dữ liệu hệ Cầu Vồng cũ sang hệ Ngọc, giữ nguyên tiến trình người chơi.
 if(S.el==='rainbow')S.el='gem';if(S.gem&&S.gem.rainbow!==undefined){S.gem.gem=(S.gem.gem||0)+S.gem.rainbow;delete S.gem.rainbow;}
 syncMoneyIn();
@@ -22,8 +22,8 @@ function toast(m){const t=$('ts');t.textContent=m;t.classList.add('on');setTimeo
 function pop(e){const p=document.createElement('span');p.className='pop';p.textContent=e;p.style.left=(30+Math.random()*40)+'%';p.style.top='55%';$('st').appendChild(p);setTimeout(()=>p.remove(),1200)}
 function eggSvg(){const x=S.taps,c=EL[S.el];
  return `<svg viewBox="0 0 200 220" onclick="tap()"><ellipse cx="100" cy="125" rx="62" ry="80" fill="${c.l}" stroke="${c.c}" stroke-width="5"/><circle cx="75" cy="100" r="11" fill="${c.c}"/><circle cx="125" cy="140" r="14" fill="${c.c}"/><circle cx="110" cy="85" r="7" fill="${c.d}"/>${x>=2?`<path d="M80 60 l12 14 l-10 8" stroke="#5a3a2a" stroke-width="4" fill="none"/>`:''}${x>=5?`<path d="M130 70 l-12 16 l12 8 l-8 14" stroke="#5a3a2a" stroke-width="4" fill="none"/>`:''}${x>=7?`<path d="M60 150 l16 -8 l8 14" stroke="#5a3a2a" stroke-width="4" fill="none"/>`:''}</svg>`}
-function dragonSvg(e,sg,mo,pl){const st=sg||stage(),m=mo!==undefined?mo:mood(),k=e||S.el,w=st==='baby'?62:st==='teen'?80:100,f=m===2?'saturate(.55)':m===3?'brightness(.82)':'none';
- const evolution=e?(st==='baby'?1:2):((S.stg||0)>=1?2:1),src=IMG[k].replace('1.png',evolution+'.png');
+function dragonSvg(e,sg,mo,pl,pv){const st=sg||stage(),m=mo!==undefined?mo:mood(),k=e||S.el,w=st==='baby'?62:st==='teen'?80:100,f=m===2?'saturate(.55)':m===3?'brightness(.82)':'none';
+ const evolution=pv?2:(e?(st==='baby'?1:2):((S.stg||0)>=1?2:1)),src=IMG[k].replace('1.png',evolution+'.png');
  return `<div class="dg" ${e?'':'onclick="pet()"'} style="width:${w}%;filter:${f}"><img src="${src}" alt="Rồng ${EL[k].n} tiến hóa ${evolution}">${!e||pl?gear():''}${m===3?'<span class="zz">💤</span>':''}</div>`}
 function bar(l,v,col){return `<div class="b">${l} ${Math.round(v)}%<div class="t"><i style="width:${v}%;background:${col}"></i></div></div>`}
 function render(force){if(B)return rb();
@@ -31,7 +31,7 @@ function render(force){if(B)return rb();
  if(force||k!==key){key=k;let h='';
   if(st==='pick')h=`<div class="nm">Chọn một quả trứng rồng</div><div class="sub">Mỗi nguyên tố có màu sắc riêng</div><div class="pick">${Object.keys(EL).map(e=>`<button onclick="choose('${e}')"><img src="${IMG[e]}" style="width:100%;max-width:64px;height:64px;object-fit:contain"><br>${EL[e].e} ${EL[e].n}</button>`).join('')}</div>`;
   else if(st==='egg')h=eggSvg()+`<div class="nm">Trứng ${EL[S.el].n}</div><div class="sub">Chạm vào trứng để ấp nở (${S.taps}/8)</div>`;
-  else h=dragonSvg()+`<div class="nm">${EL[S.el].e} ${SN[st]} ${EL[S.el].n}</div><div class="sub">${MOOD[mood()]} · chạm vào rồng để vuốt ve</div><div class="stats" id="stats"></div>`;
+  else h=dragonSvg(null,null,null,null,previewing)+`<div class="nm">${EL[S.el].e} ${previewing?'Bản xem trước tiến hóa':' '+SN[st]} ${EL[S.el].n}</div><div class="sub">${previewing?'Đây là hình dạng ở cấp tiến hóa cao nhất':' '+MOOD[mood()]+' · chạm vào rồng để vuốt ve'}</div><button class="evo-preview" onclick="togglePreview()">${previewing?'‹ Quay lại rồng hiện tại':'Xem trước tiến hóa »'}</button><div class="stats" id="stats"></div>`;
   $('st').innerHTML=h;
   $('bx').innerHTML=st==='baby'||st==='teen'||st==='adult'?`<div class="bars" id="br"></div><div class="acts"><button onclick="act('feed')"><span>🍖</span>Cho ăn<br>-5🪙</button><button onclick="act('play')"><span>🎾</span>Chơi</button><button onclick="act('wash')"><span>🛁</span>Tắm</button><button onclick="act('sleep')"><span>🌙</span>Ngủ</button></div><div class="acts" style="grid-template-columns:1fr 1fr"><button id="pb" onclick="po()" style="padding:12px"></button><button id="gb" onclick="ev()" style="padding:12px"></button></div><button style="width:100%;margin-top:8px;padding:12px" onclick="eo()">🎒 Trang bị</button><button style="width:100%;margin-top:8px;padding:12px" onclick="arena()">⚔️ Đấu trường</button>`:'';
  }
@@ -40,7 +40,7 @@ function render(force){if(B)return rb();
  $('co').textContent='🪙 '+S.coins;if($('gm'))$('gm').textContent='💎 '+(S.mainGems||0);
  $('lv').textContent=st==='pick'||st==='egg'?'Trứng rồng':'Cấp '+lvl()+' · '+S.xp+' XP · 🏆'+(S.wins||0);
 }
-function choose(e){S.el=e;S.taps=0;save();render()}
+function choose(e){S.el=e;S.taps=0;previewing=false;save();render()}
 function tap(){S.taps++;const s=$('st').querySelector('svg');s.classList.add('wob');setTimeout(()=>s.classList.remove('wob'),350);
  if(S.taps>=8){S.hatched=true;S.xp=0;toast('Trứng đã nở! Chào Rồng Con 🐉')}save();render(S.hatched)}
 function pet(){S.f=cp(S.f+2);S.coins++;pop('❤️');save();render()}
@@ -77,9 +77,10 @@ const NEED=[99,999],lvl=()=>Math.floor(S.xp/20)+1,sp=k=>(S.st&&S.st[k])||0;
 function statHtml(){const l=lvl(),g=.7+avg()/100*.6,hp=60+l*10+bn('hat')+sp('hp')*10+(S.stg||0)*20,atk=Math.round((8+l*2)*g+bn('weapon')+sp('atk')*2+(S.stg||0)*4),def=Math.min(60,bn('armor')+sp('def')*2),mp=40+sp('mp')*8;return `<div class="stats-title">📊 Chỉ số Rồng</div><div class="stats-grid"><span>❤️ Máu <b>${hp}</b></span><span>⚔️ Sức đánh <b>${atk}</b></span><span>🛡️ Phòng thủ <b>${def}%</b></span><span>⚡ Mana <b>${mp}</b></span><span>⭐ Cấp <b>${l}</b></span><span>💎 Ngọc <b>${gc()}</b></span></div>`}
 const pts=()=>lvl()-1-Object.values(S.st||{}).reduce((a,b)=>a+b,0),gc=()=>(S.gem&&S.gem[S.el])||0;
 const gtxt=()=>(S.stg||0)>=2?'💎 Tối đa':'💎 '+gc()+'/'+NEED[S.stg||0]+' Ngọc '+EL[S.el].n,ptxt=()=>'🎯 Cộng điểm'+(pts()>0?' ('+pts()+')':'');
+function togglePreview(){previewing=!previewing;render(true)}
 function ev(){const g=S.stg||0;if(g>=2)return toast('Rồng đã tiến hoá tối đa 🌟');
  if(gc()<NEED[g])return toast('Cần '+NEED[g]+' Ngọc '+EL[S.el].n+' — thắng trận Đấu trường để nhận 💎');
- S.gem[S.el]-=NEED[g];S.stg=g+1;save();toast('Tiến hoá thành '+SN[STG[S.stg]]+'! ✨');render(true);pop('✨');pop('🌟')}
+ S.gem[S.el]-=NEED[g];S.stg=g+1;previewing=false;save();toast('Tiến hoá thành '+SN[STG[S.stg]]+'! ✨');render(true);pop('✨');pop('🌟')}
 function po(){const s=S.st||(S.st={hp:0,atk:0,def:0,mp:0}),R=[['hp','❤️ Máu','+10 máu mỗi điểm'],['atk','⚔️ Sức đánh','+2 sức đánh mỗi điểm'],['def','🛡️ Phòng thủ','giảm thêm 2% sát thương mỗi điểm'],['mp','⚡ Mana','+8 mana khởi đầu mỗi điểm']];
  let h=`<div class="nm">Cộng điểm chiến đấu</div><div class="sub" style="margin:4px 0 8px">Điểm còn lại: ${pts()} · mỗi cấp được 1 điểm</div>`;
  R.forEach(r=>h+=`<div class="it"><b>${r[1]}: ${s[r[0]]||0}<br><small style="font-weight:400;color:var(--mut)">${r[2]}</small></b><button onclick="ap('${r[0]}')">+1</button></div>`);
