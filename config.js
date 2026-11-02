@@ -4,3 +4,5 @@ const FB_CONFIG={apiKey:"AIzaSyDLMXxpZu6SxMevS8k2tOaRayFLYccN8BI",authDomain:"no
 
 /* Chế độ thử: true = mọi tài khoản có 99999 xu (chỉ để test). Bản chơi thật phải để false */
 const TEST_MODE=false;
+
+window.FB_CONFIG=FB_CONFIG;
