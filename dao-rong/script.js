@@ -90,8 +90,8 @@ let B=null,busy=false;
 const RING=['fire','leaf','water','ice','lightning','dark','gem'],ORD={};RING.forEach((k,i)=>ORD[k]=RING[(i+1)%7]);
 const mul=(a,d)=>ORD[a]===d?1.5:ORD[d]===a?.67:1;
 function arena(){if(S.en<10)return toast('Rồng quá mệt, hãy cho ngủ trước 🌙');
- const lv=Math.floor(S.xp/20)+1,g=.7+avg()/100*.6,w=S.wins||0,boss=w%5===4,ks=Object.keys(EL),e=ks[Math.floor(Math.random()*ks.length)],hp=60+lv*10+bn('hat')+sp('hp')*10+(S.stg||0)*20,eh=Math.round((50+w*15)*(boss?1.8:1));
- B={p:{hp:hp,max:hp,atk:(8+lv*2)*g+bn('weapon')+sp('atk')*2+(S.stg||0)*4,mp:40+sp('mp')*8,def:false},e:{el:e,hp:eh,max:eh,atk:(7+w*2)*(boss?1.3:1),boss:boss},log:boss?'👑 Boss xuất hiện!':'Trận đấu bắt đầu!',over:false};rb()}
+ const lv=Math.floor(S.xp/20)+1,g=.7+avg()/100*.6,w=S.wins||0,boss=w%5===4,ks=Object.keys(EL),e=ks[Math.floor(Math.random()*ks.length)],hp=60+lv*10+bn('hat')+sp('hp')*10+(S.stg||0)*20,eh=Math.round((50+w*15)*(boss?2.6:1));
+ B={p:{hp:hp,max:hp,atk:(8+lv*2)*g+bn('weapon')+sp('atk')*2+(S.stg||0)*4,mp:40+sp('mp')*8,def:false},e:{el:e,hp:eh,max:eh,atk:(7+w*2)*(boss?1.65:1),boss:boss},log:boss?'👑 Boss xuất hiện!':'Trận đấu bắt đầu!',over:false};rb()}
 function hb(n,h,m){return `<div class="b">${n} ${Math.max(0,Math.round(h))}/${m}<div class="t"><i style="width:${Math.max(0,h)/m*100}%;background:#e03131"></i></div></div>`}
 function rb(a,d){const w=S.wins||0,e=B.e,sg=e.boss||w>=7?'adult':w>=3?'teen':'baby';
  $('st').innerHTML=`<div class="bt"><div>${hb((e.boss?'👑 Boss ':'Rồng hoang ')+EL[e.el].n,e.hp,e.max)}<div class="${a==='p'?'hit':a==='e'?'lr':''}"><div style="transform:scaleX(-1)">${dragonSvg(e.el,sg,1)}</div></div></div><div>${hb('Rồng bạn',B.p.hp,B.p.max)}<div class="${a==='p'?'ll':a==='e'?'hit':''}">${dragonSvg(S.el,stage(),0,1)}</div></div></div><div class="sub" style="margin-top:6px;min-height:42px">${B.log}</div>`;
@@ -100,12 +100,12 @@ function rb(a,d){const w=S.wins||0,e=B.e,sg=e.boss||w>=7?'adult':w>=3?'teen':'ba
 function mv(i){if(busy||B.over)return;const p=B.p,e=B.e;let l='',dd=0;
  if(i===1&&p.mp<25)return toast('Không đủ mana ⚡');
  p.def=false;
- if(i===0){const d=Math.round(p.atk*(.9+Math.random()*.2));e.hp-=d;dd=d;p.mp=Math.min(100,p.mp+10);l=`Bạn đánh thường: -${d} máu.`}
- if(i===1){p.mp-=25;const m=mul(S.el,e.el),d=Math.round(p.atk*1.8*m);e.hp-=d;dd=d;l=`Chiêu ${EL[S.el].n}: -${d} máu${m>1?' (khắc hệ! 💥)':m<1?' (bị kháng)':''}.`}
+ if(i===0){const d=Math.round(p.atk*(.9+Math.random()*.2)*(e.boss?.85:1));e.hp-=d;dd=d;p.mp=Math.min(100,p.mp+10);l=`Bạn đánh thường: -${d} máu.`}
+ if(i===1){p.mp-=25;const m=mul(S.el,e.el),d=Math.round(p.atk*1.8*m*(e.boss?.85:1));e.hp-=d;dd=d;l=`Chiêu ${EL[S.el].n}: -${d} máu${m>1?' (khắc hệ! 💥)':m<1?' (bị kháng)':''}.`}
  if(i===2){p.def=true;p.mp=Math.min(100,p.mp+15);const h=Math.round(p.max*.08);p.hp=Math.min(p.max,p.hp+h);dd=h;l=`Bạn phòng thủ, hồi ${h} máu.`}
  if(e.hp<=0)return end(true,l,'p',dd);
  busy=true;B.log=l;rb(i===2?'d':'p',dd);
- setTimeout(()=>{const st=Math.random()<.25,m=st?mul(e.el,S.el):1;let d=Math.round(e.atk*(st?1.5:1)*m*(.9+Math.random()*.2));if(p.def)d=Math.round(d/2);d=Math.round(d*(1-Math.min(60,bn('armor')+sp('def')*2)/100));p.hp-=d;B.log=l+` Địch ${st?'tung chiêu mạnh':'tấn công'}: -${d} máu.`;busy=false;if(p.hp<=0)return end(false,B.log,'e',d);rb('e',d);if(B.auto)setTimeout(au,800)},700)}
+ setTimeout(()=>{const st=Math.random()<(e.boss?.55:.25),m=st?mul(e.el,S.el):1;let d=Math.round(e.atk*(st?(e.boss?1.8:1.5):1)*m*(.9+Math.random()*.2));if(p.def)d=Math.round(d/2);d=Math.round(d*(1-Math.min(60,bn('armor')+sp('def')*2)/100));p.hp-=d;B.log=l+` Địch ${st?'tung chiêu mạnh':'tấn công'}: -${d} máu.`;busy=false;if(p.hp<=0)return end(false,B.log,'e',d);rb('e',d);if(B.auto)setTimeout(au,800)},700)}
 function end(win,l,a,d){B.over=true;busy=false;
  if(win){const w=S.wins||0,c=10+w*3,x=B.e.boss?20:8;S.wins=w+1;S.coins+=c;const gm=B.e.boss?3:1;S.gem=S.gem||{};S.gem[S.el]=(S.gem[S.el]||0)+gm;B.log=l+` 🎉 Thắng! +${c}🪙 +${x} XP +${gm}💎`+(B.e.boss?' (hạ boss!)':'');gain(x)}
  else{S.en=cp(S.en-10);B.log=l+' 💀 Bạn thua, rồng mất chút năng lượng.'}
