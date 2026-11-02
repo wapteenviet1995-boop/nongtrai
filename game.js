@@ -64,8 +64,13 @@
   function saveLocal(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
   function saveClaimedAchievements(){
     try{
-      const ids=Object.keys(S.achievements||{}).filter(id=>S.achievements[id]?.claimed);
-      localStorage.setItem(CLAIM_KEY,JSON.stringify(ids));
+      // Không bao giờ ghi đè mất dấu đã nhận cũ nếu state vừa được đồng bộ từ tab/thiết bị khác.
+      const oldIds=JSON.parse(localStorage.getItem(CLAIM_KEY)||'[]');
+      const ids=new Set(Array.isArray(oldIds)?oldIds:[]);
+      Object.keys(S.achievements||{}).forEach(id=>{
+        if(S.achievements[id]?.claimed===true)ids.add(id);
+      });
+      localStorage.setItem(CLAIM_KEY,JSON.stringify([...ids]));
     }catch(e){}
   }
   function loadClaimedAchievements(){
@@ -79,7 +84,7 @@
       }
     }catch(e){}
   }
-  function refreshFromLocal(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;const d=JSON.parse(raw);S=mergeState(cloneDefault(),d);updateHUD();}catch(e){}}
+  function refreshFromLocal(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;const d=JSON.parse(raw);S=mergeState(cloneDefault(),d);loadClaimedAchievements();updateHUD();}catch(e){}}
   function scheduleSave(){
     saveLocal();
     clearTimeout(saveTimer);
@@ -246,6 +251,8 @@
   }
 
   function openAchievements(){
+    // Nạp dấu đã nhận trước khi dựng nút, tránh hiện lại "Nhận thưởng" sau khi tải lại.
+    loadClaimedAchievements();
     refreshAchievements();
     const unlocked=ACHIEVEMENTS.filter(a=>S.achievements[a.id]?.unlocked).length;
     let html='<div style="display:flex;gap:7px;margin-bottom:10px"><button id="achTab" class="btn" style="flex:1">🏆 Thành tựu</button><button id="rankTab" class="btn" style="flex:1">🥇 BXH</button></div><div id="achContent"><p><b>'+unlocked+'/'+ACHIEVEMENTS.length+' thành tựu đã mở</b></p><div style="display:grid;gap:8px">';
