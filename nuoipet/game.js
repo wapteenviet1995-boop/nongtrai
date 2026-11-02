@@ -56,7 +56,7 @@ const els={};
 function mk(a){
  const d=T[a.type],el=document.createElement('div');
  el.className='ent animal '+(['chicken','duck','goat','bee'].includes(a.type)?'animal-new animal-'+a.type:'');el.style.width=(d.s/vf)+'%';
- el.innerHTML='<div class="bar"><i></i></div><div class="bub" hidden></div><div class="in"><img alt="'+d.n+'" src="'+IMG[a.type]+'"></div>';
+ el.innerHTML='<div class="bar"><i></i></div><div class="bub" hidden></div><div class="in"><img alt="'+d.n+'" src="'+IMG[a.type]+'" draggable="false" decoding="async"></div>';
  el.onclick=()=>tap(a);stage.appendChild(el);els[a.id]=el;place(el,a.x,a.y);
 }
 function ui(a){
@@ -68,11 +68,11 @@ function ui(a){
 function wander(a){
  let x,y,k=0;
  do{x=26+Math.random()*56;y=62+Math.random()*24;k++}while(k<20&&Math.abs(x-72)<9&&Math.abs(y-79)<6);
+ if(a.type==='bee')y=Math.max(48,Math.min(76,y-12-Math.random()*10));
  const dx=x-a.x,dist=Math.hypot(dx,y-a.y),dur=Math.max(2,dist/5);
- const el=els[a.id];el.style.setProperty('--d',dur+'s');
- const img=el.querySelector('.in').firstChild;img.style.transform=dx>0?'scaleX(-1)':'none';
- el.classList.toggle('moving',true);clearTimeout(el._moveTimer);el._moveTimer=setTimeout(()=>el.classList.remove('moving'),dur*1000);
- if(a.type==='bee'){y=Math.max(48,Math.min(76,y-12-Math.random()*10));}
+ const el=els[a.id];if(!el)return;el.style.setProperty('--d',dur+'s');
+ const img=el.querySelector('.in img');if(img)img.style.transform=dx>0?'scaleX(-1)':'none';
+ el.classList.add('moving');clearTimeout(el._moveTimer);el._moveTimer=setTimeout(()=>el.classList.remove('moving'),dur*1000);
  a.x=x;a.y=y;place(el,x,y);
  a.next=now()+dur*1000+1500+Math.random()*4000;
 }
