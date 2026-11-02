@@ -118,6 +118,32 @@ service cloud.firestore {
     }
 
     // =========================
+    // PLAYER GIFTS
+    // Người gửi tạo quà; chỉ người nhận được đọc và nhận/xóa quà.
+    // =========================
+    match /playerGifts/{giftId} {
+      allow read: if signedIn()
+        && (resource.data.fromUid == request.auth.uid
+            || resource.data.toUid == request.auth.uid);
+
+      allow create: if signedIn()
+        && request.resource.data.fromUid == request.auth.uid
+        && request.resource.data.toUid is string
+        && request.resource.data.toUid != request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.qty is int
+        && request.resource.data.qty >= 1
+        && request.resource.data.qty <= 999
+        && request.resource.data.item in ['coin', 'carrot', 'corn', 'tomato', 'wheat'];
+
+      allow delete: if signedIn()
+        && resource.data.toUid == request.auth.uid
+        && resource.data.status == 'pending';
+
+      allow update: if false;
+    }
+
+    // =========================
     // LEADERBOARD
     // =========================
 
