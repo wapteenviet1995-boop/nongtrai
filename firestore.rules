@@ -134,11 +134,21 @@ service cloud.firestore {
         && request.resource.data.qty is int
         && request.resource.data.qty >= 1
         && request.resource.data.qty <= 999
-        && request.resource.data.item in ['coin', 'carrot', 'corn', 'tomato', 'wheat'];
+        && request.resource.data.item in ['coin', 'carrot', 'corn', 'tomato', 'wheat']
+        && (request.resource.data.item == 'coin'
+          ? getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.game.coins
+              == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.game.coins - request.resource.data.qty
+          : getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.game.inventory[request.resource.data.item]
+              == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.game.inventory[request.resource.data.item] - request.resource.data.qty);
 
       allow delete: if signedIn()
         && resource.data.toUid == request.auth.uid
-        && resource.data.status == 'pending';
+        && resource.data.status == 'pending'
+        && (resource.data.item == 'coin'
+          ? getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.game.coins
+              == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.game.coins + resource.data.qty
+          : getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.game.inventory[resource.data.item]
+              == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.game.inventory[resource.data.item] + resource.data.qty);
 
       allow update: if false;
     }
