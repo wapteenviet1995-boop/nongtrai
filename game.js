@@ -613,6 +613,7 @@
     state:()=>S,
     save:scheduleSave,
     refresh:updateHUD,
+    applyGiftDelta:(item,qty)=>{qty=Math.floor(Number(qty)||0);if(!qty)return;if(item==='coin')S.coins=Math.max(0,Number(S.coins||0)+qty);else if(Object.prototype.hasOwnProperty.call(S.inventory,item))S.inventory[item]=Math.max(0,Number(S.inventory[item]||0)+qty);saveLocal();updateHUD();scheduleSave();},
     toast
   };
 })();
