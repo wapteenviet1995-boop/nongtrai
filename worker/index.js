@@ -126,8 +126,8 @@ export class PvpRoom {
       this.queue = this.queue.filter(x => x.uid !== uid);
       return this.send(ws, { type: "queue_cancelled" });
     }
-    if (msg.type === "invite") return this.invite(uid, name, String(msg.toUid || "").trim());
-    if (msg.type === "accept_invite") return this.acceptInvite(uid, name, String(msg.fromUid || ""));
+    if (msg.type === "invite") return this.invite(uid, name, String(msg.toUid || "").trim(), msg.element);
+    if (msg.type === "accept_invite") return this.acceptInvite(uid, name, String(msg.fromUid || ""), msg.element);
     if (msg.type === "decline_invite") {
       const from = this.invites.get(uid);
       this.invites.delete(uid);
@@ -151,16 +151,17 @@ export class PvpRoom {
     const opponent = this.queue.splice(otherIndex, 1)[0];
     this.createMatch(opponent, { uid, name, element: this.cleanElement(element) });
   }
-  invite(uid, name, toUid) {
+  invite(uid, name, toUid, element) {
     if (!toUid || toUid === uid) return this.sendUid(uid, { type: "error", message: "UID người chơi không hợp lệ" });
     const target = this.players.get(toUid);
     if (!target || target.readyState !== 1) return this.sendUid(uid, { type: "error", message: "Người này chưa online ở Đảo Rồng" });
-    this.invites.set(toUid, uid);
-    this.send(target, { type: "invite_received", fromUid: uid, fromName: name });
+    this.invites.set(toUid, { fromUid: uid, fromName: name, element: this.cleanElement(element) });
+    this.send(target, { type: "invite_received", fromUid: uid, fromName: name, element: this.cleanElement(element) });
     this.sendUid(uid, { type: "invite_sent", toUid });
   }
-  acceptInvite(uid, name, fromUid) {
-    if (this.invites.get(uid) !== fromUid) return this.sendUid(uid, { type: "error", message: "Lời mời không còn hiệu lực" });
+  acceptInvite(uid, name, fromUid, element) {
+    const invitation = this.invites.get(uid);
+    if (!invitation || invitation.fromUid !== fromUid) return this.sendUid(uid, { type: "error", message: "Lời mời không còn hiệu lực" });
     const inviter = this.players.get(fromUid);
     if (!inviter || inviter.readyState !== 1) {
       this.invites.delete(uid);
@@ -169,8 +170,8 @@ export class PvpRoom {
     this.invites.delete(uid);
     const from = this.data(inviter);
     this.createMatch(
-      { uid: fromUid, name: from.name, element: "fire" },
-      { uid, name, element: "fire" }
+      { uid: fromUid, name: from.name, element: invitation.element },
+      { uid, name, element: this.cleanElement(element) }
     );
   }
   createMatch(a, b) {
@@ -271,8 +272,8 @@ export class PvpRoom {
     if (!uid) return;
     if (this.players.get(uid) === ws) this.players.delete(uid);
     this.queue = this.queue.filter(x => x.uid !== uid);
-    const from = this.invites.get(uid);
-    if (from) { this.invites.delete(uid); this.sendUid(from, { type: "error", message: "Người được mời đã ngoại tuyến" }); }
+    const invitation = this.invites.get(uid);
+    if (invitation) { this.invites.delete(uid); this.sendUid(invitation.fromUid, { type: "error", message: "Người được mời đã ngoại tuyến" }); }
     const match = this.findMatch(uid);
     if (match) this.finishForfeit(uid);
   }
