@@ -129,9 +129,9 @@ export class PvpRoom {
     if (msg.type === "invite") return this.invite(uid, name, String(msg.toUid || "").trim(), msg.element);
     if (msg.type === "accept_invite") return this.acceptInvite(uid, name, String(msg.fromUid || ""), msg.element);
     if (msg.type === "decline_invite") {
-      const from = this.invites.get(uid);
+      const invitation = this.invites.get(uid);
       this.invites.delete(uid);
-      if (from) this.sendUid(from, { type: "invite_declined", name });
+      if (invitation) this.sendUid(invitation.fromUid, { type: "invite_declined", name });
       return;
     }
     if (msg.type === "move") return this.move(uid, msg.action);
@@ -154,6 +154,7 @@ export class PvpRoom {
   invite(uid, name, toUid, element) {
     if (!toUid || toUid === uid) return this.sendUid(uid, { type: "error", message: "UID người chơi không hợp lệ" });
     const target = this.players.get(toUid);
+    if (this.findMatch(uid) || this.findMatch(toUid)) return this.sendUid(uid, { type: "error", message: "Một trong hai người đang ở trận đấu khác" });
     if (!target || target.readyState !== 1) return this.sendUid(uid, { type: "error", message: "Người này chưa online ở Đảo Rồng" });
     this.invites.set(toUid, { fromUid: uid, fromName: name, element: this.cleanElement(element) });
     this.send(target, { type: "invite_received", fromUid: uid, fromName: name, element: this.cleanElement(element) });
