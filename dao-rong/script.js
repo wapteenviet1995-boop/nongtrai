@@ -26,14 +26,14 @@ function dragonSvg(e,sg,mo,pl,pv){const st=sg||stage(),m=mo!==undefined?mo:mood(
  const evolution=pv?2:(e?(st==='baby'?1:2):((S.stg||0)>=1?2:1)),src=IMG[k].replace('1.png',evolution+'.png');
  return `<div class="dg" ${e?'':'onclick="pet()"'} style="width:${w}%;filter:${f}"><img src="${src}" alt="Rồng ${EL[k].n} tiến hóa ${evolution}">${!e||pl?gear():''}${m===3?'<span class="zz">💤</span>':''}</div>`}
 function bar(l,v,col){return `<div class="b">${l} ${Math.round(v)}%<div class="t"><i style="width:${v}%;background:${col}"></i></div></div>`}
-function render(force){if(B)return rb();
+function render(force){if(pvpScreen)return;if(B)return rb();
  const st=stage(),k=st+S.el+mood()+S.taps;
  if(force||k!==key){key=k;let h='';
   if(st==='pick')h=`<div class="nm">Chọn một quả trứng rồng</div><div class="sub">Mỗi nguyên tố có màu sắc riêng</div><div class="pick">${Object.keys(EL).map(e=>`<button onclick="choose('${e}')"><img src="${IMG[e]}" style="width:100%;max-width:64px;height:64px;object-fit:contain"><br>${EL[e].e} ${EL[e].n}</button>`).join('')}</div>`;
   else if(st==='egg')h=eggSvg()+`<div class="nm">Trứng ${EL[S.el].n}</div><div class="sub">Chạm vào trứng để ấp nở (${S.taps}/8)</div>`;
   else h=dragonSvg(null,null,null,null,previewing)+`<div class="nm">${EL[S.el].e} ${previewing?'Bản xem trước tiến hóa':' '+SN[st]} ${EL[S.el].n}</div><div class="sub">${previewing?'Đây là hình dạng ở cấp tiến hóa cao nhất':' '+MOOD[mood()]+' · chạm vào rồng để vuốt ve'}</div><button class="evo-preview" onclick="togglePreview()">${previewing?'‹ Quay lại rồng hiện tại':'Xem trước tiến hóa »'}</button><div class="stats" id="stats"></div>`;
   $('st').innerHTML=h;
-  $('bx').innerHTML=st==='baby'||st==='teen'||st==='adult'?`<div class="bars" id="br"></div><div class="acts"><button onclick="act('feed')"><span>🍖</span>Cho ăn<br>-5🪙</button><button onclick="act('play')"><span>🎾</span>Chơi</button><button onclick="act('wash')"><span>🛁</span>Tắm</button><button onclick="act('sleep')"><span>🌙</span>Ngủ</button></div><div class="acts" style="grid-template-columns:1fr 1fr"><button id="pb" onclick="po()" style="padding:12px"></button><button id="gb" onclick="ev()" style="padding:12px"></button></div><button style="width:100%;margin-top:8px;padding:12px" onclick="eo()">🎒 Trang bị</button><button style="width:100%;margin-top:8px;padding:12px" onclick="arena()">⚔️ Đấu trường</button>`:'';
+  $('bx').innerHTML=st==='baby'||st==='teen'||st==='adult'?`<div class="bars" id="br"></div><div class="acts"><button onclick="act('feed')"><span>🍖</span>Cho ăn<br>-5🪙</button><button onclick="act('play')"><span>🎾</span>Chơi</button><button onclick="act('wash')"><span>🛁</span>Tắm</button><button onclick="act('sleep')"><span>🌙</span>Ngủ</button></div><div class="acts" style="grid-template-columns:1fr 1fr"><button id="pb" onclick="po()" style="padding:12px"></button><button id="gb" onclick="ev()" style="padding:12px"></button></div><button style="width:100%;margin-top:8px;padding:12px" onclick="eo()">🎒 Trang bị</button><button style="width:100%;margin-top:8px;padding:12px" onclick="arena()">⚔️ Đấu trường PvE</button><button style="width:100%;margin-top:8px;padding:12px;background:#d8efff;color:#174b78" onclick="openPvp()">⚔️ PvP thời gian thực</button>`:'';
  }
  if($('gb')){$('gb').textContent=gtxt();$('pb').textContent=ptxt()}
  if($('br'))$('br').innerHTML=bar('🍖 No bụng',S.h,'#f08c00')+bar('🎾 Vui vẻ',S.f,'#e64980')+bar('🛁 Sạch sẽ',S.cl,'#1c7ed6')+bar('⚡ Năng lượng',S.en,'#37b24d'); if($('stats'))$('stats').innerHTML=statHtml();
@@ -80,7 +80,78 @@ const gtxt=()=>(S.stg||0)>=2?'💎 Tối đa':'💎 '+gc()+'/'+NEED[S.stg||0]+' 
 function togglePreview(){previewing=!previewing;render(true)}
 function ev(){const g=S.stg||0;if(g>=2)return toast('Rồng đã tiến hoá tối đa 🌟');
  if(gc()<NEED[g])return toast('Cần '+NEED[g]+' Ngọc '+EL[S.el].n+' — thắng trận Đấu trường để nhận 💎');
- S.gem[S.el]-=NEED[g];S.stg=g+1;previewing=false;save();toast('Tiến hoá thành '+SN[STG[S.stg]]+'! ✨');render(true);pop('✨');pop('🌟')}
+ S.gem[S.el]-=NEED[g];S.stg=g+1;previewing=false;save();toast('Tiến hoá thành '+SN[STG[S.stg]]+'! ✨');
+/* ===== PvP thời gian thực: máy chủ xác thực lượt đánh ===== */
+let pvpScreen=false,pvpSocket=null,pvpMe='',pvpMatch=null,pvpStatus='Chọn cách tham gia PvP',pvpAuthPromise=null;
+const PVP_ELEMENTS=['fire','leaf','water','ice','lightning','dark','gem'];
+function pvpEsc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pvpSend(data){if(pvpSocket&&pvpSocket.readyState===WebSocket.OPEN)pvpSocket.send(JSON.stringify(data));else toast('Chưa kết nối máy chủ PvP')}
+async function pvpUser(){
+ if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined')throw new Error('Thiếu cấu hình đăng nhập Firebase');
+ if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);
+ const auth=firebase.auth();
+ if(auth.currentUser)return auth.currentUser;
+ if(!pvpAuthPromise)pvpAuthPromise=new Promise(resolve=>{const off=auth.onAuthStateChanged(u=>{off();resolve(u)})});
+ const user=await pvpAuthPromise;
+ if(!user){location.href='../login.html';throw new Error('Bạn cần đăng nhập trước')};
+ return user;
+}
+async function pvpConnect(){
+ if(pvpSocket&&pvpSocket.readyState===WebSocket.OPEN)return;
+ const user=await pvpUser(),token=await user.getIdToken();
+ const url=(location.protocol==='https:'?'wss://':'ws://')+location.host+'/api/pvp/ws';
+ pvpStatus='Đang kết nối máy chủ...';renderPvp();
+ const ws=new WebSocket(url,['firebase',token]);pvpSocket=ws;
+ ws.onopen=()=>{pvpStatus='Đã kết nối Đảo Rồng';renderPvp()};
+ ws.onmessage=event=>{
+  let m;try{m=JSON.parse(event.data)}catch(e){return}
+  if(m.type==='connected'){pvpMe=m.uid;pvpStatus='Đã kết nối · '+m.name;renderPvp()}
+  if(m.type==='queued'){pvpStatus=m.message;renderPvp()}
+  if(m.type==='queue_cancelled'){pvpStatus='Đã hủy tìm trận';renderPvp()}
+  if(m.type==='invite_sent'){pvpStatus='Đã gửi lời mời. Chờ người chơi phản hồi.';renderPvp()}
+  if(m.type==='invite_received'){
+   const yes=confirm(m.fromName+' đang mời bạn đấu PvP. Chấp nhận?');
+   if(yes)pvpSend({type:'accept_invite',fromUid:m.fromUid});
+   else pvpSend({type:'decline_invite'});
+  }
+  if(m.type==='invite_declined'){pvpStatus=m.name+' đã từ chối lời mời.';renderPvp()}
+  if(m.type==='match_start'){pvpMatch={id:m.matchId,players:m.players,turnUid:m.turnUid,over:false,log:m.note};pvpStatus='Trận đấu bắt đầu!';renderPvp()}
+  if(m.type==='match_role'){pvpMe=m.you}
+  if(m.type==='match_update'&&pvpMatch){pvpMatch.players=m.players;pvpMatch.turnUid=m.turnUid;pvpMatch.log=m.log;renderPvp()}
+  if(m.type==='match_end'&&pvpMatch){pvpMatch.players=m.players;pvpMatch.over=true;pvpMatch.winnerUid=m.winnerUid;pvpMatch.log=m.message;pvpStatus=m.winnerUid===pvpMe?'Bạn đã chiến thắng! +3 điểm BXH':'Trận đấu đã kết thúc';renderPvp()}
+  if(m.type==='error'){pvpStatus=m.message;renderPvp()}
+ };
+ ws.onclose=()=>{if(pvpSocket===ws){pvpSocket=null;if(!pvpMatch||!pvpMatch.over){pvpStatus='Mất kết nối máy chủ. Hãy kết nối lại.';renderPvp()}}};
+ ws.onerror=()=>{pvpStatus='Không thể kết nối PvP. Máy chủ có thể chưa được triển khai.';renderPvp()};
+}
+async function openPvp(){
+ pvpScreen=true;pvpMatch=null;pvpStatus='Chọn cách tham gia PvP';renderPvp();
+ try{await pvpConnect()}catch(e){pvpStatus=e.message||'Không thể đăng nhập';renderPvp()}
+}
+function closePvp(){pvpScreen=false;pvpMatch=null;render(true)}
+function renderPvp(){
+ if(!pvpScreen)return;
+ if(pvpMatch){
+  const ps=pvpMatch.players||[],me=ps.find(p=>p.uid===pvpMe),op=ps.find(p=>p.uid!==pvpMe),myTurn=pvpMatch.turnUid===pvpMe&&!pvpMatch.over;
+  const playerCard=(p,own)=>p?'<div class="pvp-player"><div class="pvp-dragon"><img src="'+IMG[p.element].replace('1.png','2.png')+'" alt="Rồng"></div><b>'+pvpEsc(p.name)+(own?' (Bạn)':'')+'</b><div class="pvp-hp">❤️ '+p.hp+'/'+p.maxHp+'<i><u style="width:'+Math.max(0,p.hp)/p.maxHp*100+'%"></u></i></div><small>⚡ Mana '+p.mana+'</small></div>':'';
+  $('st').innerHTML='<div class="nm">⚔️ Đấu trường PvP</div><div class="pvp-duel">'+playerCard(me,true)+playerCard(op,false)+'</div><div class="pvp-log">'+pvpEsc(pvpMatch.log||'Trận đấu đang diễn ra')+'</div><div class="sub">'+(pvpMatch.over?'Trận đấu đã kết thúc':myTurn?'Đến lượt bạn!':'Đang chờ đối thủ ra đòn...')+'</div>';
+  $('bx').innerHTML=pvpMatch.over?'<button style="width:100%;padding:12px" onclick="pvpMatch=null;renderPvp()">🔁 Trở lại PvP</button><button style="width:100%;margin-top:8px;padding:12px" onclick="pvpLoadRank()">🏆 Xem BXH PvP</button><button style="width:100%;margin-top:8px;padding:12px" onclick="closePvp()">Về rồng của tôi</button>':myTurn?'<div class="acts" style="grid-template-columns:repeat(3,1fr)"><button onclick="pvpSend({type:\'move\',action:\'attack\'})"><span>⚔️</span>Đánh<br>+10 mana</button><button onclick="pvpSend({type:\'move\',action:\'special\'})"><span>✨</span>Chiêu<br>-20 mana</button><button onclick="pvpSend({type:\'move\',action:\'defend\'})"><span>🛡️</span>Thủ<br>+8 máu</button></div><button style="width:100%;margin-top:8px;padding:10px" onclick="pvpSend({type:\'leave_match\'})">Rời trận</button>':'<button style="width:100%;padding:12px" disabled>⏳ Chờ đối thủ...</button><button style="width:100%;margin-top:8px;padding:10px" onclick="pvpSend({type:\'leave_match\'})">Rời trận</button>';
+  return;
+ }
+ $('st').innerHTML='<div class="nm">⚔️ Đấu trường PvP thời gian thực</div><div class="sub">Hai người cùng online · thay phiên ra đòn · kết quả cập nhật trực tiếp</div><div class="pvp-status">'+pvpEsc(pvpStatus)+'</div><div class="pvp-duel"><div class="pvp-player"><div class="pvp-dragon"><img src="'+IMG[S.el||'fire'].replace('1.png','2.png')+'" alt="Rồng của bạn"></div><b>Rồng của bạn</b></div><div class="pvp-vs">VS</div><div class="pvp-player"><div class="pvp-dragon pvp-unknown">🐉</div><b>Đối thủ online</b></div></div><div class="sub">Trận cân bằng: mỗi rồng có 100 máu, 30 mana. Thắng được 3 điểm BXH PvP.</div>';
+ $('bx').innerHTML='<button style="width:100%;padding:13px;background:#d8efff;color:#174b78" onclick="pvpFind()">🔎 Ghép trận ngẫu nhiên</button><button style="width:100%;margin-top:8px;padding:12px" onclick="pvpInvite()">✉️ Mời bạn bè bằng UID</button><button style="width:100%;margin-top:8px;padding:12px" onclick="pvpLoadRank()">🏆 Bảng xếp hạng PvP</button><button style="width:100%;margin-top:8px;padding:12px" onclick="closePvp()">‹ Quay về rồng</button>';
+}
+async function pvpFind(){try{await pvpConnect();pvpStatus='Đang tìm người chơi...';pvpSend({type:'queue',element:S.el||'fire'});renderPvp()}catch(e){pvpStatus=e.message;renderPvp()}}
+async function pvpInvite(){try{await pvpConnect();const uid=prompt('Nhập UID của người bạn muốn mời (cả hai phải đang online ở Đảo Rồng):');if(!uid)return;pvpSend({type:'invite',toUid:uid.trim()})}catch(e){pvpStatus=e.message;renderPvp()}}
+async function pvpLoadRank(){
+ pvpScreen=true;pvpMatch=null;$('st').innerHTML='<div class="nm">🏆 Bảng xếp hạng PvP</div><div class="sub">Đang tải...</div>';
+ try{const res=await fetch('/api/pvp/leaderboard');if(!res.ok)throw new Error('Máy chủ chưa sẵn sàng');const data=await res.json();const rows=data.rows||[];$('st').innerHTML='<div class="nm">🏆 Bảng xếp hạng PvP</div><div class="sub">Top 50 người chơi theo điểm thắng</div><div class="pvp-ranks">'+(rows.length?rows.map((r,i)=>'<div class="pvp-rank"><b>'+(i+1)+'. '+pvpEsc(r.name)+'</b><span>🏆 '+r.points+' điểm · '+r.wins+' thắng · '+r.losses+' thua</span></div>').join(''):'Chưa có trận PvP nào.')+'</div>';
+ }catch(e){$('st').innerHTML='<div class="nm">🏆 Bảng xếp hạng PvP</div><div class="pvp-status">'+pvpEsc(e.message)+'</div>'}
+ $('bx').innerHTML='<button style="width:100%;padding:12px" onclick="renderPvp()">‹ Quay lại PvP</button><button style="width:100%;margin-top:8px;padding:12px" onclick="closePvp()">Về rồng của tôi</button>';
+}
+window.openPvp=openPvp;window.renderPvp=renderPvp;window.pvpLoadRank=pvpLoadRank;window.closePvp=closePvp;window.pvpFind=pvpFind;window.pvpInvite=pvpInvite;window.pvpSend=pvpSend;window.pvpMatch=null;
+
+render(true);pop('✨');pop('🌟')}
 function po(){const s=S.st||(S.st={hp:0,atk:0,def:0,mp:0}),R=[['hp','❤️ Máu','+10 máu mỗi điểm'],['atk','⚔️ Sức đánh','+2 sức đánh mỗi điểm'],['def','🛡️ Phòng thủ','giảm thêm 2% sát thương mỗi điểm'],['mp','⚡ Mana','+8 mana khởi đầu mỗi điểm']];
  let h=`<div class="nm">Cộng điểm chiến đấu</div><div class="sub" style="margin:4px 0 8px">Điểm còn lại: ${pts()} · mỗi cấp được 1 điểm</div>`;
  R.forEach(r=>h+=`<div class="it"><b>${r[1]}: ${s[r[0]]||0}<br><small style="font-weight:400;color:var(--mut)">${r[2]}</small></b><button onclick="ap('${r[0]}')">+1</button></div>`);
