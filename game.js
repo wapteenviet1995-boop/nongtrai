@@ -34,7 +34,8 @@
     stats:{planted:0,harvested:0,earned:0},
     achievements:{},
     profile:{displayName:'',age:null,photoURL:''},
-    pets:{animals:[],capacity:4,feed:0}
+    pets:{animals:[],capacity:4,feed:0},
+    buildings:{landLevel:1,house:1,barn:1,warehouse:1,garden:1,workshop:0,dragonGate:0,decor:0}
   };
 
   let S=loadState();
