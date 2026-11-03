@@ -192,6 +192,7 @@ body{overflow:hidden}
 
   <nav class="bottom" id="bottomMenu">
     <button class="nav" data-feature="map">🗺️<br>Bản đồ</button>
+    <button class="nav" data-feature="build">🏗️<br>Xây dựng</button>
     <button class="nav" data-feature="field">🌾<br>Ruộng</button>
     <button class="nav" data-feature="barn">🐄<br>Chuồng</button>
     <button class="nav" data-feature="warehouse">📦<br>Kho</button>
@@ -229,6 +230,7 @@ body{overflow:hidden}
     dragon:['🐉 Đảo Rồng','Khu vực nuôi rồng, nâng cấp rồng và nhận phần thưởng.'],
     achieve:['🏆 Thành tựu & BXH','Theo dõi thành tựu, thứ hạng và bảng xếp hạng người chơi.'],
     house:['🏡 Nhà','Khu nhà chính của nông dân và các nâng cấp trang trại.'],
+    build:['🏗️ Xây dựng','Mở rộng đất, xây mới và nâng cấp công trình nông trại.'],
     production:['⚙️ Sản xuất','Chế biến nông sản thành các sản phẩm có giá trị cao hơn.'],
     barn:['🐄 Chuồng','Nuôi vật nuôi và thu hoạch sản phẩm từ chuồng.'],
     field:['🌾 Ruộng','Trồng cây, chờ cây lớn rồi thu hoạch để kiếm xu.'],
@@ -238,6 +240,10 @@ body{overflow:hidden}
     seeds:['🌱 Hạt giống','Chọn giống cây để bắt đầu trồng trọt.']
   };
   async function openFeature(key){
+    if(key==='build'||key==='house'){
+      location.href='./xay-dung.html';
+      return;
+    }
     if(key==='barn'){
       location.href='./chuong.html';
       return;
