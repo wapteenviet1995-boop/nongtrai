@@ -23,7 +23,18 @@ function mergeGame(g){S={...S,...g,buildings:{...DEFAULT_BUILDINGS,...(g.buildin
 function persistLocal(){const local=readLocal();local.coins=S.coins;local.gems=S.gems;local.level=S.level;local.xp=S.xp;local.buildings={...DEFAULT_BUILDINGS,...S.buildings};try{localStorage.setItem(SAVE_KEY,JSON.stringify(local))}catch(e){}}
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2300)}
 function costFor(b,level){return Math.round(b.base*Math.pow(1.55,Math.max(0,level)))}
+function renderFarmMap(){
+ const land=Number(S.buildings.landLevel)||1;
+ const zones=[
+  {n:1,title:'Đảo chính',icons:'🏡 🌾 🐄',desc:'Nhà chính · Ruộng · Chuồng'},
+  {n:2,title:'Bãi cỏ phía Đông',icons:'🌳 🌼 ⚙️',desc:'Vườn mở rộng · Xưởng'},
+  {n:3,title:'Thung lũng xanh',icons:'🐉 🌲 💧',desc:'Cổng Đảo Rồng · Hồ cảnh quan'},
+  {n:4,title:'Đồi nắng vàng',icons:'⛰️ ☀️ 🌻',desc:'Khu đất cao cấp'}
+ ];
+ $('farmMap').innerHTML=zones.map(z=>'<div class="zone '+(land>=z.n?'':'closed')+'"><strong>'+z.title+'</strong><div class="icons">'+(land>=z.n?z.icons:'🔒')+'</div><small>'+(land>=z.n?z.desc:'Chưa mở khóa · Khu '+z.n)+'</small></div>').join('');
+}
 function render(){
+ renderFarmMap();
  $('coins').textContent=Math.floor(S.coins).toLocaleString('vi-VN');$('gems').textContent=Math.floor(S.gems).toLocaleString('vi-VN');$('level').textContent='Lv.'+S.level;
  const land=Number(S.buildings.landLevel)||1;$('landCount').textContent=land;
  $('buildingCount').textContent=BUILDINGS.filter(b=>(Number(S.buildings[b.id])||0)>0).length;
