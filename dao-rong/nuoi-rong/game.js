@@ -1,8 +1,8 @@
 const IMG={
- "fire": "assets/fire.webp",
- "leaf": "assets/leaf.webp",
- "ice": "assets/ice.webp",
- "spark": "assets/spark.webp"
+ "fire": "../img/fire.webp",
+ "leaf": "../img/leaf.webp",
+ "ice": "../img/ice.webp",
+ "spark": "../img/lightning.webp"
 };
 const T={fire:{n:'Rồng Lửa',p:0,i:'🔥'},leaf:{n:'Rồng Lá',p:80,i:'🍃'},ice:{n:'Rồng Băng',p:200,i:'❄️'},spark:{n:'Rồng Sét',p:400,i:'⚡'}};
 const KEY='rong_v1',MAXD=7,B={x0:15,x1:87,y0:30,y1:68},E={x:51,y:49,rx:36,ry:19};
