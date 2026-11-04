@@ -22,7 +22,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Baloo 2',system-ui,sans-
 .staff .in{animation:hop .6s ease-in-out infinite}
 .pop{position:absolute;transform:translate(-50%,-100%);font-weight:800;font-size:clamp(14px,3.6vw,26px);color:#fff;text-shadow:0 2px 0 #4a2e14,0 0 6px #4a2e14;animation:rise 1.1s ease-out forwards;pointer-events:none;z-index:999}
 @keyframes rise{to{transform:translate(-50%,-260%);opacity:0}}
-#bar{width:min(100vw,900px);display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px;box-sizing:border-box}
+#bar{width:min(100vw,900px);display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:10px;box-sizing:border-box}
 button{font:inherit;font-weight:800;color:#fff;background:linear-gradient(var(--wood1),var(--wood2));border:3px solid #6b3a0e;border-radius:14px;padding:6px 8px;cursor:pointer;text-shadow:0 1px 0 #4a2e14;box-shadow:0 3px 0 #6b3a0e}
 button:active{transform:translateY(2px);box-shadow:0 1px 0 #6b3a0e}
 button:disabled{filter:grayscale(.8);opacity:.6}
@@ -55,3 +55,9 @@ button:focus-visible{outline:3px solid #fff;outline-offset:2px}
 @keyframes goatWalk{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-4%) rotate(1deg)}}
 @keyframes beeHover{0%,100%{transform:translateY(-3%)}50%{transform:translateY(5%)}}
 @keyframes beeFly{0%,100%{transform:translateY(-7%) rotate(-2deg)}50%{transform:translateY(5%) rotate(2deg)}}
+
+/* Giao diện khu lai giống */
+.breed-select{display:block;width:100%;margin:6px 0 12px;padding:10px;border:2px solid var(--line);border-radius:10px;background:#fff;color:#3f2a16;font:700 15px 'Baloo 2',sans-serif}
+#sheet label{font-weight:800}
+.breed-odds{padding:10px;background:#e8d6ad;border:2px dashed #a8641f;border-radius:12px;color:#4a2e14;line-height:1.5}
+@media(max-width:390px){#bar{gap:4px;padding:7px 5px}#bar button{font-size:11px;padding:5px 1px}}
