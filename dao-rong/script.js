@@ -10,7 +10,7 @@ function penState(){try{return JSON.parse(localStorage.getItem('rong_v1')||'null
 const activeChoice=chosenDragon(),penData=penState();
 const activePet=activeChoice&&penData&&Array.isArray(penData.dragons)?penData.dragons.find(d=>String(d.id)===String(activeChoice.id)):null;
 const legacyState=load();
-let S=activePet?(activePet.combat?Object.assign(fresh(),activePet.combat):Object.assign(fresh(),{el:activeChoice.type,hatched:true,xp:0,stg:0,gem:{},wins:0})):legacyState,key='',sleepUntil=0,armed=false,previewing=false;
+let S=activePet?(activePet.combat?Object.assign(fresh(),activePet.combat):Object.assign(fresh(),{el:activeChoice.type,hatched:true,xp:0,stg:0,gem:{},wins:0})):legacyState,key='',sleepUntil=0,armed=false,previewing=false;\n// Migrate legacy shared evolution state: only keep evolution explicitly saved by the player for this dragon.\nif(activePet&&S.evoVersion!==1){S.stg=0;S.evoVersion=1;}
 
 // Chuyển dữ liệu hệ Cầu Vồng cũ sang hệ Ngọc, giữ nguyên tiến trình người chơi.
 if(S.el==='rainbow')S.el='gem';if(S.gem&&S.gem.rainbow!==undefined){S.gem.gem=(S.gem.gem||0)+S.gem.rainbow;delete S.gem.rainbow;}
@@ -37,7 +37,7 @@ function render(force){if(B)return rb();
  if(force||k!==key){key=k;let h='';
   if(st==='pick')h=`<div class="nm">Chọn một quả trứng rồng</div><div class="sub">Mỗi nguyên tố có màu sắc riêng</div><div class="pick">${Object.keys(EL).map(e=>`<button onclick="choose('${e}')"><img src="${IMG[e]}" style="width:100%;max-width:64px;height:64px;object-fit:contain"><br>${EL[e].e} ${EL[e].n}</button>`).join('')}</div>`;
   else if(st==='egg')h=eggSvg()+`<div class="nm">Trứng ${EL[S.el].n}</div><div class="sub">Chạm vào trứng để ấp nở (${S.taps}/8)</div>`;
-  else h=(chosen?dragonSvg(chosen.type,'baby',null,1,false):dragonSvg(null,null,null,null,previewing))+(chosen?'<div class="sub" style="margin:6px auto;padding:6px 10px;border-radius:10px;background:#fff3c4;color:#704b12;font-weight:700">⚔️ Rồng chiến đấu: '+EL[chosen.type].e+' '+EL[chosen.type].n+' · Cấp '+(Number(chosen.level)||1)+'</div>':'')+`<div class="nm">${chosen?EL[chosen.type].e+' Rồng chiến đấu '+EL[chosen.type].n:EL[S.el].e+(previewing?'Bản xem trước tiến hóa':' '+SN[st])+' '+EL[S.el].n}</div><div class="sub">${previewing?'Đây là hình dạng ở cấp tiến hóa cao nhất':' '+MOOD[mood()]+' · chạm vào rồng để vuốt ve'}</div><button class="evo-preview" onclick="togglePreview()">${previewing?'‹ Quay lại rồng hiện tại':'Xem trước tiến hóa »'}</button><div class="stats" id="stats"></div>`;
+  else h=(chosen?dragonSvg(chosen.type,(S.stg>=2?'adult':S.stg>=1?'teen':'baby'),null,1,false):dragonSvg(null,null,null,null,previewing))+(chosen?'<div class="sub" style="margin:6px auto;padding:6px 10px;border-radius:10px;background:#fff3c4;color:#704b12;font-weight:700">⚔️ Rồng chiến đấu: '+EL[chosen.type].e+' '+EL[chosen.type].n+' · Cấp '+(Number(chosen.level)||1)+'</div>':'')+`<div class="nm">${chosen?EL[chosen.type].e+' Rồng chiến đấu '+EL[chosen.type].n:EL[S.el].e+(previewing?'Bản xem trước tiến hóa':' '+SN[st])+' '+EL[S.el].n}</div><div class="sub">${previewing?'Đây là hình dạng ở cấp tiến hóa cao nhất':' '+MOOD[mood()]+' · chạm vào rồng để vuốt ve'}</div><button class="evo-preview" onclick="togglePreview()">${previewing?'‹ Quay lại rồng hiện tại':'Xem trước tiến hóa »'}</button><div class="stats" id="stats"></div>`;
   $('st').innerHTML=h;
   $('bx').innerHTML=st==='baby'||st==='teen'||st==='adult'?`<div class="bars" id="br"></div><div class="acts"><button onclick="act('feed')"><span>🍖</span>Cho ăn<br>-5🪙</button><button onclick="act('play')"><span>🎾</span>Chơi</button><button onclick="act('wash')"><span>🛁</span>Tắm</button><button onclick="act('sleep')"><span>🌙</span>Ngủ</button></div><div class="acts" style="grid-template-columns:1fr 1fr"><button id="pb" onclick="po()" style="padding:12px"></button><button id="gb" onclick="ev()" style="padding:12px"></button></div><button style="width:100%;margin-top:8px;padding:12px" onclick="eo()">🎒 Trang bị</button><button style="width:100%;margin-top:8px;padding:12px" onclick="arena()">⚔️ Đấu trường</button>`:'';
  }
@@ -86,7 +86,7 @@ const gtxt=()=>(S.stg||0)>=2?'💎 Tối đa':'💎 '+gc()+'/'+NEED[S.stg||0]+' 
 function togglePreview(){previewing=!previewing;render(true)}
 function ev(){const g=S.stg||0;if(g>=2)return toast('Rồng đã tiến hoá tối đa 🌟');
  if(gc()<NEED[g])return toast('Cần '+NEED[g]+' Ngọc '+EL[S.el].n+' — thắng trận Đấu trường để nhận 💎');
- S.gem[S.el]-=NEED[g];S.stg=g+1;previewing=false;save();toast('Tiến hoá thành '+SN[STG[S.stg]]+'! ✨');render(true);pop('✨');pop('🌟')}
+ S.gem[S.el]-=NEED[g];S.stg=g+1;S.evoVersion=1;previewing=false;save();toast('Tiến hoá thành '+SN[STG[S.stg]]+'! ✨');render(true);pop('✨');pop('🌟')}
 function po(){const s=S.st||(S.st={hp:0,atk:0,def:0,mp:0}),R=[['hp','❤️ Máu','+10 máu mỗi điểm'],['atk','⚔️ Sức đánh','+2 sức đánh mỗi điểm'],['def','🛡️ Phòng thủ','giảm thêm 2% sát thương mỗi điểm'],['mp','⚡ Mana','+8 mana khởi đầu mỗi điểm']];
  let h=`<div class="nm">Cộng điểm chiến đấu</div><div class="sub" style="margin:4px 0 8px">Điểm còn lại: ${pts()} · mỗi cấp được 1 điểm</div>`;
  R.forEach(r=>h+=`<div class="it"><b>${r[1]}: ${s[r[0]]||0}<br><small style="font-weight:400;color:var(--mut)">${r[2]}</small></b><button onclick="ap('${r[0]}')">+1</button></div>`);
