@@ -24,8 +24,9 @@ function toast(m){const t=$('toast');t.textContent=m;t.style.opacity=1;clearTime
 function newD(type){return{id:S.n++,type,lv:1,xp:0,hun:80,x:rnd(40,62),y:rnd(42,56),tx:null,ty:null,wait:1,ct:0}}
 if(!S.dragons.length)S.dragons.push(newD('fire'));
 const sc=d=>.75+.07*d.lv;
+function dragonImage(d){const names={fire:'lua',leaf:'co',ice:'bang',spark:'set',water:'nuoc',dark:'hacam',rainbow:'ngoc'};const stage=Number(d.combat&&d.combat.stg)||0;const evolution=stage>=1?2:1;return '../rong-tien-hoa/rong_'+(names[d.type]||'lua')+evolution+'.png'}
 function mk(d){const e=document.createElement('div');e.className='d';
- e.innerHTML='<div class="b"><div class="sh"></div><img src="'+IMG[d.type]+'"><span class="em"></span></div>';
+ e.innerHTML='<div class="b"><div class="sh"></div><img src="'+dragonImage(d)+'"><span class="em"></span></div>';
  e.onclick=ev=>{ev.stopPropagation();S.sel=d.id;d.wait=0;render()};W.appendChild(e);els[d.id]=e}
 function fx(x,y,t){const f=document.createElement('div');f.className='fx';f.textContent=t;f.style.left=x+'%';f.style.top=(y-12)+'%';W.appendChild(f);setTimeout(()=>f.remove(),1000)}
 W.onclick=ev=>{const d=S.dragons.find(d=>d.id===S.sel);if(!d)return;const r=W.getBoundingClientRect();
