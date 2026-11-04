@@ -63,7 +63,16 @@ const btn=$('createBtn');btn.disabled=true;btn.textContent='ĐANG TẠO...';
 try{
 const data={active:true,rewards:rewards,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
 if($('expiry').value){const date=new Date($('expiry').value+'T23:59:59');if(date.getTime()<Date.now())throw Error('Ngày hết hạn phải ở hiện tại hoặc tương lai.');data.expiresAt=firebase.firestore.Timestamp.fromDate(date);}
-await db.collection('promoCodes').doc(code).create(data);
+await db.runTransaction(async transaction => {
+  const codeRef = db.collection('promoCodes').doc(code);
+  const existing = await transaction.get(codeRef);
+  if (existing.exists) {
+    const err = new Error('Mã này đã tồn tại. Hãy chọn mã khác.');
+    err.code = 'already-exists';
+    throw err;
+  }
+  transaction.set(codeRef, data);
+});
 say('🎉 Đã tạo mã '+code+'. Người chơi có thể nhập mã ở trang Mã quà.','ok');
 $('code').value='';['coins','gems','energy','xp'].forEach(id=>$(id).value='0');$('expiry').value='';await loadCodes();
 }catch(e){say(e.code==='already-exists'?'Mã này đã tồn tại. Hãy chọn mã khác.':(e.message||'Không thể tạo mã.'),'err');}
