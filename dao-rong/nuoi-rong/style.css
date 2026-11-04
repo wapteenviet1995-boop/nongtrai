@@ -28,3 +28,6 @@ button:active{transform:translateY(.5cqw);box-shadow:0 .3cqw #b66a00}button:disa
 .box{background:#fffbea;width:88%;border-radius:4cqw;padding:4cqw;color:#2b2b2b;max-height:90%;overflow:auto}
 .it{display:flex;align-items:center;gap:3cqw;margin:2cqw 0;font-size:3.8cqw}.it img{width:15cqw;height:15cqw;object-fit:contain}.it div{flex:1}
 #toast{position:absolute;top:14cqw;left:50%;transform:translateX(-50%);background:#000b;color:#fff;padding:2cqw 4cqw;border-radius:4cqw;font-size:3.8cqw;z-index:10002;opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none}
+
+#backnav{position:absolute;left:3cqw;top:13cqw;display:flex;flex-direction:column;gap:1.8cqw;z-index:10000}#backnav button{font-size:3.2cqw;padding:1.7cqw 2.6cqw;background:#fff1c9;color:#4b3100;box-shadow:0 .6cqw #b88b38;border:1px solid #fff8}
+#shop .it img{flex:0 0 17cqw;width:17cqw;height:17cqw;object-fit:contain;background:#e9e2c9;border-radius:2.5cqw;padding:1cqw}
