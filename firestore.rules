@@ -166,16 +166,70 @@ service cloud.firestore {
     }
 
     match /promoRedemptions/{redemptionId} {
-      // Transaction đổi mã cần đọc cả tài liệu chưa tồn tại để kiểm tra mã đã dùng chưa.
+      // ID lượt đổi mã có dạng UID_MA, vì vậy người chơi chỉ đọc được
+      // tài liệu lượt đổi mã mang UID của chính mình (kể cả khi tài liệu chưa tồn tại).
       allow get: if signedIn()
+        && redemptionId.matches('^' + request.auth.uid + '_.*
+
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.code is string
+        && redemptionId == request.auth.uid + '_' + request.resource.data.code
+        && get(/databases/$(database)/documents/promoCodes/$(request.resource.data.code)).data.active == true
+        && request.resource.data.rewards == get(/databases/$(database)/documents/promoCodes/$(request.resource.data.code)).data.rewards;
+      allow update, delete: if false;
+    }
+
+    // =========================
+    // LEADERBOARD
+    // =========================
+
+    // =========================
+    // PLAYER MARKET
+    // =========================
+    match /marketListings/{listingId} {
+      // Người đã đăng nhập có thể xem chợ.
+      allow read: if signedIn();
+
+      // Chỉ người bán được tạo tin của chính mình.
+      allow create: if signedIn()
+        && request.resource.data.sellerUid == request.auth.uid
+        && request.resource.data.status == 'active'
+        && request.resource.data.qty is int
+        && request.resource.data.qty > 0
+        && request.resource.data.price is int
+        && request.resource.data.price > 0;
+
+      // Người bán có thể gỡ tin; người mua có thể chuyển active -> sold
+      // nhưng không được thay đổi món, số lượng, giá hay UID người bán.
+      allow update: if signedIn()
         && (
-          !exists(/databases/$(database)/documents/promoRedemptions/$(redemptionId))
-          || resource.data.uid == request.auth.uid
+          resource.data.sellerUid == request.auth.uid
+          ||
+          (
+            resource.data.status == 'active'
+            && request.resource.data.status == 'sold'
+            && request.resource.data.buyerUid == request.auth.uid
+            && request.resource.data.sellerUid == resource.data.sellerUid
+            && request.resource.data.item == resource.data.item
+            && request.resource.data.qty == resource.data.qty
+            && request.resource.data.price == resource.data.price
+          )
         );
 
-      // Chỉ cho phép truy vấn các lượt đổi mã của chính tài khoản.
-      allow list: if signedIn()
-        && resource.data.uid == request.auth.uid;
+      allow delete: if signedIn()
+        && resource.data.sellerUid == request.auth.uid;
+    }
+
+    match /leaderboard/{userId} {
+      allow read: if signedIn();
+      allow create, update: if isMe(userId);
+    }
+  }
+});
+
+      // Không cho phép truy vấn toàn bộ danh sách lượt đổi mã.
+      allow list: if false;
 
       allow create: if signedIn()
         && request.resource.data.uid == request.auth.uid
