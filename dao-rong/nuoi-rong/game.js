@@ -16,8 +16,8 @@ try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.dragons)S=s}catch(e){}
 const $=id=>document.getElementById(id),W=$('world'),els={},coins=[];
 const rnd=(a,b)=>a+Math.random()*(b-a);
 function mainLoad(){try{return JSON.parse(localStorage.getItem(MAIN_KEY))||null}catch(e){return null}}
-function syncMoneyIn(){const g=mainLoad();if(g&&g.coins!==undefined&&Number.isFinite(Number(g.coins)))S.coins=Math.max(0,Number(g.coins));S.gems=Math.max(0,Number(g?.gems)||0);try{const e=JSON.parse(localStorage.getItem(ENERGY_KEY)||'0');S.energy=Math.max(0,Number(e)||0)}catch(_){S.energy=0}}
-function syncMoneyOut(){const g=mainLoad();if(g){g.coins=Math.max(0,Number(S.coins)||0);g.gems=Math.max(0,Number(S.gems)||0);try{localStorage.setItem(MAIN_KEY,JSON.stringify(g))}catch(e){}}try{localStorage.setItem(ENERGY_KEY,String(Math.max(0,Number(S.energy)||0)))}catch(e){}}
+function syncMoneyIn(){const g=mainLoad();if(g&&g.coins!==undefined&&Number.isFinite(Number(g.coins)))S.coins=Math.max(0,Number(g.coins));S.gems=Math.max(0,Number(g?.gems)||0);S.energy=Math.max(0,Number(g?.energy)||0);try{S.energy=Math.max(S.energy,Number(localStorage.getItem(ENERGY_KEY))||0)}catch(_){ }}
+function syncMoneyOut(){const g=mainLoad();if(g){g.coins=Math.max(0,Number(S.coins)||0);g.gems=Math.max(0,Number(S.gems)||0);g.energy=Math.max(0,Number(S.energy)||0);try{localStorage.setItem(MAIN_KEY,JSON.stringify(g))}catch(e){}}try{localStorage.setItem(ENERGY_KEY,String(Math.max(0,Number(S.energy)||0)))}catch(e){}}
 syncMoneyIn();
 function save(){syncMoneyOut();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function toast(m){const t=$('toast');t.textContent=m;t.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.opacity=0,1600)}
