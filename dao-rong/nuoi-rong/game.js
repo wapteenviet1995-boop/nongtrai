@@ -59,7 +59,6 @@ function shop(){const s=$('shop');s.hidden=false;
   if(k!=='food'&&S.dragons.length>=MAXD)return toast('Tối đa '+MAXD+' chuồng rồng!');
   S.coins-=p;if(k==='food'){S.food+=5}else{const d=newD(k);S.dragons.push(d);mk(d);S.sel=d.id;toast('Chào mừng '+T[k].n+'!')}
   hud();render();save()})}
-$('sb').onclick=e=>{e.stopPropagation();shop()};
 S.dragons.forEach(mk);S.sel=null;render();
 let last=performance.now(),acc=0;
 function tick(t){const dt=Math.min(.1,(t-last)/1000);last=t;acc+=dt;
