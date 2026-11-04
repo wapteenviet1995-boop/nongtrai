@@ -205,7 +205,8 @@ function shop(){
  open(h);
 }
 
-/* ---------- lai giống ---------- */
+/* ---------- lai giống: tạm khóa ---------- */
+const BREEDING_ENABLED=false;
 const breedFilters=[
  {name:'Thường',chance:60,filter:'none',color:'#777'},
  {name:'Hiếm',chance:25,filter:'hue-rotate(55deg) saturate(1.35)',color:'#d99a22'},
@@ -213,6 +214,7 @@ const breedFilters=[
  {name:'Huyền thoại',chance:3,filter:'hue-rotate(265deg) saturate(1.8) brightness(1.12)',color:'#b45bd4'}
 ];
 function breeding(){
+ if(!BREEDING_ENABLED){toast('🔒 Chức năng lai giống đang tạm khóa');return}
  let h=head('🧬 Khu lai giống');
  if(S.animals.length<2){h+='<p class="hint">Cần ít nhất 2 vật nuôi trong chuồng để bắt đầu.</p>'}
  else{
@@ -227,6 +229,7 @@ function breeding(){
  open(h);
 }
 function breedNow(){
+ if(!BREEDING_ENABLED){toast('🔒 Chức năng lai giống đang tạm khóa');return}
  const a=S.animals.find(x=>x.id===Number($('breedA')?.value));
  const b=S.animals.find(x=>x.id===Number($('breedB')?.value));
  if(!a||!b){toast('Hãy chọn đủ hai vật nuôi');return}
