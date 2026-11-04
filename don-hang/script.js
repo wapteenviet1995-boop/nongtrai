@@ -137,7 +137,7 @@ document.addEventListener('click',e=>{
    saved.done=true;O.done=(Number(O.done)||0)+1;
    // Mỗi đơn giao thành công cấp 5 năng lượng dùng để vuốt ve rồng.
    let energy=0;try{energy=Math.max(0,Number(localStorage.getItem(ENERGY_KEY))||0)}catch(e){}
-   energy+=5;try{localStorage.setItem(ENERGY_KEY,String(energy))}catch(e){}
+   energy+=5;G.energy=energy;try{localStorage.setItem(ENERGY_KEY,String(energy));localStorage.setItem(KEY,JSON.stringify(G))}catch(e){}
    save();
    const coins=$('#coins');if(coins)coins.textContent=Math.floor(G.coins);
    if(window.nongTrai?.refresh)window.nongTrai.refresh();
