@@ -55,20 +55,57 @@ function render(){
  document.querySelectorAll('[data-building]').forEach(b=>b.addEventListener('click',()=>upgradeBuilding(b.dataset.building)));
 }
 async function commitPurchase(mutator){
- if(busy)return;busy=true;render();
+ if(busy)return;
+ if(!user||!user.uid){toast('❌ Bạn chưa đăng nhập.');return}
+ busy=true;render();
  try{
-  const ref=firebase.firestore().collection('users').doc(user.uid);
-  await firebase.firestore().runTransaction(async tx=>{
-   const snap=await tx.get(ref),data=snap.exists?snap.data()||{}:{},game=data.game||{};
-   const latest={...S,...game,buildings:{...DEFAULT_BUILDINGS,...(S.buildings||{}),...(game.buildings||{})}};
+  const db=firebase.firestore();
+  const ref=db.collection('users').doc(user.uid);
+  let savedGame=null;
+  await db.runTransaction(async tx=>{
+   const snap=await tx.get(ref);
+   if(!snap.exists)throw new Error('USER_DOC_NOT_FOUND');
+   const data=snap.data()||{};
+   const game=data.game&&typeof data.game==='object'?data.game:{};
+   const latest={
+    ...S,
+    ...game,
+    coins:Number(game.coins??S.coins)||0,
+    gems:Number(game.gems??S.gems)||0,
+    level:Number(game.level??S.level)||1,
+    xp:Number(game.xp??S.xp)||0,
+    buildings:{...DEFAULT_BUILDINGS,...(S.buildings||{}),...(game.buildings||{})}
+   };
    const next=mutator(latest);
    if(!next)throw new Error('NOT_ENOUGH');
-   tx.set(ref,{game:{coins:next.coins,gems:next.gems,buildings:next.buildings},updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-   S={...latest,...next,buildings:{...DEFAULT_BUILDINGS,...next.buildings}};
+   const coins=Number(next.coins);
+   const gems=Number(next.gems??latest.gems);
+   if(!Number.isFinite(coins)||!Number.isFinite(gems)||coins<0||gems<0)throw new Error('INVALID_GAME_VALUE');
+   const buildings={...latest.buildings,...(next.buildings||{})};
+   for(const [key,value] of Object.entries(buildings)){
+    const n=Number(value);
+    if(!Number.isFinite(n)||n<0)throw new Error('INVALID_BUILDING_VALUE');
+    buildings[key]=n;
+   }
+   savedGame={...game,...next,coins,gems,buildings};
+   tx.set(ref,{
+    game:savedGame,
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+   },{merge:true});
   });
-  persistLocal();toast('🎉 Xây dựng thành công!');render();
- }catch(e){console.warn('Build save:',e);toast(e.message==='NOT_ENOUGH'?'❌ Không đủ Xu hoặc chưa đủ điều kiện.':'❌ Không lưu được: '+(e.code||'lỗi Firebase'))}
- finally{busy=false;render()}
+  if(savedGame)mergeGame(savedGame);
+  persistLocal();
+  toast('🎉 Xây dựng thành công!');
+ }catch(e){
+  console.warn('Build save:',e);
+  const code=e.code||'';
+  const detail=code?code+': ': '';
+  const msg=e.message==='NOT_ENOUGH'?'❌ Dữ liệu mới nhất không đủ Xu hoặc chưa đủ điều kiện.':
+   e.message==='USER_DOC_NOT_FOUND'?'❌ Chưa tìm thấy hồ sơ người chơi trên máy chủ.':
+   e.message==='INVALID_GAME_VALUE'||e.message==='INVALID_BUILDING_VALUE'?'❌ Dữ liệu nâng cấp không hợp lệ.':
+   '❌ Không lưu được: '+detail+(e.message||'Lỗi Firebase');
+  toast(msg);
+ }finally{busy=false;render()}
 }
 function expandLand(level){
  const item=LAND.find(x=>x.level===level);if(!item||Number(S.buildings.landLevel)>=level)return;
@@ -79,9 +116,13 @@ function expandLand(level){
 }
 function upgradeBuilding(id){
  const b=BUILDINGS.find(x=>x.id===id);if(!b)return;
- const lv=Number(S.buildings[id])||0;if((Number(S.buildings.landLevel)||1)<b.land||lv>=b.max)return;
- const price=costFor(b,lv);if(S.coins<price){toast('❌ Không đủ Xu. Cần '+price.toLocaleString('vi-VN')+' Xu.');return}
- commitPurchase(g=>{const current=Number(g.buildings[id])||0;if(g.coins<price||current!==lv||g.buildings.landLevel<b.land||current>=b.max)return null;return {coins:g.coins-price,buildings:{...g.buildings,[id]:current+1}}});
+ commitPurchase(g=>{
+  const current=Number(g.buildings[id])||0;
+  const land=Number(g.buildings.landLevel)||1;
+  const price=costFor(b,current);
+  if(land<b.land||current>=b.max||Number(g.coins)<price)return null;
+  return {coins:Number(g.coins)-price,buildings:{...g.buildings,[id]:current+1}};
+ });
 }
 async function start(){
  if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined'){location.replace('./login.html');return}
