@@ -37,7 +37,7 @@ tx.set(rr,{uid:user.uid,code:code,rewards:clean,redeemedAt:firebase.firestore.Fi
 });
 try{localStorage.setItem('nongtrai_new_v1',JSON.stringify(game));localStorage.setItem('rong_energy_v1',String(game.energy||0));}catch(e){}
 show('🎉 Đổi mã thành công! '+rewardText(rewards),'ok');input.value='';
-}catch(e){console.warn(e);const m=e.message||'Không thể đổi mã lúc này.';show(m.includes('permission')?'Firestore chưa được cấp quyền cho tính năng mã khuyến mãi. Hãy cập nhật Firestore Rules.':m,'err');}
+}catch(e){console.error('PROMO_REDEEM_ERROR',e);const code=e&&e.code?String(e.code):'unknown';const detail=e&&e.message?String(e.message):'Không thể đổi mã lúc này.';if(code==='permission-denied'||detail.toLowerCase().includes('permission')){show('Firestore từ chối thao tác (permission-denied). Hãy kiểm tra Rules đã Publish đúng dự án Firebase chưa. Chi tiết: '+detail,'err');}else{show('Lỗi đổi mã ['+code+']: '+detail,'err');}}
 finally{btn.disabled=false;btn.textContent='🎉 ĐỔI QUÀ';}
 }
 btn.addEventListener('click',redeem);input.addEventListener('keydown',e=>{if(e.key==='Enter')redeem();});
