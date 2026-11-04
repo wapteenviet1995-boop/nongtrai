@@ -10,7 +10,7 @@ function penState(){try{return JSON.parse(localStorage.getItem('rong_v1')||'null
 const activeChoice=chosenDragon(),penData=penState();
 const activePet=activeChoice&&penData&&Array.isArray(penData.dragons)?penData.dragons.find(d=>String(d.id)===String(activeChoice.id)):null;
 const legacyState=load();
-let S=activePet?(activePet.combat?Object.assign(fresh(),activePet.combat):Object.assign(fresh(),{el:activeChoice.type,hatched:true,xp:0,stg:0,gem:{},wins:0})):legacyState,key='',sleepUntil=0,armed=false,previewing=false;\n// Migrate legacy shared evolution state: only keep evolution explicitly saved by the player for this dragon.\nif(activePet&&S.evoVersion!==1){S.stg=0;S.evoVersion=1;}
+let S=activePet?(activePet.combat?Object.assign(fresh(),activePet.combat):Object.assign(fresh(),{el:activeChoice.type,hatched:true,xp:0,stg:0,gem:{},wins:0})):legacyState,key='',sleepUntil=0,armed=false,previewing=false;
 
 // Chuyển dữ liệu hệ Cầu Vồng cũ sang hệ Ngọc, giữ nguyên tiến trình người chơi.
 if(S.el==='rainbow')S.el='gem';if(S.gem&&S.gem.rainbow!==undefined){S.gem.gem=(S.gem.gem||0)+S.gem.rainbow;delete S.gem.rainbow;}
