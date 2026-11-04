@@ -166,7 +166,17 @@ service cloud.firestore {
     }
 
     match /promoRedemptions/{redemptionId} {
-      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      // Transaction đổi mã cần đọc cả tài liệu chưa tồn tại để kiểm tra mã đã dùng chưa.
+      allow get: if signedIn()
+        && (
+          !exists(/databases/$(database)/documents/promoRedemptions/$(redemptionId))
+          || resource.data.uid == request.auth.uid
+        );
+
+      // Chỉ cho phép truy vấn các lượt đổi mã của chính tài khoản.
+      allow list: if signedIn()
+        && resource.data.uid == request.auth.uid;
+
       allow create: if signedIn()
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.code is string
