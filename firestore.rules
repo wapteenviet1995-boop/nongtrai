@@ -153,6 +153,23 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // PROMO CODES
+    match /promoCodes/{code} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /promoRedemptions/{redemptionId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.code is string
+        && redemptionId == request.auth.uid + '_' + request.resource.data.code
+        && get(/databases/$(database)/documents/promoCodes/$(request.resource.data.code)).data.active == true
+        && request.resource.data.rewards == get(/databases/$(database)/documents/promoCodes/$(request.resource.data.code)).data.rewards;
+      allow update, delete: if false;
+    }
+
     // =========================
     // LEADERBOARD
     // =========================
