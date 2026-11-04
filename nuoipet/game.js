@@ -93,17 +93,20 @@ function feed(a,free){
 function rarityOf(a){return breedFilters.find(r=>r.name===a.breedRarity)||breedFilters[0]}
 function productionTime(a){const mult={'Thường':1,'Hiếm':.8,'Siêu hiếm':.65,'Huyền thoại':.5};return Math.max(1,T[a.type].t*(mult[a.breedRarity]||1))}
 function productYield(a){const mult={'Thường':1,'Hiếm':2,'Siêu hiếm':3,'Huyền thoại':4};return mult[a.breedRarity]||1}
+let selectedAnimalId=null;
 function animalInfo(a){
  const d=T[a.type],r=rarityOf(a),time=productionTime(a),qty=productYield(a);
  const remain=a.ready?0:Math.max(0,time-(Number(a.prog)||0));
- let h=head('🐾 Thông tin vật nuôi');
- h+='<div class="animal-info"><img src="'+IMG[a.type]+'" alt=""><div><b>'+d.n+'</b><br><strong style="color:'+r.color+'">'+r.name+'</strong><br>Mã vật nuôi: #'+a.id+'</div></div>';
- h+='<div class="animal-stats"><div>📦 Sản phẩm: <b>'+d.p+'</b></div><div>⏱️ Thời gian mỗi lượt: <b>'+time.toFixed(1)+' giây</b> (thường '+d.t+' giây)</div><div>🎁 Số lượng mỗi lần: <b>'+qty+' sản phẩm</b></div><div>🍽️ Độ no: <b>'+Math.floor(a.food)+'%</b></div><div>🏭 Trạng thái: <b>'+(a.ready?'Sẵn sàng thu hoạch':a.food<=0?'Đang đói': 'Đang sản xuất')+'</b></div>'+(a.ready?'': '<div>⌛ Còn khoảng: <b>'+remain.toFixed(1)+' giây</b></div>')+'</div>';
- h+='<div class="breed-odds">Vật nuôi '+r.name+' sản xuất nhanh hơn và cho nhiều sản phẩm hơn vật nuôi thường.</div>';
- h+='<div class="animal-actions"><button onclick="animalHarvest('+a.id+')">🧺 Thu hoạch</button><button onclick="animalFeed('+a.id+')">🍽️ Cho ăn · '+FEED_COST+' xu</button></div>';
- open(h);
+ let p=$('animalPanel');if(!p){p=document.createElement('div');p.id='animalPanel';document.body.appendChild(p)}
+ document.querySelectorAll('.animal.selected').forEach(e=>e.classList.remove('selected'));
+ selectedAnimalId=a.id;els[a.id]?.classList.add('selected');
+ p.innerHTML='<div class="animal-panel-head"><b>'+d.n+' · '+r.name+'</b><button onclick="closeAnimalInfo()" aria-label="Đóng">✕</button></div>'+
+ '<div class="animal-panel-body"><img src="'+IMG[a.type]+'" alt=""><div class="animal-panel-data"><div>📦 '+d.p+' · <b>'+qty+' sản phẩm/lượt</b></div><div>⏱️ '+time.toFixed(1)+' giây/lượt <small>(thường '+d.t+' giây)</small></div><div>🏭 '+(a.ready?'Sẵn sàng thu hoạch':a.food<=0?'Đang đói':'Đang sản xuất')+'</div><div class="animal-progress-label">🍽️ Độ no <b>'+Math.floor(a.food)+'%</b></div><div class="animal-track"><i style="width:'+a.food+'%;background:#ef8b24"></i></div><div class="animal-progress-label">⭐ Tiến độ sản xuất <b>'+(a.ready?100:Math.min(100,Math.floor(a.prog/time*100)))+'%</b></div><div class="animal-track"><i style="width:'+(a.ready?100:Math.min(100,a.prog/time*100))+'%;background:#7c4dff"></i></div>'+(a.ready?'': '<small>⏳ Còn khoảng '+remain.toFixed(1)+' giây</small>')+'</div></div>'+
+ '<div class="animal-panel-actions"><button onclick="animalHarvest('+a.id+')">🧺 Thu hoạch</button><button onclick="animalFeed('+a.id+')">🍽️ Cho ăn · '+FEED_COST+' xu</button></div>';
+ p.hidden=false;
 }
-function tap(a){animalInfo(a)}
+function closeAnimalInfo(){const p=$('animalPanel');if(p)p.hidden=true;document.querySelectorAll('.animal.selected').forEach(e=>e.classList.remove('selected'));selectedAnimalId=null}
+function tap(a){if(selectedAnimalId===a.id&&$('animalPanel')&&!$('animalPanel').hidden){closeAnimalInfo();return}animalInfo(a)}
 function animalHarvest(id){const a=S.animals.find(x=>x.id===id);if(a&&harvest(a))animalInfo(a)}
 function animalFeed(id){const a=S.animals.find(x=>x.id===id);if(a){if(feed(a))animalInfo(a);else if(a.food>85)toast(T[a.type].n+' đang no')}}
 
