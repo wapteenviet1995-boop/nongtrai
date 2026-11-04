@@ -82,7 +82,7 @@ function wander(a){
 function harvest(a,quiet){
  if(!a.ready)return false;const d=T[a.type];
  if(!d.g&&used()>=S.cap){if(!quiet)toast('Kho đầy – hãy bán bớt hoặc mở rộng kho');return false}
- if(d.g){S.gems+=d.g;pop(a.x,a.y,'+'+d.g+' 💎')}else{S.inv[a.type]=(S.inv[a.type]||0)+1;pop(a.x,a.y,'+1 '+d.e)}
+ const qty=productYield(a);if(d.g){S.gems+=d.g*qty;pop(a.x,a.y,'+'+(d.g*qty)+' 💎')}else{S.inv[a.type]=(S.inv[a.type]||0)+qty;pop(a.x,a.y,'+'+qty+' '+d.e)}
  a.ready=false;a.prog=0;ui(a);addXp(d.g?10:3);hud();save();return true;
 }
 function feed(a,free){
@@ -90,7 +90,22 @@ function feed(a,free){
  if(!free){if(S.coins<FEED_COST){toast('Không đủ xu để cho ăn');return false}S.coins-=FEED_COST}
  a.food=Math.min(100,a.food+70);addXp(1);pop(a.x,a.y,'🍽️ +');ui(a);hud();save();return true;
 }
-function tap(a){if(a.ready)harvest(a);else if(!feed(a)&&a.food>85)toast(T[a.type].n+' đang no')}
+function rarityOf(a){return breedFilters.find(r=>r.name===a.breedRarity)||breedFilters[0]}
+function productionTime(a){const mult={'Thường':1,'Hiếm':.8,'Siêu hiếm':.65,'Huyền thoại':.5};return Math.max(1,T[a.type].t*(mult[a.breedRarity]||1))}
+function productYield(a){const mult={'Thường':1,'Hiếm':2,'Siêu hiếm':3,'Huyền thoại':4};return mult[a.breedRarity]||1}
+function animalInfo(a){
+ const d=T[a.type],r=rarityOf(a),time=productionTime(a),qty=productYield(a);
+ const remain=a.ready?0:Math.max(0,time-(Number(a.prog)||0));
+ let h=head('🐾 Thông tin vật nuôi');
+ h+='<div class="animal-info"><img src="'+IMG[a.type]+'" alt=""><div><b>'+d.n+'</b><br><strong style="color:'+r.color+'">'+r.name+'</strong><br>Mã vật nuôi: #'+a.id+'</div></div>';
+ h+='<div class="animal-stats"><div>📦 Sản phẩm: <b>'+d.p+'</b></div><div>⏱️ Thời gian mỗi lượt: <b>'+time.toFixed(1)+' giây</b> (thường '+d.t+' giây)</div><div>🎁 Số lượng mỗi lần: <b>'+qty+' sản phẩm</b></div><div>🍽️ Độ no: <b>'+Math.floor(a.food)+'%</b></div><div>🏭 Trạng thái: <b>'+(a.ready?'Sẵn sàng thu hoạch':a.food<=0?'Đang đói': 'Đang sản xuất')+'</b></div>'+(a.ready?'': '<div>⌛ Còn khoảng: <b>'+remain.toFixed(1)+' giây</b></div>')+'</div>';
+ h+='<div class="breed-odds">Vật nuôi '+r.name+' sản xuất nhanh hơn và cho nhiều sản phẩm hơn vật nuôi thường.</div>';
+ h+='<div class="animal-actions"><button onclick="animalHarvest('+a.id+')">🧺 Thu hoạch</button><button onclick="animalFeed('+a.id+')">🍽️ Cho ăn · '+FEED_COST+' xu</button></div>';
+ open(h);
+}
+function tap(a){animalInfo(a)}
+function animalHarvest(id){const a=S.animals.find(x=>x.id===id);if(a&&harvest(a))animalInfo(a)}
+function animalFeed(id){const a=S.animals.find(x=>x.id===id);if(a){if(feed(a))animalInfo(a);else if(a.food>85)toast(T[a.type].n+' đang no')}}
 
 /* ---------- staff ---------- */
 const crew={};
@@ -130,7 +145,7 @@ function tick(){
  const n=performance.now(),dt=Math.min(2,(n-last)/1000);last=n;
  for(const a of S.animals){
   a.food=Math.max(0,a.food-dt);
-  if(a.food>0&&!a.ready){a.prog+=dt;if(a.prog>=T[a.type].t)a.ready=true}
+  if(a.food>0&&!a.ready){a.prog+=dt;if(a.prog>=productionTime(a))a.ready=true}
   if(!a.next||now()>a.next)wander(a);
   ui(a);
  }
