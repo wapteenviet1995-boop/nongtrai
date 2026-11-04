@@ -54,3 +54,9 @@ button:active{transform:translateY(.5cqw);box-shadow:0 .3cqw #b66a00}button:disa
 #bottomnav::-webkit-scrollbar{display:none}
 #bottomnav button{user-select:none;-webkit-user-select:none}
 #panel{bottom:calc(env(safe-area-inset-bottom,0px) + 19cqw)}
+
+/* HUD tiền tệ và năng lượng */
+#hud{flex-wrap:wrap;gap:1.2cqw}
+#hud .pill{font-size:3.3cqw;padding:1.3cqw 2.4cqw}
+#hud .energy-pill{color:#fff;background:#26384dcc;text-shadow:0 0 1cqw #fff;border:1px solid #ffffff88}
+#hud .gem-pill{background:#34205dcc}
