@@ -39,8 +39,9 @@ function render(){hud();const d=S.dragons.find(d=>d.id===S.sel),p=$('panel');
  '<div class="r">🍖<div class="bar"><i id="bh" style="background:#ef6c00"></i></div></div>'+
  '<div class="r">⭐<div class="bar"><i id="bx" style="background:#7c4dff"></i></div></div>'+
  '<div class="r"><button id="bf">🍖 Cho ăn</button><button id="bp">💗 Vuốt ve</button><span style="font-size:3cqw;flex:1">Chạm đất để rồng đi tới đó</span></div>';
+ '<div class="r"><button id="pvp-select-dragon" style="width:100%">⚔️ Chọn rồng chiến đấu</button></div>';
  $('bf').onclick=()=>{if(S.food<1)return toast('Hết thịt! Mua thêm ở cửa hàng');S.food--;d.hun=Math.min(100,d.hun+40);gain(d,10);fx(d.x,d.y,'🍖');hud();save()};
- $('bp').onclick=()=>{gain(d,2);fx(d.x,d.y,'💗')};bars()}
+ $('bp').onclick=()=>{gain(d,2);fx(d.x,d.y,'💗')};$('pvp-select-dragon').onclick=()=>{const chosen={id:d.id,type:d.type,level:d.lv,name:T[d.type].n};try{localStorage.setItem('rong_chien_dau_v1',JSON.stringify(chosen));toast('Đã chọn '+chosen.name+' làm rồng chiến đấu!')}catch(e){toast('Không lưu được lựa chọn')}};bars()}
 function bars(){const d=S.dragons.find(d=>d.id===S.sel);if(!d||!$('bh'))return;$('bh').style.width=d.hun+'%';$('bx').style.width=(d.lv>=10?100:d.xp/(d.lv*30)*100)+'%'}
 function gain(d,x){if(d.lv>=10)return;d.xp+=x;while(d.xp>=d.lv*30&&d.lv<10){d.xp-=d.lv*30;d.lv++;toast('🎉 '+T[d.type].n+' lên cấp '+d.lv+'!');fx(d.x,d.y,'🌟')}bars()}
 function shop(){const s=$('shop');s.hidden=false;
