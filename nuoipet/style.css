@@ -66,3 +66,12 @@ button:focus-visible{outline:3px solid #fff;outline-offset:2px}
 #bar{position:relative;z-index:20}
 #bar button{position:relative;z-index:21;pointer-events:auto;touch-action:manipulation}
 #bBreed{min-width:0;display:block;visibility:visible;opacity:1}
+
+/* Bảng thông tin khi chạm vào vật nuôi */
+.animal-info{display:flex;align-items:center;gap:14px;padding:10px 4px}
+.animal-info img{width:112px;height:100px;object-fit:contain}
+.animal-info div{line-height:1.5;font-size:16px}
+.animal-info strong{font-size:18px}
+.animal-stats{display:grid;gap:7px;padding:10px;background:#fff8e8;border:2px solid #d6ad70;border-radius:12px;color:#4a2e14}
+.animal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.animal-actions button{font-size:14px;padding:8px 4px}
