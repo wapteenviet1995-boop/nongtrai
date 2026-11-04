@@ -62,7 +62,6 @@ function home(){
  '<button class="pvp-action secondary" id="pvp-invite">✉️ Mời bạn bè bằng UID</button>'+
  '<button class="pvp-action secondary" id="pvp-rank">🏆 Bảng xếp hạng PvP</button>'+
  '<p class="pvp-hint">Cả hai người phải cùng online tại Đảo Rồng. Trận đấu cân bằng: 100 máu, 30 mana; mỗi lượt được đánh, dùng chiêu hoặc phòng thủ. Thắng nhận 3 điểm BXH.</p>';
- $('pvp-element').addEventListener('change',e=>selectedElement=e.target.value);
  $('pvp-find').onclick=async()=>{try{await connect();selectedElement=chosenElement();mode='queue';status='Đang tìm đối thủ...';send({type:'queue',element:selectedElement});render()}catch(e){status=e.message;render()}};
  $('pvp-invite').onclick=async()=>{try{await connect();selectedElement=chosenElement();const toUid=prompt('Nhập UID của bạn bè. Người đó cần đang online ở Đảo Rồng:');if(toUid)send({type:'invite',toUid:toUid.trim(),element:selectedElement})}catch(e){status=e.message;render()}};
  $('pvp-rank').onclick=loadRank;
