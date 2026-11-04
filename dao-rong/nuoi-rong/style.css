@@ -33,8 +33,8 @@ button:active{transform:translateY(.5cqw);box-shadow:0 .3cqw #b66a00}button:disa
 #shop .it img{flex:0 0 17cqw;width:17cqw;height:17cqw;object-fit:contain;background:#e9e2c9;border-radius:2.5cqw;padding:1cqw}
 
 /* Thanh menu ngang dưới cùng */
-#bottomnav{position:absolute;left:2cqw;right:2cqw;bottom:calc(env(safe-area-inset-bottom,0px) + 1.5cqw);display:flex;align-items:center;justify-content:space-between;gap:1.2cqw;padding:1.5cqw;background:#fff9e9eF;border:1px solid #fff;border-radius:4cqw;box-shadow:0 1cqw 3cqw #0004;z-index:10000}
-#bottomnav button{flex:1;min-width:0;padding:2.1cqw .8cqw;font-size:2.9cqw;white-space:nowrap;background:#ffe3a1;color:#563700;box-shadow:0 .6cqw #c18a35;border-radius:2.5cqw}
+#bottomnav{position:absolute;left:2cqw;right:2cqw;bottom:calc(env(safe-area-inset-bottom,0px) + 2cqw);display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:2cqw;padding:1.5cqw;background:#fff9e9f2;border:1px solid #fff;border-radius:4cqw;box-shadow:0 1cqw 3cqw #0004;z-index:10000;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;}
+#bottomnav button{flex:0 0 auto;min-width:25cqw;padding:2.3cqw 2cqw;font-size:3.1cqw;white-space:nowrap;background:#ffe3a1;color:#563700;box-shadow:0 .6cqw #c18a35;border-radius:2.5cqw;touch-action:pan-x;}
 #panel{bottom:calc(env(safe-area-inset-bottom,0px) + 18cqw);max-height:48%;overflow:auto}
 #collection{position:absolute;inset:0;background:#000b;z-index:10003;display:flex;align-items:center;justify-content:center;padding:5cqw}
 #collection[hidden]{display:none}
@@ -50,3 +50,7 @@ button:active{transform:translateY(.5cqw);box-shadow:0 .3cqw #b66a00}button:disa
 .collection-card.owned{box-shadow:inset 0 0 0 .5cqw #ffcf54,0 0 2cqw #ffd76a66}
 .collection-card.owned img{filter:drop-shadow(0 0 1.5cqw #ffe27a)}
 @media(max-aspect-ratio:5/9){#bottomnav button{font-size:2.6cqw}}
+
+#bottomnav::-webkit-scrollbar{display:none}
+#bottomnav button{user-select:none;-webkit-user-select:none}
+#panel{bottom:calc(env(safe-area-inset-bottom,0px) + 19cqw)}
