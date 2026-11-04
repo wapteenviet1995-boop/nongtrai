@@ -75,3 +75,20 @@ button:focus-visible{outline:3px solid #fff;outline-offset:2px}
 .animal-stats{display:grid;gap:7px;padding:10px;background:#fff8e8;border:2px solid #d6ad70;border-radius:12px;color:#4a2e14}
 .animal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .animal-actions button{font-size:14px;padding:8px 4px}
+
+/* Bảng thông tin vật nuôi theo giao diện nuôi rồng: thẻ trắng nổi ở đáy màn hình */
+#animalPanel{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);transform:translateX(-50%);width:min(calc(100vw - 20px),640px);max-height:48dvh;overflow:auto;background:#fff;color:#2b2b2b;border-radius:18px;padding:12px;z-index:45;box-shadow:0 8px 28px #0006;font-family:system-ui,sans-serif}
+#animalPanel[hidden]{display:none}
+.animal-panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800;font-size:16px}
+.animal-panel-head button{background:#e7dfd1;color:#3b2919;box-shadow:0 2px #b7aa95;padding:5px 12px;border:0}
+.animal-panel-body{display:flex;align-items:center;gap:12px;margin-top:8px}
+.animal-panel-body>img{width:clamp(76px,22vw,118px);height:clamp(76px,22vw,118px);object-fit:contain;flex:none}
+.animal-panel-data{flex:1;min-width:0;display:grid;gap:5px;font-size:12px;line-height:1.35}
+.animal-panel-data small{color:#777}
+.animal-progress-label{display:flex;justify-content:space-between;gap:8px;margin-top:2px}
+.animal-track{height:8px;background:#e5e5e5;border-radius:9px;overflow:hidden}
+.animal-track i{display:block;height:100%;border-radius:9px}
+.animal-panel-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.animal-panel-actions button{border:0;border-radius:12px;padding:9px 5px;background:#ffb703;color:#3b2200;box-shadow:0 3px #b66a00;font-size:13px}
+.animal.selected{filter:drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #ffe066);z-index:40!important}
+@media(max-width:380px){#animalPanel{padding:9px}.animal-panel-data{font-size:11px}.animal-panel-head{font-size:14px}}
