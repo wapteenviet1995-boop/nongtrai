@@ -11,7 +11,9 @@ service cloud.firestore {
     }
 
     function isPromoAdmin() {
-      return signedIn() && request.auth.uid == '0GMaHbQl2tRBu566SdJbOIN72rI3';
+      return signedIn()
+        && request.auth.token.email == 'wapteenviet1995@gmail.com'
+        && request.auth.token.email_verified == true;
     }
 
     // =========================
