@@ -85,7 +85,7 @@ function render(){
    return '<div class="order">'+
     '<div class="face">'+face+'</div>'+
     '<div class="who"><b>'+name+'</b><div class="needs">'+ns+'</div><small>🔓 Mở từ Lv.'+lv+'</small></div>'+
-    '<div class="reward">🪙 '+coin+'<br>⭐ '+xp+' XP'+
+    '<div class="reward"><div class="reward-values"><span>🪙 '+coin+'</span><span>⭐ '+xp+' XP</span><span class="energy-reward">⚡ +5</span></div>'+
     '<button class="deliver" type="button" data-order="'+x.id+'">'+(saved.done?'Đã giao':'Giao hàng')+'</button></div></div>';
  }).join('');
  const done=Number(O.done)||0;
