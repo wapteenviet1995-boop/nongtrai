@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Mã khuyến mãi - Nông Trại</title>
+<script src="./config.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;padding:20px;background:radial-gradient(circle at top,#b8e9ff,#e9f5d8 55%,#9bd18d);font-family:system-ui,sans-serif;color:#3b2919;display:grid;place-items:center}.card{width:min(100%,460px);padding:22px;border:4px solid #8c6330;border-radius:26px;background:linear-gradient(#fffdf0,#fff0c8);box-shadow:0 15px 40px #34552c55;text-align:center}h1{margin:0 0 8px;font-size:27px;color:#765024}.sub{margin:0 0 20px;color:#786447}.gift{font-size:64px;margin:6px}.field{text-align:left;font-weight:900;margin:18px 0 8px}input{width:100%;padding:15px;border:3px solid #c6a66a;border-radius:14px;background:#fff;font-size:19px;font-weight:900;text-align:center;text-transform:uppercase;letter-spacing:2px;color:#382514}button{width:100%;padding:13px;margin-top:12px;border:0;border-radius:13px;background:linear-gradient(#64cf55,#329b40);color:white;font-size:17px;font-weight:1000;cursor:pointer}button:disabled{opacity:.6;cursor:wait}.back{background:#e6c77c;color:#3b2919}#message{margin-top:15px;padding:12px;border-radius:12px;display:none;line-height:1.5;font-weight:800}#message.ok{display:block;background:#e1f6d9;color:#28652d}#message.err{display:block;background:#ffe2d9;color:#922e20}.hint{margin-top:17px;font-size:12px;color:#816d50;line-height:1.5}
+</style></head><body><main class="card"><div class="gift">🎁</div><h1>MÃ KHUYẾN MÃI</h1><p class="sub">Nhập mã để nhận quà trong Nông Trại</p><div class="field">Mã khuyến mãi của bạn</div><input id="promoCode" maxlength="40" autocomplete="off" placeholder="NHẬP MÃ TẠI ĐÂY"><button id="redeemBtn" type="button">🎉 ĐỔI QUÀ</button><div id="message" aria-live="polite"></div><button class="back" type="button" onclick="location.href='./game.html'">🏝️ VỀ NÔNG TRẠI</button><p class="hint">Mỗi tài khoản chỉ đổi mỗi mã một lần. Mã có thể tặng Xu, Kim Cương, Năng lượng và EXP.</p></main>
+<script>
+(function(){
+const $=id=>document.getElementById(id),btn=$('redeemBtn'),input=$('promoCode'),msg=$('message');let user=null;
+function show(t,c){msg.className=c;msg.textContent=t;}
+function num(v){const n=Number(v);return Number.isFinite(n)&&n>0?Math.floor(n):0;}
+function need(l){return 50+(Math.max(1,l)-1)*35;}
+function rewardGame(g,r){g=g||{};g.coins=(Number(g.coins)||0)+num(r.coins);g.gems=(Number(g.gems)||0)+num(r.gems);g.energy=(Number(g.energy)||0)+num(r.energy);let xp=(Number(g.xp)||0)+num(r.xp),level=Math.max(1,Number(g.level)||1);while(xp>=need(level)){xp-=need(level);level++;}g.xp=xp;g.level=level;return g;}
+function rewardText(r){const a=[];if(num(r.coins))a.push('🪙 +'+num(r.coins)+' Xu');if(num(r.gems))a.push('💎 +'+num(r.gems)+' Kim Cương');if(num(r.energy))a.push('⚡ +'+num(r.energy)+' Năng lượng');if(num(r.xp))a.push('⭐ +'+num(r.xp)+' EXP');return a.join(' · ');}
+if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined'){show('Không tải được Firebase. Hãy tải lại trang.','err');btn.disabled=true;return;}
+try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);}catch(e){}
+const auth=firebase.auth();auth.onAuthStateChanged(u=>{user=u;if(!u)location.replace('./login.html');});
+async function redeem(){
+if(!user){show('Bạn cần đăng nhập trước khi đổi mã.','err');return;}
+const code=(input.value||'').trim().toUpperCase().replace(/\s+/g,'');
+if(!code){show('Bạn hãy nhập mã khuyến mãi.','err');input.focus();return;}
+if(!/^[A-Z0-9_-]{3,40}$/.test(code)){show('Mã chỉ gồm chữ cái, số, dấu gạch ngang hoặc gạch dưới.','err');return;}
+btn.disabled=true;btn.textContent='ĐANG KIỂM TRA...';msg.className='';
+try{
+const db=firebase.firestore(),cr=db.collection('promoCodes').doc(code),ur=db.collection('users').doc(user.uid),rr=db.collection('promoRedemptions').doc(user.uid+'_'+code);let rewards=null,game=null;
+await db.runTransaction(async tx=>{
+const cs=await tx.get(cr),us=await tx.get(ur),rs=await tx.get(rr);
+if(!cs.exists)throw Error('Mã khuyến mãi không tồn tại.');
+if(rs.exists)throw Error('Bạn đã sử dụng mã này rồi.');
+const p=cs.data()||{};if(p.active!==true)throw Error('Mã này hiện không còn hiệu lực.');
+if(p.expiresAt&&p.expiresAt.toDate&&p.expiresAt.toDate().getTime()<Date.now())throw Error('Mã khuyến mãi đã hết hạn.');
+const r=p.rewards||{};const clean={coins:num(r.coins),gems:num(r.gems),energy:num(r.energy),xp:num(r.xp)};
+if(!Object.values(clean).some(v=>v>0))throw Error('Mã này chưa có phần thưởng.');
+game=rewardGame((us.exists&&us.data().game)||{},clean);rewards=clean;
+tx.set(ur,{game:game,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+tx.set(rr,{uid:user.uid,code:code,rewards:clean,redeemedAt:firebase.firestore.FieldValue.serverTimestamp()});
+});
+try{localStorage.setItem('nongtrai_new_v1',JSON.stringify(game));localStorage.setItem('rong_energy_v1',String(game.energy||0));}catch(e){}
+show('🎉 Đổi mã thành công! '+rewardText(rewards),'ok');input.value='';
+}catch(e){console.warn(e);const m=e.message||'Không thể đổi mã lúc này.';show(m.includes('permission')?'Firestore chưa được cấp quyền cho tính năng mã khuyến mãi. Hãy cập nhật Firestore Rules.':m,'err');}
+finally{btn.disabled=false;btn.textContent='🎉 ĐỔI QUÀ';}
+}
+btn.addEventListener('click',redeem);input.addEventListener('keydown',e=>{if(e.key==='Enter')redeem();});
+})();
+</script></body></html>
