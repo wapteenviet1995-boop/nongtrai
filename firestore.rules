@@ -10,6 +10,10 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == uid;
     }
 
+    function isPromoAdmin() {
+      return signedIn() && request.auth.uid == '0GMaHbQl2tRBu566SdJbOIN72rI3';
+    }
+
     // =========================
     // USERS / PROFILE / GAME
     // =========================
@@ -156,7 +160,7 @@ service cloud.firestore {
     // PROMO CODES
     match /promoCodes/{code} {
       allow read: if signedIn();
-      allow write: if false;
+      allow create, update, delete: if isPromoAdmin();
     }
 
     match /promoRedemptions/{redemptionId} {
