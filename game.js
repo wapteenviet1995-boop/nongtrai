@@ -29,7 +29,7 @@
   };
 
   const DEFAULT_STATE={
-    version:1,coins:100,gems:0,xp:0,level:1,selectedCrop:'carrot',
+    version:1,coins:100,gems:0,energy:0,xp:0,level:1,selectedCrop:'carrot',
     inventory:{carrot:0,corn:0,tomato:0,wheat:0},
     plots:Array.from({length:8},()=>({state:'empty',crop:null,plantedAt:0,readyAt:0})),
     stats:{planted:0,harvested:0,earned:0},
@@ -40,6 +40,7 @@
   };
 
   let S=loadState();
+  try{const legacyEnergy=Number(localStorage.getItem(ENERGY_KEY));if(Number.isFinite(legacyEnergy))S.energy=Math.max(Number(S.energy)||0,legacyEnergy);}catch(e){}
   loadClaimedAchievements();
   let currentUser=null;
   let saveTimer=null;
@@ -63,7 +64,7 @@
     }catch(e){console.warn('Không đọc được save:',e);}
     return cloneDefault();
   }
-  function saveLocal(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
+  function saveLocal(){try{S.energy=Math.max(0,Number(S.energy)||0);localStorage.setItem(ENERGY_KEY,String(S.energy));localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
   function saveClaimedAchievements(){
     try{
       // Không bao giờ ghi đè mất dấu đã nhận cũ nếu state vừa được đồng bộ từ tab/thiết bị khác.
@@ -86,7 +87,7 @@
       }
     }catch(e){}
   }
-  function refreshFromLocal(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;const d=JSON.parse(raw);S=mergeState(cloneDefault(),d);loadClaimedAchievements();updateHUD();}catch(e){}}
+  function refreshFromLocal(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;const d=JSON.parse(raw);S=mergeState(cloneDefault(),d);try{S.energy=Math.max(0,Number(localStorage.getItem(ENERGY_KEY))||Number(S.energy)||0)}catch(e){}loadClaimedAchievements();updateHUD();}catch(e){}}
   function scheduleSave(){
     saveLocal();
     clearTimeout(saveTimer);
@@ -410,7 +411,7 @@
     const gem=$('gems');
     if(gem)gem.textContent=Math.floor(S.gems);
     const energy=$('energy');
-    if(energy){let value=0;try{value=Math.max(0,Number(localStorage.getItem(ENERGY_KEY))||0)}catch(e){}energy.textContent=value;}
+    if(energy)energy.textContent=Math.max(0,Number(S.energy)||0);
     const levelText=document.querySelector('.player small');
     const xpBar=document.querySelector('.xp i');
     if(levelText)levelText.textContent='⭐ Lv.'+S.level+' · '+S.xp+'/'+xpNeed(S.level)+' XP';
@@ -567,7 +568,7 @@
     };
   }
 
-  window.addEventListener('storage',e=>{if(e.key===SAVE_KEY)refreshFromLocal();if(e.key===ENERGY_KEY)updateHUD();});
+  window.addEventListener('storage',e=>{if(e.key===SAVE_KEY)refreshFromLocal();if(e.key===ENERGY_KEY){S.energy=Math.max(0,Number(e.newValue)||0);updateHUD();}});
   window.addEventListener('pageshow',()=>refreshFromLocal());
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshFromLocal();});
 
