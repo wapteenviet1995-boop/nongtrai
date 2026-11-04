@@ -90,6 +90,7 @@ let B=null,busy=false;
 const RING=['fire','leaf','water','ice','lightning','dark','gem'],ORD={};RING.forEach((k,i)=>ORD[k]=RING[(i+1)%7]);
 const mul=(a,d)=>ORD[a]===d?1.5:ORD[d]===a?.67:1;
 function arena(){if(S.en<10)return toast('Rồng quá mệt, hãy cho ngủ trước 🌙');
+ let chosen=null;try{chosen=JSON.parse(localStorage.getItem('rong_chien_dau_v1')||'null')}catch(e){};if(chosen&&chosen.type){const map={spark:'lightning',rainbow:'gem'};S.el=map[chosen.type]||chosen.type;S.stg=Math.max(0,Math.min(2,Math.floor((Number(chosen.level)||1)/4)));}
  const lv=Math.floor(S.xp/20)+1,g=.7+avg()/100*.6,w=S.wins||0,boss=w%5===4,ks=Object.keys(EL),e=ks[Math.floor(Math.random()*ks.length)],hp=60+lv*10+bn('hat')+sp('hp')*10+(S.stg||0)*20,eh=Math.round((50+w*15)*(boss?2.6:1));
  B={p:{hp:hp,max:hp,atk:(8+lv*2)*g+bn('weapon')+sp('atk')*2+(S.stg||0)*4,mp:40+sp('mp')*8,def:false},e:{el:e,hp:eh,max:eh,atk:(7+w*2)*(boss?1.65:1),boss:boss},log:boss?'👑 Boss xuất hiện!':'Trận đấu bắt đầu!',over:false};rb()}
 function hb(n,h,m){return `<div class="b">${n} ${Math.max(0,Math.round(h))}/${m}<div class="t"><i style="width:${Math.max(0,h)/m*100}%;background:#e03131"></i></div></div>`}
