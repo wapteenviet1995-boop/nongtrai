@@ -2,9 +2,12 @@ const IMG={
  "fire": "../img/fire.webp",
  "leaf": "../img/leaf.webp",
  "ice": "../img/ice.webp",
- "spark": "../img/lightning.webp"
+ "spark": "../img/lightning.webp",
+ "water": "../img/water.webp",
+ "dark": "../img/dark.webp",
+ "rainbow": "../img/rainbow.webp"
 };
-const T={fire:{n:'Rồng Lửa',p:0,i:'🔥'},leaf:{n:'Rồng Lá',p:80,i:'🍃'},ice:{n:'Rồng Băng',p:200,i:'❄️'},spark:{n:'Rồng Sét',p:400,i:'⚡'}};
+const T={fire:{n:'Rồng Lửa',p:0,i:'🔥'},leaf:{n:'Rồng Lá',p:80,i:'🍃'},ice:{n:'Rồng Băng',p:200,i:'❄️'},spark:{n:'Rồng Sét',p:400,i:'⚡'},water:{n:'Rồng Nước',p:300,i:'💧'},dark:{n:'Rồng Bóng Tối',p:600,i:'🌑'},rainbow:{n:'Rồng Cầu Vồng',p:1000,i:'🌈'}};
 const KEY='rong_v1',MAXD=7,B={x0:15,x1:87,y0:30,y1:68},E={x:51,y:49,rx:36,ry:19};
 function pen(x,y){const a=(x-E.x)/E.rx,b=(y-E.y)/E.ry,r=Math.hypot(a,b);return r>1?[E.x+a/r*E.rx,E.y+b/r*E.ry]:[x,y]}
 function rp(){const t=Math.random()*6.283,r=Math.sqrt(Math.random())*.95;return[E.x+Math.cos(t)*r*E.rx,E.y+Math.sin(t)*r*E.ry]}
