@@ -61,3 +61,8 @@ button:focus-visible{outline:3px solid #fff;outline-offset:2px}
 #sheet label{font-weight:800}
 .breed-odds{padding:10px;background:#e8d6ad;border:2px dashed #a8641f;border-radius:12px;color:#4a2e14;line-height:1.5}
 @media(max-width:390px){#bar{gap:4px;padding:7px 5px}#bar button{font-size:11px;padding:5px 1px}}
+
+/* Đảm bảo nút Lai giống luôn nhận thao tác chạm trên điện thoại */
+#bar{position:relative;z-index:20}
+#bar button{position:relative;z-index:21;pointer-events:auto;touch-action:manipulation}
+#bBreed{min-width:0;display:block;visibility:visible;opacity:1}
