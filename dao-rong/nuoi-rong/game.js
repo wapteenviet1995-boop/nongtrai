@@ -35,7 +35,7 @@ function spawnCoin(d){if(coins.length>=8)return;const c=document.createElement('
  const v=d.lv*5;c.style.left=(d.x+rnd(-4,4))+'%';c.style.top=(d.y+1)+'%';c.style.zIndex=9999;
  c.onclick=ev=>{ev.stopPropagation();S.coins+=v;fx(parseFloat(c.style.left),parseFloat(c.style.top),'+'+v);c.remove();coins.splice(coins.indexOf(c),1);hud();save()};
  W.appendChild(c);coins.push(c)}
-function hud(){$('co').textContent='🪙 '+S.coins;$('gm').textContent='💎 '+S.gems;$('en').textContent='⚡ '+S.energy;$('fo').textContent='🍖 '+S.food}
+function hud(){$('co').textContent='🪙 '+S.coins;$('gm').textContent='💎 '+S.gems;$('en').textContent='ϟ '+S.energy;$('fo').textContent='🍖 '+S.food}
 function render(){hud();const d=S.dragons.find(d=>d.id===S.sel),p=$('panel');
  Object.values(els).forEach(e=>e.classList.remove('sel'));
  if(!d){p.hidden=true;return}els[d.id].classList.add('sel');p.hidden=false;
@@ -43,7 +43,7 @@ function render(){hud();const d=S.dragons.find(d=>d.id===S.sel),p=$('panel');
  p.innerHTML='<b>'+t.i+' '+t.n+' — Cấp '+d.lv+(d.lv>=10?' (MAX)':'')+'</b>'+
  '<div class="r">🍖<div class="bar"><i id="bh" style="background:#ef6c00"></i></div></div>'+
  '<div class="r">⭐<div class="bar"><i id="bx" style="background:#7c4dff"></i></div></div>'+
- '<div class="r"><button id="bf">🍖 Cho ăn</button><button id="bp">⚡ Vuốt ve (1)</button><span style="font-size:3cqw;flex:1">Chạm đất để rồng đi tới đó</span></div>'+
+ '<div class="r"><button id="bf">🍖 Cho ăn</button><button id="bp">ϟ Vuốt ve (1)</button><span style="font-size:3cqw;flex:1">Chạm đất để rồng đi tới đó</span></div>'+
  '<div class="r"><button id="pvp-select-dragon" style="width:100%">⚔️ Chọn rồng chiến đấu</button></div>';
  $('bf').onclick=()=>{if(S.food<1)return toast('Hết thịt! Mua thêm ở cửa hàng');S.food--;d.hun=Math.min(100,d.hun+40);gain(d,10);fx(d.x,d.y,'🍖');hud();save()};
  $('bp').onclick=()=>{if(S.energy<1)return toast('Hết năng lượng! Hãy giao đơn hàng để nhận thêm ⚡');S.energy--;gain(d,2);fx(d.x,d.y,'💗');hud();save()};$('pvp-select-dragon').onclick=()=>{const chosen={id:d.id,type:d.type,level:d.lv,name:T[d.type].n};try{localStorage.setItem('rong_chien_dau_v1',JSON.stringify(chosen));toast('Đã chọn '+chosen.name+' làm rồng chiến đấu!')}catch(e){toast('Không lưu được lựa chọn')}};bars()}
