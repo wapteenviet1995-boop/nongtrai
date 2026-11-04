@@ -65,3 +65,6 @@ button:active{transform:scale(.95)}
 .pvp-ranks>div{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px;background:var(--card);border:1px solid var(--bar);border-radius:11px;font-size:12px}
 .pvp-ranks span{color:var(--mut);text-align:right}
 @media(max-width:360px){#pvp-card{padding:10px}.pvp-fighter img{height:82px}.pvp-ranks>div{font-size:11px}}
+
+.dragon-care-entry{display:block;width:100%;margin:12px 0 8px;padding:13px 16px;border:2px solid #4c7b35;border-radius:14px;background:linear-gradient(#e7ffd0,#a8dc78);color:#24451d;font-weight:1000;font-size:16px;box-shadow:0 4px 12px #0003;cursor:pointer}
+.dragon-care-entry:active{transform:scale(.98)}
