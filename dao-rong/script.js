@@ -11,12 +11,14 @@ const activeChoice=chosenDragon(),penData=penState();
 const activePet=activeChoice&&penData&&Array.isArray(penData.dragons)?penData.dragons.find(d=>String(d.id)===String(activeChoice.id)):null;
 const legacyState=load();
 let S=activePet?(activePet.combat?Object.assign(fresh(),activePet.combat):Object.assign(fresh(),{el:activeChoice.type,hatched:true,xp:0,stg:0,gem:{},wins:0})):legacyState,key='',sleepUntil=0,armed=false,previewing=false;
+// Evolution is shared only through the explicit per-dragon evolutionStage field.
+if(activePet){S.stg=Math.max(0,Math.min(2,Number(activePet.evolutionStage)||0));S.evoVersion=2;}
 
 // Chuyển dữ liệu hệ Cầu Vồng cũ sang hệ Ngọc, giữ nguyên tiến trình người chơi.
 if(S.el==='rainbow')S.el='gem';if(S.gem&&S.gem.rainbow!==undefined){S.gem.gem=(S.gem.gem||0)+S.gem.rainbow;delete S.gem.rainbow;}
 syncMoneyIn();
 if(S.stg===undefined)S.stg=S.hatched?(S.xp<30?0:S.xp<100?1:2):0;
-function save(){S.t=Date.now();syncMoneyOut();try{localStorage.setItem(KEY,JSON.stringify(S));if(activePet){const p=penState();if(p&&Array.isArray(p.dragons)){const d=p.dragons.find(x=>String(x.id)===String(activeChoice.id));if(d){d.combat=JSON.parse(JSON.stringify(S));localStorage.setItem('rong_v1',JSON.stringify(p));}}}}catch(e){}}
+function save(){S.t=Date.now();syncMoneyOut();try{localStorage.setItem(KEY,JSON.stringify(S));if(activePet){const p=penState();if(p&&Array.isArray(p.dragons)){const d=p.dragons.find(x=>String(x.id)===String(activeChoice.id));if(d){d.combat=JSON.parse(JSON.stringify(S));d.evolutionStage=Math.max(0,Math.min(2,Number(S.stg)||0));localStorage.setItem('rong_v1',JSON.stringify(p));}}}}catch(e){}}
 function decay(n){S.h=cp(S.h-n);S.f=cp(S.f-n);S.cl=cp(S.cl-.7*n);S.en=cp(S.en-.6*n)}
 decay(Math.min(120,Math.floor((Date.now()-S.t)/5000)));
 const STG=['baby','teen','adult'],stage=()=>!S.el?'pick':!S.hatched?'egg':STG[S.stg||0];
@@ -86,7 +88,7 @@ const gtxt=()=>(S.stg||0)>=2?'💎 Tối đa':'💎 '+gc()+'/'+NEED[S.stg||0]+' 
 function togglePreview(){previewing=!previewing;render(true)}
 function ev(){const g=S.stg||0;if(g>=2)return toast('Rồng đã tiến hoá tối đa 🌟');
  if(gc()<NEED[g])return toast('Cần '+NEED[g]+' Ngọc '+EL[S.el].n+' — thắng trận Đấu trường để nhận 💎');
- S.gem[S.el]-=NEED[g];S.stg=g+1;S.evoVersion=1;previewing=false;save();toast('Tiến hoá thành '+SN[STG[S.stg]]+'! ✨');render(true);pop('✨');pop('🌟')}
+ S.gem[S.el]-=NEED[g];S.stg=g+1;S.evoVersion=2;previewing=false;save();toast('Tiến hoá thành '+SN[STG[S.stg]]+'! ✨');render(true);pop('✨');pop('🌟')}
 function po(){const s=S.st||(S.st={hp:0,atk:0,def:0,mp:0}),R=[['hp','❤️ Máu','+10 máu mỗi điểm'],['atk','⚔️ Sức đánh','+2 sức đánh mỗi điểm'],['def','🛡️ Phòng thủ','giảm thêm 2% sát thương mỗi điểm'],['mp','⚡ Mana','+8 mana khởi đầu mỗi điểm']];
  let h=`<div class="nm">Cộng điểm chiến đấu</div><div class="sub" style="margin:4px 0 8px">Điểm còn lại: ${pts()} · mỗi cấp được 1 điểm</div>`;
  R.forEach(r=>h+=`<div class="it"><b>${r[1]}: ${s[r[0]]||0}<br><small style="font-weight:400;color:var(--mut)">${r[2]}</small></b><button onclick="ap('${r[0]}')">+1</button></div>`);
