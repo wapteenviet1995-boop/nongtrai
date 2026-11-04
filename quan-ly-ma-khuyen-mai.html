@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Quản lý mã khuyến mãi</title>
+<script src="./config.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;padding:16px;background:linear-gradient(145deg,#b9e8ff,#eaf4d8 55%,#a4d58e);font-family:system-ui,sans-serif;color:#392817}.wrap{width:min(100%,620px);margin:auto}.card{background:#fff9e5;border:3px solid #8c6330;border-radius:20px;padding:17px;margin:0 0 14px;box-shadow:0 8px 24px #31552c33}h1{font-size:24px;margin:0 0 6px;color:#765024}h2{font-size:18px;margin:0 0 12px}.sub{margin:0 0 14px;color:#766348;font-size:13px}.field{display:block;font-weight:900;margin:12px 0 5px}input{width:100%;padding:12px;border:2px solid #c6a66a;border-radius:11px;background:white;font-size:16px;color:#382514} .rewards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.rewards label{font-size:13px;font-weight:900}.rewards input{margin-top:5px}button{border:0;border-radius:11px;padding:11px 14px;background:linear-gradient(#64cf55,#329b40);color:#fff;font-weight:1000;font-size:15px;cursor:pointer}button:disabled{opacity:.55}.secondary{background:#dfbd70;color:#382514}.danger{background:#d85a45}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.code-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid #e3d4b4}.code-info{flex:1;min-width:0}.code-info b{display:block;overflow-wrap:anywhere}.code-info small{color:#78684f}.code-actions{display:flex;gap:6px}.code-actions button{padding:8px 10px;font-size:12px}.status{font-size:12px;font-weight:900}.active{color:#27843a}.inactive{color:#a33b2b}#message{display:none;padding:11px;border-radius:10px;margin-top:12px;font-weight:800;line-height:1.4}#message.ok{display:block;background:#e1f6d9;color:#28652d}#message.err{display:block;background:#ffe2d9;color:#922e20}.hidden{display:none!important}@media(max-width:420px){.card{padding:13px}.rewards{gap:7px}.code-row{align-items:flex-start}.code-actions{flex-direction:column}}
+</style></head><body><main class="wrap">
+<section class="card"><h1>🔐 QUẢN LÝ MÃ KHUYẾN MÃI</h1><p class="sub">Trang dành riêng cho tài khoản quản trị Nông Trại.</p><div id="access">Đang kiểm tra quyền quản trị...</div>
+<div id="admin" class="hidden">
+<label class="field" for="code">Tên mã khuyến mãi</label><input id="code" maxlength="40" placeholder="Ví dụ: TET2027" autocomplete="off">
+<div class="field">🎁 Phần thưởng (để 0 nếu không tặng)</div><div class="rewards">
+<label>🪙 Xu<input id="coins" type="number" min="0" max="100000000" value="0"></label>
+<label>💎 Kim Cương<input id="gems" type="number" min="0" max="1000000" value="0"></label>
+<label>⚡ Năng lượng<input id="energy" type="number" min="0" max="1000000" value="0"></label>
+<label>⭐ EXP<input id="xp" type="number" min="0" max="100000000" value="0"></label></div>
+<label class="field" for="expiry">Ngày hết hạn (để trống = không hết hạn)</label><input id="expiry" type="date">
+<div class="actions"><button id="createBtn" type="button">✨ TẠO MÃ</button><button class="secondary" id="refreshBtn" type="button">↻ Tải danh sách</button></div>
+<div id="message" aria-live="polite"></div>
+</div></section>
+<section class="card hidden" id="listCard"><h2>📋 Danh sách mã đã tạo</h2><div id="codes">Đang tải...</div></section>
+<section class="card"><button class="secondary" style="width:100%" type="button" onclick="location.href='./game.html'">🏝️ VỀ NÔNG TRẠI</button></section>
+</main>
+<script>
+(function(){
+const ADMIN_UID="0GMaHbQl2tRBu566SdJbOIN72rI3";
+const $=id=>document.getElementById(id),access=$('access'),admin=$('admin'),listCard=$('listCard'),message=$('message');
+function say(t,kind){message.textContent=t;message.className=kind;}
+function positive(id){const n=Number($(id).value);return Number.isFinite(n)&&n>0?Math.floor(n):0;}
+if(typeof firebase==='undefined'||typeof FB_CONFIG==='undefined'){access.textContent='Không tải được Firebase. Hãy kiểm tra config.js.';return;}
+try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);}catch(e){}
+const auth=firebase.auth(),db=firebase.firestore();
+auth.onAuthStateChanged(async user=>{
+if(!user){location.replace('./login.html');return;}
+if(user.uid!==ADMIN_UID){access.textContent='⛔ Tài khoản này không có quyền quản trị mã khuyến mãi.';return;}
+access.textContent='✅ Đã xác nhận quyền quản trị.';admin.classList.remove('hidden');listCard.classList.remove('hidden');await loadCodes();
+});
+async function loadCodes(){
+$('codes').textContent='Đang tải...';
+try{
+const snap=await db.collection('promoCodes').get();
+if(snap.empty){$('codes').textContent='Chưa có mã nào. Hãy tạo mã đầu tiên.';return;}
+const rows=[];snap.forEach(doc=>{const d=doc.data()||{},r=d.rewards||{};const exp=d.expiresAt&&d.expiresAt.toDate?d.expiresAt.toDate().toLocaleDateString('vi-VN'):'Không giới hạn';rows.push({code:doc.id,active:d.active===true,rewards:r,expiry:exp});});
+rows.sort((a,b)=>a.code.localeCompare(b.code));
+$('codes').innerHTML='';
+rows.forEach(item=>{
+const row=document.createElement('div');row.className='code-row';
+const info=document.createElement('div');info.className='code-info';
+const title=document.createElement('b');title.textContent='🎟️ '+item.code;
+const detail=document.createElement('small');detail.textContent='🪙 '+(item.rewards.coins||0)+' · 💎 '+(item.rewards.gems||0)+' · ⚡ '+(item.rewards.energy||0)+' · ⭐ '+(item.rewards.xp||0)+' | Hạn: '+item.expiry;
+const status=document.createElement('div');status.className='status '+(item.active?'active':'inactive');status.textContent=item.active?'ĐANG HOẠT ĐỘNG':'ĐÃ KHÓA';
+info.append(title,detail,status);
+const actions=document.createElement('div');actions.className='code-actions';
+const toggle=document.createElement('button');toggle.className=item.active?'danger':'secondary';toggle.textContent=item.active?'Khóa mã':'Mở mã';toggle.addEventListener('click',()=>setActive(item.code,!item.active));
+actions.append(toggle);row.append(info,actions);$('codes').append(row);
+});
+}catch(e){$('codes').textContent='Không tải được danh sách: '+(e.message||e);}}
+async function setActive(code,active){try{await db.collection('promoCodes').doc(code).update({active:active,updatedAt:firebase.firestore.FieldValue.serverTimestamp()});say((active?'Đã mở mã ':'Đã khóa mã ')+code,'ok');await loadCodes();}catch(e){say('Không thể cập nhật mã: '+(e.message||e),'err');}}
+$('createBtn').addEventListener('click',async()=>{
+const code=($('code').value||'').trim().toUpperCase().replace(/\s+/g,'');
+if(!/^[A-Z0-9_-]{3,40}$/.test(code)){say('Mã cần có 3–40 ký tự, chỉ gồm chữ, số, - hoặc _.','err');return;}
+const rewards={coins:positive('coins'),gems:positive('gems'),energy:positive('energy'),xp:positive('xp')};
+if(!Object.values(rewards).some(v=>v>0)){say('Hãy nhập ít nhất một phần thưởng lớn hơn 0.','err');return;}
+const btn=$('createBtn');btn.disabled=true;btn.textContent='ĐANG TẠO...';
+try{
+const data={active:true,rewards:rewards,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+if($('expiry').value){const date=new Date($('expiry').value+'T23:59:59');if(date.getTime()<Date.now())throw Error('Ngày hết hạn phải ở hiện tại hoặc tương lai.');data.expiresAt=firebase.firestore.Timestamp.fromDate(date);}
+await db.collection('promoCodes').doc(code).create(data);
+say('🎉 Đã tạo mã '+code+'. Người chơi có thể nhập mã ở trang Mã quà.','ok');
+$('code').value='';['coins','gems','energy','xp'].forEach(id=>$(id).value='0');$('expiry').value='';await loadCodes();
+}catch(e){say(e.code==='already-exists'?'Mã này đã tồn tại. Hãy chọn mã khác.':(e.message||'Không thể tạo mã.'),'err');}
+finally{btn.disabled=false;btn.textContent='✨ TẠO MÃ';}
+});
+$('refreshBtn').addEventListener('click',loadCodes);
+})();
+</script></body></html>
