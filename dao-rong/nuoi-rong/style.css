@@ -31,3 +31,22 @@ button:active{transform:translateY(.5cqw);box-shadow:0 .3cqw #b66a00}button:disa
 
 #backnav{position:absolute;left:3cqw;top:13cqw;display:flex;flex-direction:column;gap:1.8cqw;z-index:10000}#backnav button{font-size:3.2cqw;padding:1.7cqw 2.6cqw;background:#fff1c9;color:#4b3100;box-shadow:0 .6cqw #b88b38;border:1px solid #fff8}
 #shop .it img{flex:0 0 17cqw;width:17cqw;height:17cqw;object-fit:contain;background:#e9e2c9;border-radius:2.5cqw;padding:1cqw}
+
+/* Thanh menu ngang dưới cùng */
+#bottomnav{position:absolute;left:2cqw;right:2cqw;bottom:calc(env(safe-area-inset-bottom,0px) + 1.5cqw);display:flex;align-items:center;justify-content:space-between;gap:1.2cqw;padding:1.5cqw;background:#fff9e9eF;border:1px solid #fff;border-radius:4cqw;box-shadow:0 1cqw 3cqw #0004;z-index:10000}
+#bottomnav button{flex:1;min-width:0;padding:2.1cqw .8cqw;font-size:2.9cqw;white-space:nowrap;background:#ffe3a1;color:#563700;box-shadow:0 .6cqw #c18a35;border-radius:2.5cqw}
+#panel{bottom:calc(env(safe-area-inset-bottom,0px) + 18cqw);max-height:48%;overflow:auto}
+#collection{position:absolute;inset:0;background:#000b;z-index:10003;display:flex;align-items:center;justify-content:center;padding:5cqw}
+#collection[hidden]{display:none}
+.collection-box{width:100%;max-height:82%;overflow:auto;background:#fff9eb;border:1px solid #fff;border-radius:4cqw;padding:4cqw;color:#382b1d;box-shadow:0 1cqw 4cqw #0006}
+.collection-head{display:flex;align-items:center;justify-content:space-between;gap:2cqw;font-weight:800;font-size:4.5cqw;margin-bottom:3cqw}
+.collection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.5cqw}
+.collection-card{min-width:0;text-align:center;padding:2cqw 1cqw;border-radius:3cqw;background:#fff;border:1px solid #eadcc2;display:flex;flex-direction:column;align-items:center;gap:1cqw}
+.collection-card img{width:100%;height:19cqw;object-fit:contain}
+.collection-card b{font-size:3cqw;line-height:1.2}
+.collection-card small{font-size:2.6cqw;color:#795f3e}
+.collection-card.locked img{filter:grayscale(1) brightness(.48);opacity:.48}
+.collection-card.locked{background:#e9e4dc;border-color:#d3c9b9;color:#8c857a}
+.collection-card.owned{box-shadow:inset 0 0 0 .5cqw #ffcf54,0 0 2cqw #ffd76a66}
+.collection-card.owned img{filter:drop-shadow(0 0 1.5cqw #ffe27a)}
+@media(max-aspect-ratio:5/9){#bottomnav button{font-size:2.6cqw}}
