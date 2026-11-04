@@ -8,14 +8,18 @@ const IMG={
  "rainbow": "../img/rainbow.webp"
 };
 const T={fire:{n:'Rồng Lửa',p:0,i:'🔥'},leaf:{n:'Rồng Lá',p:80,i:'🍃'},ice:{n:'Rồng Băng',p:200,i:'❄️'},spark:{n:'Rồng Sét',p:400,i:'⚡'},water:{n:'Rồng Nước',p:300,i:'💧'},dark:{n:'Rồng Bóng Tối',p:600,i:'🌑'},rainbow:{n:'Rồng Cầu Vồng',p:1000,i:'🌈'}};
-const KEY='rong_v1',MAXD=7,B={x0:15,x1:87,y0:30,y1:68},E={x:51,y:49,rx:36,ry:19};
+const KEY='rong_v1',MAIN_KEY='nongtrai_new_v1',MAXD=7,B={x0:15,x1:87,y0:30,y1:68},E={x:51,y:49,rx:36,ry:19};
 function pen(x,y){const a=(x-E.x)/E.rx,b=(y-E.y)/E.ry,r=Math.hypot(a,b);return r>1?[E.x+a/r*E.rx,E.y+b/r*E.ry]:[x,y]}
 function rp(){const t=Math.random()*6.283,r=Math.sqrt(Math.random())*.95;return[E.x+Math.cos(t)*r*E.rx,E.y+Math.sin(t)*r*E.ry]}
 let S={coins:100,food:3,dragons:[],n:1,sel:null};
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.dragons)S=s}catch(e){}
 const $=id=>document.getElementById(id),W=$('world'),els={},coins=[];
 const rnd=(a,b)=>a+Math.random()*(b-a);
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function mainLoad(){try{return JSON.parse(localStorage.getItem(MAIN_KEY))||null}catch(e){return null}}
+function syncMoneyIn(){const g=mainLoad();if(g&&g.coins!==undefined&&Number.isFinite(Number(g.coins)))S.coins=Math.max(0,Number(g.coins))}
+function syncMoneyOut(){const g=mainLoad();if(!g)return;g.coins=Math.max(0,Number(S.coins)||0);try{localStorage.setItem(MAIN_KEY,JSON.stringify(g))}catch(e){}}
+syncMoneyIn();
+function save(){syncMoneyOut();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function toast(m){const t=$('toast');t.textContent=m;t.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.opacity=0,1600)}
 function newD(type){return{id:S.n++,type,lv:1,xp:0,hun:80,x:rnd(40,62),y:rnd(42,56),tx:null,ty:null,wait:1,ct:0}}
 if(!S.dragons.length)S.dragons.push(newD('fire'));
@@ -28,7 +32,7 @@ W.onclick=ev=>{const d=S.dragons.find(d=>d.id===S.sel);if(!d)return;const r=W.ge
  [d.tx,d.ty]=pen((ev.clientX-r.left)/r.width*100,(ev.clientY-r.top)/r.height*100);d.wait=0;d.go=1};
 function spawnCoin(d){if(coins.length>=8)return;const c=document.createElement('div');c.className='c';c.textContent='🪙';
  const v=d.lv*5;c.style.left=(d.x+rnd(-4,4))+'%';c.style.top=(d.y+1)+'%';c.style.zIndex=9999;
- c.onclick=ev=>{ev.stopPropagation();S.coins+=v;fx(parseFloat(c.style.left),parseFloat(c.style.top),'+'+v);c.remove();coins.splice(coins.indexOf(c),1);hud()};
+ c.onclick=ev=>{ev.stopPropagation();S.coins+=v;fx(parseFloat(c.style.left),parseFloat(c.style.top),'+'+v);c.remove();coins.splice(coins.indexOf(c),1);hud();save()};
  W.appendChild(c);coins.push(c)}
 function hud(){$('co').textContent='🪙 '+S.coins;$('fo').textContent='🍖 '+S.food}
 function render(){hud();const d=S.dragons.find(d=>d.id===S.sel),p=$('panel');
@@ -72,3 +76,4 @@ function tick(t){const dt=Math.min(.1,(t-last)/1000);last=t;acc+=dt;
  if(acc>.5){acc=0;bars();save()}
  requestAnimationFrame(tick)}
 requestAnimationFrame(tick);
+window.addEventListener('storage',e=>{if(e.key===MAIN_KEY){syncMoneyIn();hud();}});
