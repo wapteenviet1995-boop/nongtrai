@@ -1,5 +1,5 @@
 const EL={fire:{n:'Lửa',c:'#ef5b2b',d:'#b8341a',l:'#ffd9a8',e:'🔥'},leaf:{n:'Cỏ',c:'#46c15f',d:'#2a8a40',l:'#e0f7c8',e:'🍃'},water:{n:'Nước',c:'#3aa0ff',d:'#1f6fc4',l:'#cdeaff',e:'💧'},ice:{n:'Băng',c:'#8fd3f4',d:'#4a9bd1',l:'#e8f7ff',e:'❄️'},lightning:{n:'Sấm Sét',c:'#f6c90e',d:'#c98a0a',l:'#fff3b0',e:'⚡'},dark:{n:'Hắc Ám',c:'#6b3fa0',d:'#3a2060',l:'#d9c6f0',e:'🌑'},gem:{n:'Ngọc',c:'#f49ac1',d:'#c46a9a',l:'#ffe3f1',e:'💎'}};
-const IMG={fire:'rong-tien-hoa/rong_lua1.png',leaf:'rong-tien-hoa/rong_co1.png',water:'rong-tien-hoa/rong_nuoc1.png',ice:'rong-tien-hoa/rong_bang1.png',lightning:'rong-tien-hoa/rong_set1.png',dark:'rong-tien-hoa/rong_hacam1.png',gem:'rong-tien-hoa/rong_ngoc1.png'};const KEY='rong_con_v1',MAIN_KEY='nongtrai_new_v1',$=id=>document.getElementById(id),cp=v=>Math.max(0,Math.min(100,v));
+const IMG={fire:'../img/fire.webp',leaf:'../img/leaf.webp',water:'../img/water.webp',ice:'../img/ice.webp',lightning:'../img/lightning.webp',dark:'../img/dark.webp',gem:'../img/rainbow.webp'};const KEY='rong_con_v1',MAIN_KEY='nongtrai_new_v1',$=id=>document.getElementById(id),cp=v=>Math.max(0,Math.min(100,v));
 function mainLoad(){try{return JSON.parse(localStorage.getItem(MAIN_KEY))||{}}catch(e){return {}}}
 function syncMoneyIn(){const g=mainLoad();S.coins=Number(g.coins)||0;S.mainGems=Number(g.gems)||0}
 function syncMoneyOut(){const g=mainLoad();g.coins=Math.max(0,Number(S.coins)||0);g.gems=Math.max(0,Number(S.mainGems)||0);try{localStorage.setItem(MAIN_KEY,JSON.stringify(g))}catch(e){}}
@@ -31,7 +31,7 @@ function pop(e){const p=document.createElement('span');p.className='pop';p.textC
 function eggSvg(){const x=S.taps,c=EL[S.el];
  return `<svg viewBox="0 0 200 220" onclick="tap()"><ellipse cx="100" cy="125" rx="62" ry="80" fill="${c.l}" stroke="${c.c}" stroke-width="5"/><circle cx="75" cy="100" r="11" fill="${c.c}"/><circle cx="125" cy="140" r="14" fill="${c.c}"/><circle cx="110" cy="85" r="7" fill="${c.d}"/>${x>=2?`<path d="M80 60 l12 14 l-10 8" stroke="#5a3a2a" stroke-width="4" fill="none"/>`:''}${x>=5?`<path d="M130 70 l-12 16 l12 8 l-8 14" stroke="#5a3a2a" stroke-width="4" fill="none"/>`:''}${x>=7?`<path d="M60 150 l16 -8 l8 14" stroke="#5a3a2a" stroke-width="4" fill="none"/>`:''}</svg>`}
 function dragonSvg(e,sg,mo,pl,pv){const st=sg||stage(),m=mo!==undefined?mo:mood(),k=e||S.el,w=st==='baby'?62:st==='teen'?80:100,f=m===2?'saturate(.55)':m===3?'brightness(.82)':'none';
- const evolution=pv?2:(e?(st==='baby'?1:2):((S.stg||0)>=1?2:1)),src=IMG[k].replace('1.png',evolution+'.png');
+ const evolution=pv?2:((e?st!=='baby':(S.stg||0)>=1)?2:0),src=evolution===0?IMG[k]:'rong-tien-hoa/rong_'+({fire:'lua',leaf:'co',water:'nuoc',ice:'bang',lightning:'set',dark:'hacam',gem:'ngoc'}[k]||'lua')+'2.png';
  return `<div class="dg" ${e?'':'onclick="pet()"'} style="width:${w}%;filter:${f}"><img src="${src}" alt="Rồng ${EL[k].n} tiến hóa ${evolution}">${!e||pl?gear():''}${m===3?'<span class="zz">💤</span>':''}</div>`}
 function bar(l,v,col){return `<div class="b">${l} ${Math.round(v)}%<div class="t"><i style="width:${v}%;background:${col}"></i></div></div>`}
 function render(force){if(B)return rb();
