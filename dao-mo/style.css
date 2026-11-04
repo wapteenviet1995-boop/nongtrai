@@ -69,3 +69,5 @@ body{min-height:100vh;background:linear-gradient(180deg,#5b3a20,#2a190c) fixed;c
  .stage{flex-direction:row;align-items:center;gap:16px}.side{flex-direction:column}
 }
 .cell:focus-visible,button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+
+.energy-res{color:#fff;text-shadow:0 1px 3px #000,0 0 5px #fff;border:1px solid #ffffff99;border-radius:9px;padding:5px 9px;background:#24354dcc;font-weight:900}
