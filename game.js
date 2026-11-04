@@ -4,6 +4,7 @@
   const $ = id => document.getElementById(id);
   const SAVE_KEY = 'nongtrai_new_v1';
   const CLAIM_KEY = 'nongtrai_claimed_achievements_v1';
+  const ENERGY_KEY = 'rong_energy_v1';
 
   if (typeof firebase === 'undefined' || typeof FB_CONFIG === 'undefined') {
     location.replace('./login.html');
@@ -408,6 +409,8 @@
     if(coin)coin.textContent=Math.floor(S.coins);
     const gem=$('gems');
     if(gem)gem.textContent=Math.floor(S.gems);
+    const energy=$('energy');
+    if(energy){let value=0;try{value=Math.max(0,Number(localStorage.getItem(ENERGY_KEY))||0)}catch(e){}energy.textContent=value;}
     const levelText=document.querySelector('.player small');
     const xpBar=document.querySelector('.xp i');
     if(levelText)levelText.textContent='⭐ Lv.'+S.level+' · '+S.xp+'/'+xpNeed(S.level)+' XP';
@@ -564,7 +567,7 @@
     };
   }
 
-  window.addEventListener('storage',e=>{if(e.key===SAVE_KEY)refreshFromLocal();});
+  window.addEventListener('storage',e=>{if(e.key===SAVE_KEY)refreshFromLocal();if(e.key===ENERGY_KEY)updateHUD();});
   window.addEventListener('pageshow',()=>refreshFromLocal());
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshFromLocal();});
 
