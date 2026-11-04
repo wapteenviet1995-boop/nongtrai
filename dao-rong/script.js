@@ -5,14 +5,18 @@ function syncMoneyIn(){const g=mainLoad();S.coins=Number(g.coins)||0;S.mainGems=
 function syncMoneyOut(){const g=mainLoad();g.coins=Math.max(0,Number(S.coins)||0);g.gems=Math.max(0,Number(S.mainGems)||0);try{localStorage.setItem(MAIN_KEY,JSON.stringify(g))}catch(e){}}
 const fresh=()=>({el:null,taps:0,hatched:false,xp:0,coins:20,wins:0,stg:0,gem:{},st:{hp:0,atk:0,def:0,mp:0},inv:[],eq:{},h:80,f:80,cl:80,en:80,t:Date.now()});
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s==='object')return Object.assign(fresh(),s)}catch(e){}return fresh()}
-let S=load(),key='',sleepUntil=0,armed=false,previewing=false;
 function chosenDragon(){try{const d=JSON.parse(localStorage.getItem('rong_chien_dau_v1')||'null');if(!d||!d.type)return null;const map={spark:'lightning',rainbow:'gem'};const type=map[d.type]||d.type;return EL[type]?{...d,type}:null}catch(e){return null}}
+function penState(){try{return JSON.parse(localStorage.getItem('rong_v1')||'null')}catch(e){return null}}
+const activeChoice=chosenDragon(),penData=penState();
+const activePet=activeChoice&&penData&&Array.isArray(penData.dragons)?penData.dragons.find(d=>String(d.id)===String(activeChoice.id)):null;
+const legacyState=load();
+let S=activePet?(activePet.combat?Object.assign(fresh(),activePet.combat):Object.assign(fresh(),{el:activeChoice.type,hatched:true,xp:0,stg:0,gem:{},wins:0})):legacyState,key='',sleepUntil=0,armed=false,previewing=false;
 
 // Chuyển dữ liệu hệ Cầu Vồng cũ sang hệ Ngọc, giữ nguyên tiến trình người chơi.
 if(S.el==='rainbow')S.el='gem';if(S.gem&&S.gem.rainbow!==undefined){S.gem.gem=(S.gem.gem||0)+S.gem.rainbow;delete S.gem.rainbow;}
 syncMoneyIn();
 if(S.stg===undefined)S.stg=S.hatched?(S.xp<30?0:S.xp<100?1:2):0;
-function save(){S.t=Date.now();syncMoneyOut();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){S.t=Date.now();syncMoneyOut();try{localStorage.setItem(KEY,JSON.stringify(S));if(activePet){const p=penState();if(p&&Array.isArray(p.dragons)){const d=p.dragons.find(x=>String(x.id)===String(activeChoice.id));if(d){d.combat=JSON.parse(JSON.stringify(S));localStorage.setItem('rong_v1',JSON.stringify(p));}}}}catch(e){}}
 function decay(n){S.h=cp(S.h-n);S.f=cp(S.f-n);S.cl=cp(S.cl-.7*n);S.en=cp(S.en-.6*n)}
 decay(Math.min(120,Math.floor((Date.now()-S.t)/5000)));
 const STG=['baby','teen','adult'],stage=()=>!S.el?'pick':!S.hatched?'egg':STG[S.stg||0];
@@ -29,7 +33,7 @@ function dragonSvg(e,sg,mo,pl,pv){const st=sg||stage(),m=mo!==undefined?mo:mood(
  return `<div class="dg" ${e?'':'onclick="pet()"'} style="width:${w}%;filter:${f}"><img src="${src}" alt="Rồng ${EL[k].n} tiến hóa ${evolution}">${!e||pl?gear():''}${m===3?'<span class="zz">💤</span>':''}</div>`}
 function bar(l,v,col){return `<div class="b">${l} ${Math.round(v)}%<div class="t"><i style="width:${v}%;background:${col}"></i></div></div>`}
 function render(force){if(B)return rb();
- const st=stage(),chosen=chosenDragon(),visualType=chosen?chosen.type:S.el,visualStage=chosen?((Number(chosen.level)||1)>=8?'adult':(Number(chosen.level)||1)>=4?'teen':'baby'):st,k=st+S.el+mood()+S.taps+(chosen?chosen.type+chosen.level:'');
+ const st=stage(),chosen=chosenDragon(),visualStage=st,k=st+S.el+mood()+S.taps+(chosen?chosen.type+chosen.id:'');
  if(force||k!==key){key=k;let h='';
   if(st==='pick')h=`<div class="nm">Chọn một quả trứng rồng</div><div class="sub">Mỗi nguyên tố có màu sắc riêng</div><div class="pick">${Object.keys(EL).map(e=>`<button onclick="choose('${e}')"><img src="${IMG[e]}" style="width:100%;max-width:64px;height:64px;object-fit:contain"><br>${EL[e].e} ${EL[e].n}</button>`).join('')}</div>`;
   else if(st==='egg')h=eggSvg()+`<div class="nm">Trứng ${EL[S.el].n}</div><div class="sub">Chạm vào trứng để ấp nở (${S.taps}/8)</div>`;
@@ -92,8 +96,8 @@ let B=null,busy=false;
 const RING=['fire','leaf','water','ice','lightning','dark','gem'],ORD={};RING.forEach((k,i)=>ORD[k]=RING[(i+1)%7]);
 const mul=(a,d)=>ORD[a]===d?1.5:ORD[d]===a?.67:1;
 function arena(){if(S.en<10)return toast('Rồng quá mệt, hãy cho ngủ trước 🌙');
- const chosen=chosenDragon();if(chosen){S.el=chosen.type;S.stg=Math.max(0,Math.min(2,Math.floor((Number(chosen.level)||1)/4)));}
-  const lv=chosen?Math.max(1,Number(chosen.level)||1):Math.floor(S.xp/20)+1,g=.7+avg()/100*.6,w=S.wins||0,boss=w%5===4,ks=Object.keys(EL),e=ks[Math.floor(Math.random()*ks.length)],hp=60+lv*10+bn('hat')+sp('hp')*10+(S.stg||0)*20,eh=Math.round((50+w*15)*(boss?2.6:1));
+ const chosen=chosenDragon();if(chosen)S.el=chosen.type;
+  const lv=lvl(),g=.7+avg()/100*.6,w=S.wins||0,boss=w%5===4,ks=Object.keys(EL),e=ks[Math.floor(Math.random()*ks.length)],hp=60+lv*10+bn('hat')+sp('hp')*10+(S.stg||0)*20,eh=Math.round((50+w*15)*(boss?2.6:1));
  B={p:{hp:hp,max:hp,atk:(8+lv*2)*g+bn('weapon')+sp('atk')*2+(S.stg||0)*4,mp:40+sp('mp')*8,def:false},e:{el:e,hp:eh,max:eh,atk:(7+w*2)*(boss?1.65:1),boss:boss},log:boss?'👑 Boss xuất hiện!':'Trận đấu bắt đầu!',over:false};rb()}
 function hb(n,h,m){return `<div class="b">${n} ${Math.max(0,Math.round(h))}/${m}<div class="t"><i style="width:${Math.max(0,h)/m*100}%;background:#e03131"></i></div></div>`}
 function rb(a,d){const w=S.wins||0,e=B.e,sg=e.boss||w>=7?'adult':w>=3?'teen':'baby';
