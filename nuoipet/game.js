@@ -59,7 +59,7 @@ const els={};
 function mk(a){
  const d=T[a.type],el=document.createElement('div');
  el.className='ent animal '+(['chicken','duck','goat','bee'].includes(a.type)?'animal-new animal-'+a.type:'');el.style.width=(d.s/vf)+'%';
- el.innerHTML='<div class="bar"><i></i></div><div class="bub" hidden></div><div class="in"><img alt="'+d.n+'" src="'+IMG[a.type]+'" draggable="false" decoding="async"></div>';
+ el.innerHTML='<div class="bar"><i></i></div><div class="bub" hidden></div><div class="in"><img alt="'+d.n+'" src="'+IMG[a.type]+'" draggable="false" decoding="async" style="'+(a.colorFilter?'filter:'+a.colorFilter+';':'')+'"></div>';
  el.onclick=()=>tap(a);stage.appendChild(el);els[a.id]=el;place(el,a.x,a.y);
 }
 function ui(a){
@@ -186,6 +186,45 @@ function shop(){
  h+='<p class="hint">Chạm vào thú: có bong bóng sản phẩm thì thu hoạch, đói thì cho ăn ('+FEED_COST+' xu). Thú đói sẽ ngừng sản xuất.</p>';
  open(h);
 }
+
+/* ---------- lai giống ---------- */
+const breedFilters=[
+ {name:'Thường',chance:60,filter:'none',color:'#777'},
+ {name:'Hiếm',chance:25,filter:'hue-rotate(55deg) saturate(1.35)',color:'#d99a22'},
+ {name:'Siêu hiếm',chance:12,filter:'hue-rotate(155deg) saturate(1.6)',color:'#3aa9c9'},
+ {name:'Huyền thoại',chance:3,filter:'hue-rotate(265deg) saturate(1.8) brightness(1.12)',color:'#b45bd4'}
+];
+function breeding(){
+ let h=head('🧬 Khu lai giống');
+ if(S.animals.length<2){h+='<p class="hint">Cần ít nhất 2 vật nuôi trong chuồng để bắt đầu.</p>'}
+ else{
+  const opts=S.animals.map(a=>'<option value="'+a.id+'">'+T[a.type].n+' · #'+a.id+'</option>').join('');
+  h+='<p class="hint">Chọn hai con cùng loài. Mỗi lần lai tốn 100 xu và tạo một con non có màu sắc ngẫu nhiên.</p>';
+  h+='<label>🐾 Vật nuôi bố</label><select id="breedA" class="breed-select">'+opts+'</select>';
+  h+='<label>🐾 Vật nuôi mẹ</label><select id="breedB" class="breed-select">'+opts+'</select>';
+  h+='<div class="breed-odds"><b>Tỉ lệ màu sắc</b><br>Thường 60% · Hiếm 25% · Siêu hiếm 12% · Huyền thoại 3%</div>';
+  h+='<button onclick="breedNow()" style="width:100%;margin-top:10px">🧬 Bắt đầu lai · 🪙 100 xu</button>';
+ }
+ h+='<p class="hint">Con non sẽ ở lại chuồng, được lưu cùng dữ liệu vật nuôi và có thể tiếp tục lai khi đã sẵn sàng.</p>';
+ open(h);
+}
+function breedNow(){
+ const a=S.animals.find(x=>x.id===Number($('breedA')?.value));
+ const b=S.animals.find(x=>x.id===Number($('breedB')?.value));
+ if(!a||!b){toast('Hãy chọn đủ hai vật nuôi');return}
+ if(a.id===b.id){toast('Bạn cần chọn hai con khác nhau');return}
+ if(a.type!==b.type){toast('Chỉ có thể lai hai con cùng loài');return}
+ if(S.animals.length>=animalCapacity()){toast('Chuồng đã đầy ('+animalCapacity()+' con)');return}
+ if(S.coins<100){toast('Cần 100 xu để lai giống');return}
+ const roll=Math.random()*100;let total=0,rarity=breedFilters[0];
+ for(const r of breedFilters){total+=r.chance;if(roll<total){rarity=r;break}}
+ S.coins-=100;
+ const child={id:S.nid++,type:a.type,food:100,prog:0,ready:false,x:50+(Math.random()*10-5),y:68+(Math.random()*6-3),colorFilter:rarity.filter,breedRarity:rarity.name};
+ S.animals.push(child);mk(child);ui(child);wander(child);hud();save();shut();
+ toast('🎉 Đã lai thành công! Con non: '+rarity.name);
+ pop(child.x,child.y,'✨ '+rarity.name);
+}
+
 function buy(k){
  const d=T[k];if(lvl()[0]<(d.lv||1)){toast('🔒 '+d.n+' mở ở cấp '+d.lv);return}
  if(S.animals.length>=animalCapacity()){toast('Chuồng đã đầy ('+animalCapacity()+' con). Hãy nâng cấp Chuồng mở rộng để tăng sức chứa.');return}
@@ -210,7 +249,7 @@ function hire(k){
  syncStaff();hud();save();toast('Đã thuê '+s.n+' 7 ngày');staff();
 }
 function skip(){S.skew+=DAY;syncStaff();save();staff()}
-$('bShop').onclick=shop;$('bKho').onclick=kho;$('bStaff').onclick=staff;
+$('bShop').onclick=shop;$('bKho').onclick=kho;$('bStaff').onclick=staff;$('bBreed').onclick=breeding;
 $('bFeed').onclick=()=>{if(lvl()[0]<LV_F){toast('🔒 Cho ăn tất cả mở khoá ở cấp '+LV_F);return}let n=0;for(const a of S.animals){if(a.food<=85&&S.coins>=FEED_COST&&feed(a))n++}toast(n?'Đã cho ăn '+n+' con':'Không cần cho ăn')};
 $('bHar').onclick=()=>{if(lvl()[0]<LV_H){toast('🔒 Thu hoạch tất cả mở khoá ở cấp '+LV_H);return}let n=0;for(const a of S.animals)if(harvest(a,true))n++;toast(n?'Đã thu hoạch '+n+' con':'Chưa có gì để thu hoạch')};
 
