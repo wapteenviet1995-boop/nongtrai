@@ -21,7 +21,7 @@
 </main>
 <script>
 (function(){
-const ADMIN_UID="0GMaHbQl2tRBu566SdJbOIN72rI3";
+const ADMIN_EMAIL="wapteenviet1995@gmail.com";
 const $=id=>document.getElementById(id),access=$('access'),admin=$('admin'),listCard=$('listCard'),message=$('message');
 function say(t,kind){message.textContent=t;message.className=kind;}
 function positive(id){const n=Number($(id).value);return Number.isFinite(n)&&n>0?Math.floor(n):0;}
@@ -30,7 +30,7 @@ try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);}catch(e){}
 const auth=firebase.auth(),db=firebase.firestore();
 auth.onAuthStateChanged(async user=>{
 if(!user){location.replace('./login.html');return;}
-if(user.uid!==ADMIN_UID){access.textContent='⛔ Tài khoản này không có quyền quản trị mã khuyến mãi.';return;}
+if((user.email||'').toLowerCase()!==ADMIN_EMAIL){access.textContent='⛔ Tài khoản này không có quyền quản trị mã khuyến mãi.';return;}
 access.textContent='✅ Đã xác nhận quyền quản trị.';admin.classList.remove('hidden');listCard.classList.remove('hidden');await loadCodes();
 });
 async function loadCodes(){
