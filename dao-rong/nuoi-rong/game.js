@@ -77,3 +77,18 @@ function tick(t){const dt=Math.min(.1,(t-last)/1000);last=t;acc+=dt;
  requestAnimationFrame(tick)}
 requestAnimationFrame(tick);
 window.addEventListener('storage',e=>{if(e.key===MAIN_KEY){syncMoneyIn();hud();}});
+
+const $collection=$('collection');
+function showCollection(){
+ const owned=new Set(S.dragons.map(d=>d.type));
+ let h='<div class="collection-box"><div class="collection-head"><span>📖 Bộ sưu tập rồng</span><span>'+owned.size+'/'+Object.keys(T).length+'</span></div><div class="collection-grid">';
+ for(const k of Object.keys(T)){
+  const yes=owned.has(k);
+  h+='<div class="collection-card '+(yes?'owned':'locked')+'"><img src="'+IMG[k]+'"><b>'+(yes?T[k].n:'???')+'</b><small>'+(yes?'✓ Đã sưu tập':'🔒 Chưa có')+'</small></div>';
+ }
+ h+='</div><button id="collection-close" style="width:100%;margin-top:3cqw;background:#e7dfd1;box-shadow:0 .7cqw #b7aa95">Đóng</button></div>';
+ $collection.innerHTML=h;$collection.hidden=false;
+ $('collection-close').onclick=()=>$collection.hidden=true;
+}
+$('collection-btn').onclick=showCollection;
+$('bottom-shop').onclick=()=>shop();
