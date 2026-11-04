@@ -53,7 +53,9 @@ function handle(m){
  else if(m.type==='error'){status=m.message}
  render();
 }
-function elementPicker(){return '<label class="pvp-label">Nguyên tố rồng <select id="pvp-element">'+Object.keys(elements).map(k=>'<option value="'+k+'" '+(selectedElement===k?'selected':'')+'>'+elements[k]+'</option>').join('')+'</select></label>'}
+function getChosenDragon(){try{return JSON.parse(localStorage.getItem('rong_chien_dau_v1')||'null')}catch(e){return null}}
+function chosenElement(){const d=getChosenDragon();const map={spark:'lightning',rainbow:'gem'};return d&&d.type?(map[d.type]||d.type):'fire'}
+function elementPicker(){const d=getChosenDragon();selectedElement=chosenElement();return '<div class="pvp-label">🐉 Rồng chiến đấu: <b>'+esc(d?d.name+' · Cấp '+d.level:'Rồng Lửa mặc định')+'</b><p>Muốn đổi rồng, hãy về khu nuôi rồng và chọn con khác.</p></div>'}
 function home(){
  $('pvp-content').innerHTML='<p class="pvp-status">'+esc(status)+'</p>'+elementPicker()+
  '<button class="pvp-action" id="pvp-find">🔎 Ghép trận ngẫu nhiên</button>'+
@@ -61,8 +63,8 @@ function home(){
  '<button class="pvp-action secondary" id="pvp-rank">🏆 Bảng xếp hạng PvP</button>'+
  '<p class="pvp-hint">Cả hai người phải cùng online tại Đảo Rồng. Trận đấu cân bằng: 100 máu, 30 mana; mỗi lượt được đánh, dùng chiêu hoặc phòng thủ. Thắng nhận 3 điểm BXH.</p>';
  $('pvp-element').addEventListener('change',e=>selectedElement=e.target.value);
- $('pvp-find').onclick=async()=>{try{await connect();selectedElement=$('pvp-element').value;mode='queue';status='Đang tìm đối thủ...';send({type:'queue',element:selectedElement});render()}catch(e){status=e.message;render()}};
- $('pvp-invite').onclick=async()=>{try{await connect();selectedElement=$('pvp-element').value;const toUid=prompt('Nhập UID của bạn bè. Người đó cần đang online ở Đảo Rồng:');if(toUid)send({type:'invite',toUid:toUid.trim(),element:selectedElement})}catch(e){status=e.message;render()}};
+ $('pvp-find').onclick=async()=>{try{await connect();selectedElement=chosenElement();mode='queue';status='Đang tìm đối thủ...';send({type:'queue',element:selectedElement});render()}catch(e){status=e.message;render()}};
+ $('pvp-invite').onclick=async()=>{try{await connect();selectedElement=chosenElement();const toUid=prompt('Nhập UID của bạn bè. Người đó cần đang online ở Đảo Rồng:');if(toUid)send({type:'invite',toUid:toUid.trim(),element:selectedElement})}catch(e){status=e.message;render()}};
  $('pvp-rank').onclick=loadRank;
 }
 function queueView(){
