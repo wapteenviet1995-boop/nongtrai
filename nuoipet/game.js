@@ -13,7 +13,10 @@ const IMG={
  lamb:"img/lamb.webp",
  chicken:"img/ga.png?v=20261102b",duck:"img/vit.png?v=20261102b",goat:"img/de.png?v=20261102b",bee:"img/ong.png?v=20261102b"
 };
-const LV_H=20,LV_F=25;const DAY=864e5, RENT=7*DAY, CAP=10, FEED_COST=8;
+const LV_H=20,LV_F=25;const DAY=864e5, RENT=7*DAY, FEED_COST=8;
+// Sức chứa chuồng lấy theo cấp Chuồng mở rộng trong trang Xây dựng.
+// Cấp 1 giữ mức hiện tại 10 con; mỗi cấp tiếp theo tăng thêm 3 chỗ.
+const animalCapacity=()=>10+Math.max(0,(Number(mainState?.buildings?.barn)||1)-1)*3;
 const T={
  pig_baby:{n:'Heo con',p:'Nấm',e:'🍄',v:6,t:35,c:80,s:9,lv:1},
  chicken:{n:'Gà',p:'Trứng',e:'🥚',v:18,t:45,c:150,s:11,lv:2},
@@ -49,7 +52,7 @@ const X=x=>((x-ox*100)/vf)+'%';
 function place(el,x,y){el.style.left=X(x);el.style.top=y+'%';el.style.zIndex=Math.round(y*10)}
 function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',2200)}
 function pop(x,y,txt){const d=document.createElement('div');d.className='pop';d.textContent=txt;place(d,x,y-6);d.style.zIndex=999;d.style.transition='none';stage.appendChild(d);setTimeout(()=>d.remove(),1200)}
-function hud(){$('coins').textContent='🪙 '+Math.floor(S.coins);$('gems').textContent='💎 '+S.gems;$('lv').textContent='⭐ Cấp '+lvl()[0];{const L=lvl()[0];$('bHar').innerHTML=(L<LV_H?'🔒':'🧺')+'<br>Thu hoạch tất cả';$('bHar').style.opacity=L<LV_H?.6:1;$('bFeed').innerHTML=(L<LV_F?'🔒':'🍽️')+'<br>Cho ăn tất cả';$('bFeed').style.opacity=L<LV_F?.6:1}$('cnt').textContent='🐾 '+S.animals.length+'/'+CAP}
+function hud(){$('coins').textContent='🪙 '+Math.floor(S.coins);$('gems').textContent='💎 '+S.gems;$('lv').textContent='⭐ Cấp '+lvl()[0];{const L=lvl()[0];$('bHar').innerHTML=(L<LV_H?'🔒':'🧺')+'<br>Thu hoạch tất cả';$('bHar').style.opacity=L<LV_H?.6:1;$('bFeed').innerHTML=(L<LV_F?'🔒':'🍽️')+'<br>Cho ăn tất cả';$('bFeed').style.opacity=L<LV_F?.6:1}$('cnt').textContent='🐾 '+S.animals.length+'/'+animalCapacity()}
 
 /* ---------- animals ---------- */
 const els={};
@@ -185,7 +188,7 @@ function shop(){
 }
 function buy(k){
  const d=T[k];if(lvl()[0]<(d.lv||1)){toast('🔒 '+d.n+' mở ở cấp '+d.lv);return}
- if(S.animals.length>=CAP){toast('Chuồng đã đầy ('+CAP+' con)');return}
+ if(S.animals.length>=animalCapacity()){toast('Chuồng đã đầy ('+animalCapacity()+' con). Hãy nâng cấp Chuồng mở rộng để tăng sức chứa.');return}
  if(d.gc){if(S.gems<d.gc){toast('Không đủ Kim Cương');return}S.gems-=d.gc}
  else{if(S.coins<d.c){toast('Không đủ xu');return}S.coins-=d.c}
  const a={id:S.nid++,type:k,food:100,prog:0,ready:false,x:50,y:68};
